@@ -9,6 +9,20 @@ public class Heapsort {
     }
 
     /**
+     * Метод копирования массива и выполнения сортировки.
+     *
+     * @param arr Массив целых чисел для сортировки.
+     */
+    public static int[] heapsortCopy(int[] arr) {
+        int[] arrCopy = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            arrCopy[i] = arr[i];
+        }
+        heapsort(arrCopy);
+        return arrCopy;
+    }
+
+    /**
      * Метод, который сортирует массив пирамидальной сортировкой.
      *
      * @param arr Массив целых чисел для сортировки.
