@@ -3,7 +3,7 @@ package org.example;
 import java.util.ArrayList;
 
 /**
- * Класс "руки" - набор карт у игрока или дилера.
+ * Класс, представляющий руку карт.
  */
 public class Hand {
     private ArrayList<Card> hand = new ArrayList<>();
