@@ -9,6 +9,7 @@ import java.util.Collections;
 public class Deck {
     /**
      * Создаёт стандартную колоду из 52 карт и перемешивает её.
+     *
      * @return Перемешанный список с объектами карт.
      */
     public static ArrayList<Card> getDeck() {

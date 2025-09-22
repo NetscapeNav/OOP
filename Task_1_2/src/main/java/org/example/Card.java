@@ -9,6 +9,7 @@ public class Card {
 
     /**
      * Создаёт карту с заданным значением и мастью.
+     *
      * @param value Цифровое значение карты (например, 2, 10, 11 - Валет, 14 - Туз).
      * @param suit  Масть карты ('S' - пики (Spades), 'H' - червы (Hearts) и т.д.).
      */
@@ -19,6 +20,7 @@ public class Card {
 
     /**
      * Позволяет узнать значение карты.
+     *
      * @return Цифровое значение карты.
      */
     public int getValue() {
@@ -27,6 +29,7 @@ public class Card {
 
     /**
      * Позволяет узнать масть карты.
+     *
      * @return Символ, обозначающий масть карты.
      */
     public char getSuit() {
@@ -35,6 +38,7 @@ public class Card {
 
     /**
      * Превращает информацию о карте в строку.
+     *
      * @return Строка вида "Queen of Hearts".
      */
     public String toString() {

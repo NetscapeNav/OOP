@@ -10,6 +10,7 @@ public class Hand {
 
     /**
      * Добавляет карту в руку.
+     *
      * @param card Карта, которую нужно добавить.
      */
     public void addCard(Card card) {
@@ -18,6 +19,7 @@ public class Hand {
 
     /**
      * Показывает карты в руке. Может скрыть первую карту (для дилера).
+     *
      * @param firstClosed Если true, первая карта скрывается. Если false, показываются все.
      */
     public void showHand(boolean firstClosed) {
@@ -40,6 +42,7 @@ public class Hand {
     /**
      * Считает количество очков в руке по правилам игры.
      * Тузы считаются за 11, но если это приводит к перебору, то за 1.
+     *
      * @return Итоговое количество очков.
      */
     public int getScore() {
