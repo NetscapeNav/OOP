@@ -1,9 +1,18 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UnitTest {
+    @Test
+    void testDeckCreation() {
+        ArrayList<Card> deck = Deck.getDeck();
+        assertEquals(52, deck.size());
+    }
+
     @Test
     void testSimpleScore() {
         Hand hand = new Hand();

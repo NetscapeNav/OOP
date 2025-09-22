@@ -2,13 +2,24 @@ package org.example;
 
 import java.util.ArrayList;
 
+/**
+ * Класс "руки" - набор карт у игрока или дилера.
+ */
 public class Hand {
     private ArrayList<Card> hand = new ArrayList<>();
 
+    /**
+     * Добавляет карту в руку.
+     * @param card Карта, которую нужно добавить.
+     */
     public void addCard(Card card) {
         hand.add(card);
     }
 
+    /**
+     * Показывает карты в руке. Может скрыть первую карту (для дилера).
+     * @param firstClosed Если true, первая карта скрывается. Если false, показываются все.
+     */
     public void showHand(boolean firstClosed) {
         if (firstClosed) {
             System.out.println("[" + hand.get(0).toString() + ", <closed card>]");
@@ -26,6 +37,11 @@ public class Hand {
         }
     }
 
+    /**
+     * Считает количество очков в руке по правилам игры.
+     * Тузы считаются за 11, но если это приводит к перебору, то за 1.
+     * @return Итоговое количество очков.
+     */
     public int getScore() {
         int score = 0;
         int aceCount = 0;

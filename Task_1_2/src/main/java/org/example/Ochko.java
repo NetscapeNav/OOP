@@ -2,9 +2,11 @@ package org.example;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 
+/**
+ * Главный класс игры. Обеспечивает ход игры, раундом и следит за счётом
+ */
 public class Ochko {
     private Scanner in = new Scanner(System.in);
     private int wonPlayer = 0;
@@ -25,6 +27,9 @@ public class Ochko {
         //System.out.println("Goodbye!");
     }
 
+    /**
+     * Метод управления логики раунда игры.
+     */
     private void round() {
         ArrayList<Card> deck = Deck.getDeck();
         Hand handPlayer = new Hand();
