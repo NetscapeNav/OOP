@@ -5,13 +5,16 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Главный класс игры. Обеспечивает ход игры, раундом и следит за счётом
+ * Главный класс игры. Обеспечивает ход игры, раундом и следит за счётом.
  */
 public class Ochko {
     private Scanner in = new Scanner(System.in);
     private int wonPlayer = 0;
     private int wonDealer = 0;
 
+    /**
+     * Начало игры.
+     */
     public void start() {
         System.out.println("Добро пожаловать в Блэкджек!");
         int roundIndex = 0;
