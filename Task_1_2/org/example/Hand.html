@@ -76,6 +76,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">Hand</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Класс "руки" - набор карт у игрока или дилера.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -105,13 +106,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addCard(org.example.Card)" class="member-name-link">addCard</a><wbr>(<a href="Card.html" title="class in org.example">Card</a>&nbsp;card)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Добавляет карту в руку.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getScore()" class="member-name-link">getScore</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Считает количество очков в руке по правилам игры.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#showHand(boolean)" class="member-name-link">showHand</a><wbr>(boolean&nbsp;firstClosed)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Показывает карты в руке.</div>
+</div>
 </div>
 </div>
 </div>
@@ -147,18 +154,34 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="addCard(org.example.Card)">
 <h3>addCard</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addCard</span><wbr><span class="parameters">(<a href="Card.html" title="class in org.example">Card</a>&nbsp;card)</span></div>
+<div class="block">Добавляет карту в руку.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>card</code> - Карта, которую нужно добавить.</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="showHand(boolean)">
 <h3>showHand</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">showHand</span><wbr><span class="parameters">(boolean&nbsp;firstClosed)</span></div>
+<div class="block">Показывает карты в руке. Может скрыть первую карту (для дилера).</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>firstClosed</code> - Если true, первая карта скрывается. Если false, показываются все.</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="getScore()">
 <h3>getScore</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getScore</span>()</div>
+<div class="block">Считает количество очков в руке по правилам игры.
+ Тузы считаются за 11, но если это приводит к перебору, то за 1.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>Итоговое количество очков.</dd>
+</dl>
 </section>
 </li>
 </ul>
