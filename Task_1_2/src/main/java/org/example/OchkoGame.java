@@ -1,39 +1,47 @@
 package org.example;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * Главный класс игры. Обеспечивает ход игры, раундом и следит за счётом.
  */
-public class Ochko {
-    private Scanner in = new Scanner(System.in);
+public class OchkoGame {
+    private OchkoUI ui = new OchkoUI();
     private int wonPlayer = 0;
     private int wonDealer = 0;
+
+    /**
+     * Возврат числа выигрышей игроком.
+     */
+    public int getWonPlayer() {
+        return wonPlayer;
+    }
+
+    /**
+     * Возврат числа выигрышей дилера.
+     */
+    public int getWonDealer() {
+        return wonDealer;
+    }
 
     /**
      * Начало игры.
      */
     public void start() {
-        System.out.println("Добро пожаловать в Блэкджек!");
+        ui.displayWelcomeMessage();
         int roundIndex = 0;
         while (true) {
-            System.out.println("Round " + (++roundIndex));
+            ui.displayRound(++roundIndex);
             round();
-            System.out.println("It's " + wonPlayer + ":" + wonDealer);
-            /*System.out.println("Still wanna play? (0 - no, 1 - yes)");
-            if (in.nextInt() == 0) {
-                break;
-            }*/
+            ui.displayScore(wonPlayer, wonDealer);
         }
-        //System.out.println("Goodbye!");
     }
 
     /**
      * Метод управления логики раунда игры.
      */
-    private void round() {
+    public void round() {
         ArrayList<Card> deck = Deck.getDeck();
         Hand handPlayer = new Hand();
         Hand handDealer = new Hand();
@@ -42,9 +50,9 @@ public class Ochko {
             return;
         }
         turnPlayer(deck, handPlayer, handDealer);
-        if (checkBlackjack(handPlayer, handDealer, false)) {
+        /*if (checkBlackjack(handPlayer, handDealer, false)) {
             return;
-        }
+        }*/
         if (handPlayer.getScore() <= 21) {
             turnDealer(deck, handDealer);
         }
@@ -56,40 +64,44 @@ public class Ochko {
         handPlayer.addCard(deck.remove(0));
         handDealer.addCard(deck.remove(0));
         handDealer.addCard(deck.remove(0));
-        System.out.println("The cards have given");
+        ui.displayCardsDealt();
     }
 
     private boolean checkBlackjack(Hand handPlayer, Hand handDealer, boolean isPlayer) {
         boolean blackjackPlayer = (handPlayer.getScore() == 21);
         boolean blackjackDealer = (handDealer.getScore() == 21);
         if (blackjackPlayer && isPlayer) {
-            System.out.println("Your cards:");
-            handPlayer.showHand(false);
-            System.out.println("Dealer's cards:");
-            handDealer.showHand(true);
-            System.out.println("Blackjack! You've won!");
+            ui.displayHand("Your", handPlayer, false);
+            ui.displayHand("Dealer", handDealer, true);
+            ui.displayBlackjack(true);
             wonPlayer += 1;
             return true;
         } else if (blackjackDealer && !isPlayer) {
-            System.out.println("Your cards:");
-            handPlayer.showHand(false);
-            System.out.println("Dealer's cards:");
-            handDealer.showHand(false);
-            System.out.println("Diler has blackjack! You've lost.");
+            ui.displayHand("Your", handPlayer, false);
+            ui.displayHand("Dealer", handDealer, false);
+            ui.displayBlackjack(false);
             wonDealer += 1;
             return true;
         }
         return false;
     }
 
-    private void turnPlayer(ArrayList<Card> deck, Hand handPlayer, Hand handDealer) {
-        System.out.println("Your turn");
-        while (true) {
-            System.out.println("Your cards:");
-            handPlayer.showHand(false);
-            System.out.println("Dealer's cards:");
-            handDealer.showHand(true);
-            if (handPlayer.getScore() >= 21) {
+    public void turnPlayer(ArrayList<Card> deck, Hand handPlayer, Hand handDealer) {
+        ui.displayPlayerTurn();
+        while (handPlayer.getScore() < 21) {
+            ui.displayHand("Your", handPlayer, false);
+            ui.displayHand("Dealer", handDealer, true);
+            int decisionPlayer = ui.getPlayerDecision();
+
+            if (decisionPlayer == 0) {
+                break;
+            } else if (decisionPlayer == 1) {
+                handPlayer.addCard(deck.remove(0));
+            } else {
+                ui.displayInvalidInput();
+            }
+
+            /*if (handPlayer.getScore() >= 21) {
                 break;
             }
             System.out.println("Enter \"1\", to take a card, and \"0\", to stop...");
@@ -100,44 +112,45 @@ public class Ochko {
                 handPlayer.addCard(deck.remove(0));
             } else {
                 System.out.println("Invalid input! Type 0 or 1.");
-            }
+            }*/
         }
+        ui.displayHand("Your", handPlayer, false);
     }
 
     private void turnDealer(ArrayList<Card> deck, Hand handDealer) {
-        System.out.println("Dealer's turn");
-        handDealer.showHand(false);
+        ui.displayDealerTurn();
+        ui.displayHand("Dealer", handDealer, false);
         while (handDealer.getScore() < 17) {
-            System.out.println("Dealer takes a card...");
+            ui.displayDealerTakesCard();
             handDealer.addCard(deck.remove(0));
-            handDealer.showHand(false);
-            if (handDealer.getScore() > 21) {
+            ui.displayHand("Dealer", handDealer, false);
+            /*if (handDealer.getScore() > 21) {
                 break;
-            }
+            }*/
         }
     }
 
     private void showWinner(int scoreDealer, int scorePlayer) {
         if (scorePlayer > 21) {
-            System.out.println("You've lost.");
+            ui.displayWinner(0);
             wonDealer += 1;
-        } else if (scorePlayer == 21) {
-            System.out.println("You've won!");
+        }/* else if (scorePlayer == 21) {
+            ui.displayWinner(2);
             wonPlayer += 1;
-        } else if (scoreDealer > 21) {
-            System.out.println("You've won!");
+        }*/ else if (scoreDealer > 21) {
+            ui.displayWinner(2);
             wonPlayer += 1;
-        } else if (scoreDealer == 21) {
-            System.out.println("You've lost.");
+        }/* else if (scoreDealer == 21) {
+            ui.displayWinner(0);
             wonDealer += 1;
-        } else if (scoreDealer > scorePlayer) {
-            System.out.println("You've lost.");
+        }*/ else if (scoreDealer > scorePlayer) {
+            ui.displayWinner(0);
             wonDealer += 1;
         } else if (scoreDealer < scorePlayer) {
-            System.out.println("You've won!");
+            ui.displayWinner(2);
             wonPlayer += 1;
         } else {
-            System.out.println("It's a tie...");
+            ui.displayWinner(1);
         }
     }
 }

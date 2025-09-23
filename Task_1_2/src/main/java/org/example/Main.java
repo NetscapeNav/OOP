@@ -1,11 +1,8 @@
 package org.example;
 
-/**
- * Класс Main.
- */
 public class Main {
     public static void main(String[] args) {
-        Ochko game = new Ochko();
+        OchkoGame game = new OchkoGame();
         game.start();
     }
 }

@@ -7,17 +7,15 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UnitTest {
+
     @Test
     void testCardToString() {
-        // Test a number card
         Card cardFiveOfSpades = new Card(5, 'S');
         assertEquals("5 of Spades", cardFiveOfSpades.toString());
 
-        // Test a face card
         Card cardKingOfHearts = new Card(13, 'H');
         assertEquals("King of Hearts", cardKingOfHearts.toString());
 
-        // Test an Ace
         Card cardAceOfClubs = new Card(14, 'C');
         assertEquals("Ace of Clubs", cardAceOfClubs.toString());
     }

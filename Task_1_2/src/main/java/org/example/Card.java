@@ -1,7 +1,7 @@
 package org.example;
 
 /**
- * Представляет одну игральную карту.
+ * Класс представляет одну игральную карту.
  */
 public class Card {
     private int value;
