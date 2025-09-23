@@ -154,8 +154,8 @@ class UnitTest {
     @Test
     void testPlayerBusts() {
         Scanner testScanner = new Scanner("1");
-        OchkoUI testUI = new OchkoUI(testScanner);
-        OchkoGame game = new OchkoGame(testUI);
+        OchkoUI testUi = new OchkoUI(testScanner);
+        OchkoGame game = new OchkoGame(testUi);
         ArrayList<Card> specificDeck = new ArrayList<>(Arrays.asList(
                 new Card(10, 'S'), new Card(8, 'S'),
                 new Card(5, 'H'), new Card(6, 'H'),
@@ -169,8 +169,8 @@ class UnitTest {
     @Test
     void testDealerBusts() {
         Scanner testScanner = new Scanner("0");
-        OchkoUI testUI = new OchkoUI(testScanner);
-        OchkoGame game = new OchkoGame(testUI);
+        OchkoUI testUi = new OchkoUI(testScanner);
+        OchkoGame game = new OchkoGame(testUi);
         ArrayList<Card> specificDeck = new ArrayList<>(Arrays.asList(
                 new Card(10, 'S'), new Card(10, 'D'),
                 new Card(10, 'H'), new Card(6, 'H'),
@@ -184,8 +184,8 @@ class UnitTest {
     @Test
     void testTieGame() {
         Scanner testScanner = new Scanner("0");
-        OchkoUI testUI = new OchkoUI(testScanner);
-        OchkoGame game = new OchkoGame(testUI);
+        OchkoUI testUi = new OchkoUI(testScanner);
+        OchkoGame game = new OchkoGame(testUi);
         ArrayList<Card> specificDeck = new ArrayList<>(Arrays.asList(
                 new Card(10, 'S'), new Card(9, 'D'),
                 new Card(10, 'H'), new Card(9, 'H')
