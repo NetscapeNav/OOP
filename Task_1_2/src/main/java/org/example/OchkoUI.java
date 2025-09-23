@@ -6,7 +6,7 @@ import java.util.Scanner;
  * Класс для взаимодействия с пользователем через консоль.
  */
 public class OchkoUI {
-    private final Scanner in = new Scanner(System.in);
+    private Scanner in = new Scanner(System.in);
 
     /*
     *

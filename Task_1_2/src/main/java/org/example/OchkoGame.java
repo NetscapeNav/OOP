@@ -39,10 +39,18 @@ public class OchkoGame {
     }
 
     /**
-     * Метод управления логики раунда игры.
+     * Приватный метод-загрузчик.
      */
     private void round() {
-        ArrayList<Card> deck = Deck.getDeck();
+        round(Deck.getDeck());
+    }
+
+    /**
+     * Метод управления логики раунда игры.
+     *
+     * @param deck Колода карт для игры.
+     */
+    void round(ArrayList<Card> deck) {
         Hand handPlayer = new Hand();
         Hand handDealer = new Hand();
         dealCards(deck, handPlayer, handDealer);
