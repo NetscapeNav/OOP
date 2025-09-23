@@ -7,9 +7,23 @@ import java.util.Scanner;
  * Главный класс игры. Обеспечивает ход игры, раундом и следит за счётом.
  */
 public class OchkoGame {
-    private OchkoUI ui = new OchkoUI();
+    private OchkoUI ui;
     private int wonPlayer = 0;
     private int wonDealer = 0;
+
+    /**
+     * Конструктор для обычной игры.
+     */
+    public OchkoGame() {
+        this.ui = new OchkoUI();
+    }
+
+    /**
+     * Конструктор для тестов с целью подмены UI.
+     */
+    public OchkoGame(OchkoUI ui) {
+        this.ui = ui;
+    }
 
     /**
      * Возврат числа выигрышей игроком.

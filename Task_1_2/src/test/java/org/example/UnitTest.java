@@ -3,6 +3,8 @@ package org.example;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -87,7 +89,7 @@ class UnitTest {
     }
 
     @Test
-    void testBlackjack() {
+    void testBlackjackExample() {
         Hand hand = new Hand();
         hand.addCard(new Card(14, 'D'));
         hand.addCard(new Card(11, 'C'));
@@ -133,5 +135,63 @@ class UnitTest {
     void testEmptyHandScore() {
         Hand hand = new Hand();
         assertEquals(0, hand.getScore());
+    }
+
+    @Test
+    void testPlayerBlackjack() {
+        Scanner testScanner = new Scanner("");
+        OchkoUI testUI = new OchkoUI(testScanner);
+        OchkoGame game = new OchkoGame(testUI);
+        ArrayList<Card> specificDeck = new ArrayList<>(Arrays.asList(
+                new Card(14, 'S'), new Card(13, 'S'),
+                new Card(5, 'H'), new Card(6, 'H')
+        ));
+        game.round(specificDeck);
+        assertEquals(1, game.getWonPlayer());
+        assertEquals(0, game.getWonDealer());
+    }
+
+    @Test
+    void testPlayerBusts() {
+        Scanner testScanner = new Scanner("1");
+        OchkoUI testUI = new OchkoUI(testScanner);
+        OchkoGame game = new OchkoGame(testUI);
+        ArrayList<Card> specificDeck = new ArrayList<>(Arrays.asList(
+                new Card(10, 'S'), new Card(8, 'S'),
+                new Card(5, 'H'), new Card(6, 'H'),
+                new Card(10, 'C')
+        ));
+        game.round(specificDeck);
+        assertEquals(0, game.getWonPlayer());
+        assertEquals(1, game.getWonDealer());
+    }
+
+    @Test
+    void testDealerBusts() {
+        Scanner testScanner = new Scanner("0");
+        OchkoUI testUI = new OchkoUI(testScanner);
+        OchkoGame game = new OchkoGame(testUI);
+        ArrayList<Card> specificDeck = new ArrayList<>(Arrays.asList(
+                new Card(10, 'S'), new Card(10, 'D'),
+                new Card(10, 'H'), new Card(6, 'H'),
+                new Card(13, 'C')
+        ));
+        game.round(specificDeck);
+        assertEquals(1, game.getWonPlayer());
+        assertEquals(0, game.getWonDealer());
+    }
+
+    @Test
+    void testTieGame() {
+        Scanner testScanner = new Scanner("0");
+        OchkoUI testUI = new OchkoUI(testScanner);
+        OchkoGame game = new OchkoGame(testUI);
+        ArrayList<Card> specificDeck = new ArrayList<>(Arrays.asList(
+                new Card(10, 'S'), new Card(9, 'D'),
+                new Card(10, 'H'), new Card(9, 'H')
+        ));
+        game.round(specificDeck);
+        assertEquals(0, game.getWonPlayer());
+        assertEquals(0, game.getWonDealer());
     }
 }
