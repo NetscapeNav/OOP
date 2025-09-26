@@ -1,5 +1,7 @@
 package org.example;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -223,5 +225,58 @@ class UnitTest {
         game.round(specificDeck);
         assertEquals(0, game.getWonPlayer());
         assertEquals(1, game.getWonDealer());
+    }
+
+    @Test
+    void testUiDisplayWinnerMessages() {
+        PrintStream originalOut = System.out;
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        try {
+            OchkoUI ui = new OchkoUI();
+            ui.displayWinner(2);
+            assertTrue(outContent.toString().contains("You've won!"));
+            outContent.reset();
+            ui.displayWinner(0);
+            assertTrue(outContent.toString().contains("You've lost."));
+            outContent.reset();
+            ui.displayWinner(1);
+            assertTrue(outContent.toString().contains("It's a tie..."));
+        } finally {
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void testInvalidInput() {
+        java.io.PrintStream originalOut = System.out;
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new java.io.PrintStream(outContent));
+        try {
+            Scanner testScanner = new Scanner("abc\n1");
+            OchkoUI ui = new OchkoUI(testScanner);
+            int decision = ui.getPlayerDecision();
+            assertTrue(outContent.toString().contains("Invalid input! Please enter a number."));
+            assertEquals(1, decision);
+        } finally {
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void testBlackjackMessages() {
+        java.io.PrintStream originalOut = System.out;
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new java.io.PrintStream(outContent));
+        try {
+            OchkoUI ui = new OchkoUI();
+            ui.displayBlackjack(true);
+            assertTrue(outContent.toString().contains("Blackjack! You've won!"));
+            outContent.reset();
+            ui.displayBlackjack(false);
+            assertTrue(outContent.toString().contains("Diler has a blackjack. You've lost."));
+        } finally {
+            System.setOut(originalOut);
+        }
     }
 }
