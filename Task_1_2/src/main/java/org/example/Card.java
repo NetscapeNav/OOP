@@ -18,20 +18,10 @@ public class Card {
         this.suit = suit;
     }
 
-    /**
-     * Позволяет узнать значение карты.
-     *
-     * @return Цифровое значение карты.
-     */
     public int getValue() {
         return value;
     }
 
-    /**
-     * Позволяет узнать масть карты.
-     *
-     * @return Символ, обозначающий масть карты.
-     */
     public char getSuit() {
         return suit;
     }

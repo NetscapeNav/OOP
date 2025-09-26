@@ -194,4 +194,34 @@ class UnitTest {
         assertEquals(0, game.getWonPlayer());
         assertEquals(0, game.getWonDealer());
     }
+
+    @Test
+    void testPlayerWinsByScore() {
+        Scanner testScanner = new Scanner("0");
+        OchkoUI testUi = new OchkoUI(testScanner);
+        OchkoGame game = new OchkoGame(testUi);
+        ArrayList<Card> specificDeck = new ArrayList<>(Arrays.asList(
+                new Card(10, 'S'), new Card(10, 'H'),
+                new Card(10, 'C'), new Card(9, 'D')
+        ));
+        game.round(specificDeck);
+        assertEquals(1, game.getWonPlayer());
+        assertEquals(0, game.getWonDealer());
+    }
+
+    @Test
+    void testDealerBlackjack() {
+        Scanner testScanner = new Scanner("0");
+        OchkoUI testUi = new OchkoUI(testScanner);
+        OchkoGame game = new OchkoGame(testUi);
+        ArrayList<Card> specificDeck = new ArrayList<>(Arrays.asList(
+                new Card(10, 'S'),
+                new Card(8, 'C'),
+                new Card(14, 'H'),
+                new Card(11, 'D')
+        ));
+        game.round(specificDeck);
+        assertEquals(0, game.getWonPlayer());
+        assertEquals(1, game.getWonDealer());
+    }
 }

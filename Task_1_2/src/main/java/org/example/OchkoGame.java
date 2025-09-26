@@ -25,16 +25,10 @@ public class OchkoGame {
         this.ui = ui;
     }
 
-    /**
-     * Возврат числа выигрышей игроком.
-     */
     public int getWonPlayer() {
         return wonPlayer;
     }
 
-    /**
-     * Возврат числа выигрышей дилера.
-     */
     public int getWonDealer() {
         return wonDealer;
     }

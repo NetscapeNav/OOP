@@ -8,20 +8,10 @@ import java.util.ArrayList;
 public class Hand {
     private ArrayList<Card> hand = new ArrayList<>();
 
-    /**
-     * Добавляет карту в руку.
-     *
-     * @param card Карта, которую нужно добавить.
-     */
     public void addCard(Card card) {
         hand.add(card);
     }
 
-    /**
-     * Возвращает количество карт в руке.
-     *
-     * @return Число карт в руке.
-     */
     public int getCardCount() {
         return hand.size();
     }
