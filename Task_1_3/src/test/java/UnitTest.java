@@ -19,7 +19,7 @@ public class UnitTest {
         assertEquals(5, num.eval("x = 10"));
 
         Expression de1 = num.derivative("x");
-        assertEquals(0, de1.method());
+        assertEquals(0, de1.eval("x = 10"));
     }
 
     @Test
@@ -29,7 +29,7 @@ public class UnitTest {
         assertEquals(5, var.eval("x = 5"));
 
         Expression de1 = var.derivative("x");
-        assertEquals(1, de1.method());
+        assertEquals(1, de1.eval("x = 5"));
 
         Expression de2 = var.derivative("y");
         assertEquals(0, de2.eval("x = 5; y = 10"));
@@ -41,10 +41,14 @@ public class UnitTest {
         Number num2 = new Number(10);
         Add num = new Add(num1, num2);
         assertEquals(15, num.method());
+        assertEquals(15, num.eval("x = 10"));
 
         Variable var = new Variable("x");
         num = new Add(num1, var);
         assertEquals(15, num.eval("x = 10"));
+
+        Expression de = num.derivative("x");
+        assertEquals(1, de.eval("x = 5"));
     }
 
     @Test
@@ -57,6 +61,9 @@ public class UnitTest {
         Variable var = new Variable("x");
         num = new Sub(num1, var);
         assertEquals(-5, num.eval("x = 10"));
+
+        Expression de = num.derivative("x");
+        assertEquals(-1, de.eval("x = 5"));
     }
 
     @Test
@@ -69,6 +76,9 @@ public class UnitTest {
         Variable var = new Variable("x");
         num = new Mul(num1, var);
         assertEquals(50, num.eval("x = 10"));
+
+        Expression de = num.derivative("x");
+        assertEquals(5, de.eval("x = 5"));
     }
 
     @Test
@@ -81,6 +91,9 @@ public class UnitTest {
         Variable var = new Variable("x");
         num = new Div(num2, var);
         assertEquals(2, num.eval("x = 5"));
+
+        Expression de = num.derivative("x");
+        assertEquals(0, de.eval("x = 5"));
     }
 
 }
