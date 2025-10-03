@@ -21,8 +21,13 @@ public class UnitTest {
         Expression de1 = num.derivative("x");
         assertEquals(0, de1.eval("x = 10"));
 
-        num.print();
-        System.out.println();
+        Number negative = new Number(-5);
+        assertEquals(-5, negative.method());
+        assertEquals(-5, negative.eval("x = 10"));
+
+        Number large = new Number(1000000);
+        assertEquals(1000000, large.method());
+        assertEquals(1000000, large.eval("x = 10"));
     }
 
     @Test
