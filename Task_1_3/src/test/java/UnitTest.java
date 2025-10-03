@@ -139,5 +139,13 @@ public class UnitTest {
         ParseExpressions parserSmth = new ParseExpressions("(x + 5) smth");
         Exception e1 = assertThrows(RuntimeException.class, parserSmth::parse);
         assertEquals("Unexpected characters at end of input: 'smth'", e1.getMessage());
+
+        ParseExpressions parserInvalidSymbol = new ParseExpressions("% 5");
+        Exception e2 = assertThrows(RuntimeException.class, parserInvalidSymbol::parse);
+        assertEquals("Unexpected character: '%' at position 0", e2.getMessage());
+
+        ParseExpressions parserInvalidOp = new ParseExpressions("(x ^ 2)");
+        Exception e3 = assertThrows(RuntimeException.class, parserInvalidOp::parse);
+        assertEquals("Expected operator (+, -, *, /) but found: '^' at position 3", e3.getMessage());
     }
 }
