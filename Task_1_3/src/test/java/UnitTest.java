@@ -20,6 +20,9 @@ public class UnitTest {
 
         Expression de1 = num.derivative("x");
         assertEquals(0, de1.eval("x = 10"));
+
+        num.print();
+        System.out.println();
     }
 
     @Test
@@ -27,6 +30,9 @@ public class UnitTest {
         Variable var = new Variable("x");
         assertEquals(10, var.eval("x = 10; y = 20"));
         assertEquals(5, var.eval("x = 5"));
+
+        assertEquals(7, var.eval("x=7"));
+        assertEquals(3, var.eval("x = 3 ; y = 4"));
 
         Expression de1 = var.derivative("x");
         assertEquals(1, de1.eval("x = 5"));
