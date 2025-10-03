@@ -1,3 +1,4 @@
+import org.example.ParseExpressions;
 import org.expression.*;
 import org.expression.Number;
 import org.expression.Variable;
@@ -126,4 +127,14 @@ public class UnitTest {
         assertEquals("(10 / x)", outputStream.toString());
     }
 
+    @Test
+    void testParseExpression() {
+        ParseExpressions parser = new ParseExpressions("(x + 5)");
+        Expression expr = parser.parse();
+        assertEquals(15, expr.eval("x = 10"));
+        assertEquals(8, expr.eval("x = 3"));
+
+        expr.print();
+        assertEquals("(x + 5)", outputStream.toString());
+    }
 }

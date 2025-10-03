@@ -4,7 +4,9 @@ import org.expression.*;
 
 public class Main {
     public static void main(String[] args) {
-        Expression e = new Add(new org.expression.Number(3), new Mul(new org.expression.Number(2), new Variable("x")));
+        ParseExpressions parser = new ParseExpressions("(3 + (2 * x))");
+        Expression e = parser.parse();
+        //Expression e = new Add(new org.expression.Number(3), new Mul(new org.expression.Number(2), new Variable("x")));
         e.print();
         System.out.println();
         Expression de = e.derivative("x");
