@@ -5,6 +5,7 @@ import org.expression.Add;
 import org.expression.Sub;
 import org.expression.Mul;
 import org.expression.Div;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -14,6 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UnitTest {
+    private ByteArrayOutputStream outputStream;
+
+    @BeforeEach
+    void setUp() {
+        outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+    }
+
     @Test
     void testNumber() {
         Number num = new Number(5);
@@ -24,12 +33,8 @@ public class UnitTest {
         Expression de1 = num.derivative("x");
         assertEquals(0, de1.eval("x = 10"));
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
-
         num.print();
         assertEquals("5", outputStream.toString());
-        outputStream.reset();
     }
 
     @Test
@@ -43,6 +48,9 @@ public class UnitTest {
 
         Expression de2 = var.derivative("y");
         assertEquals(0, de2.eval("x = 5; y = 10"));
+
+        var.print();
+        assertEquals("x", outputStream.toString());
     }
 
     @Test
@@ -59,6 +67,9 @@ public class UnitTest {
 
         Expression de = num.derivative("x");
         assertEquals(1, de.eval("x = 5"));
+
+        num.print();
+        assertEquals("(5 + x)", outputStream.toString());
     }
 
     @Test
@@ -74,6 +85,9 @@ public class UnitTest {
 
         Expression de = num.derivative("x");
         assertEquals(-1, de.eval("x = 5"));
+
+        num.print();
+        assertEquals("(5 - x)", outputStream.toString());
     }
 
     @Test
@@ -89,6 +103,9 @@ public class UnitTest {
 
         Expression de = num.derivative("x");
         assertEquals(5, de.eval("x = 5"));
+
+        num.print();
+        assertEquals("(5 * x)", outputStream.toString());
     }
 
     @Test
@@ -104,6 +121,9 @@ public class UnitTest {
 
         Expression de = num.derivative("x");
         assertEquals(0, de.eval("x = 5"));
+
+        num.print();
+        assertEquals("(10 / x)", outputStream.toString());
     }
 
 }
