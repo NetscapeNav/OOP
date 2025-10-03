@@ -12,8 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UnitTest {
     private ByteArrayOutputStream outputStream;
@@ -136,5 +135,9 @@ public class UnitTest {
 
         expr.print();
         assertEquals("(x + 5)", outputStream.toString());
+
+        ParseExpressions parserSmth = new ParseExpressions("(x + 5) smth");
+        Exception e1 = assertThrows(RuntimeException.class, parserSmth::parse);
+        assertEquals("Unexpected characters at end of input: 'smth'", e1.getMessage());
     }
 }
