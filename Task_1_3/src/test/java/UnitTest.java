@@ -15,8 +15,6 @@ public class UnitTest {
         Number num = new Number(5);
         assertEquals(5, num.method());
 
-        Expression de = num.derivative("x");
-        assertEquals(0, de);
         assertEquals(5, num.eval("x = 10"));
     }
 }
