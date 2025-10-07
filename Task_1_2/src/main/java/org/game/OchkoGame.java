@@ -1,28 +1,28 @@
-package org.example;
+package org.game;
+
+import game.model.Card;
+import game.model.Deck;
+import game.model.Hand;
+import ui.ConsoleInput;
+import ui.ConsoleView;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * Главный класс игры. Обеспечивает ход игры, раундом и следит за счётом.
  */
 public class OchkoGame {
-    private OchkoUI ui;
+    private ConsoleView view;
+    private ConsoleInput input;
     private int wonPlayer = 0;
     private int wonDealer = 0;
 
     /**
      * Конструктор для обычной игры.
      */
-    public OchkoGame() {
-        this.ui = new OchkoUI();
-    }
-
-    /**
-     * Конструктор для тестов с целью подмены UI.
-     */
-    public OchkoGame(OchkoUI ui) {
-        this.ui = ui;
+    public OchkoGame(ConsoleView view, ConsoleInput input) {
+        this.view = view;
+        this.input = input;
     }
 
     public int getWonPlayer() {
@@ -37,12 +37,12 @@ public class OchkoGame {
      * Начало игры.
      */
     public void start() {
-        ui.displayWelcomeMessage();
+        view.displayWelcomeMessage();
         int roundIndex = 0;
         while (true) {
-            ui.displayRound(++roundIndex);
+            view.displayRound(++roundIndex);
             round();
-            ui.displayScore(wonPlayer, wonDealer);
+            view.displayScore(wonPlayer, wonDealer);
         }
     }
 
@@ -77,14 +77,14 @@ public class OchkoGame {
         handPlayer.addCard(deck.remove(0));
         handDealer.addCard(deck.remove(0));
         handDealer.addCard(deck.remove(0));
-        ui.displayCardsDealt();
+        view.displayCardsDealt();
     }
 
     private boolean checkBlackjack(Hand handPlayer, Hand handDealer) {
         if (handPlayer.getScore() == 21) {
-            ui.displayHand("Your", handPlayer, false);
-            ui.displayHand("Dealer", handDealer, true);
-            ui.displayBlackjack(true);
+            view.displayHand("Your", handPlayer, false);
+            view.displayHand("Dealer", handDealer, true);
+            view.displayBlackjack(true);
             wonPlayer += 1;
             return true;
         }
@@ -92,53 +92,53 @@ public class OchkoGame {
     }
 
     private void turnPlayer(ArrayList<Card> deck, Hand handPlayer, Hand handDealer) {
-        ui.displayPlayerTurn();
+        view.displayPlayerTurn();
         while (handPlayer.getScore() < 21) {
-            ui.displayHand("Your", handPlayer, false);
-            ui.displayHand("Dealer", handDealer, true);
-            int decisionPlayer = ui.getPlayerDecision();
+            view.displayHand("Your", handPlayer, false);
+            view.displayHand("Dealer", handDealer, true);
+            int decisionPlayer = input.getPlayerDecision();
 
             if (decisionPlayer == 0) {
                 break;
             } else if (decisionPlayer == 1) {
                 handPlayer.addCard(deck.remove(0));
                 if (handPlayer.getScore() >= 21) {
-                    ui.displayHand("Your", handPlayer, false);
+                    view.displayHand("Your", handPlayer, false);
                     break;
                 }
             } else {
-                ui.displayInvalidInput();
+                view.displayInvalidInput();
             }
         }
     }
 
     private void turnDealer(ArrayList<Card> deck, Hand handPlayer, Hand handDealer) {
-        ui.displayDealerTurn();
-        ui.displayHand("Your", handPlayer, false);
-        ui.displayHand("Dealer", handDealer, false);
+        view.displayDealerTurn();
+        view.displayHand("Your", handPlayer, false);
+        view.displayHand("Dealer", handDealer, false);
         while (handDealer.getScore() < 17) {
-            ui.displayDealerTakesCard();
+            view.displayDealerTakesCard();
             handDealer.addCard(deck.remove(0));
-            ui.displayHand("Your", handPlayer, false);
-            ui.displayHand("Dealer", handDealer, false);
+            view.displayHand("Your", handPlayer, false);
+            view.displayHand("Dealer", handDealer, false);
         }
     }
 
     private void showWinner(int scoreDealer, int scorePlayer) {
         if (scorePlayer > 21) {
-            ui.displayWinner(0);
+            view.displayWinner(0);
             wonDealer += 1;
         } else if (scoreDealer > 21) {
-            ui.displayWinner(2);
+            view.displayWinner(2);
             wonPlayer += 1;
         } else if (scoreDealer > scorePlayer) {
-            ui.displayWinner(0);
+            view.displayWinner(0);
             wonDealer += 1;
         } else if (scoreDealer < scorePlayer) {
-            ui.displayWinner(2);
+            view.displayWinner(2);
             wonPlayer += 1;
         } else {
-            ui.displayWinner(1);
+            view.displayWinner(1);
         }
     }
 }

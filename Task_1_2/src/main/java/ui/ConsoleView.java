@@ -1,33 +1,14 @@
-package org.example;
+package ui;
 
-import java.util.Scanner;
+import game.model.Hand;
 
-/**
- * Класс для взаимодействия с пользователем через консоль.
- */
-public class OchkoUI {
-    private Scanner in;
-
-    /**
-     * Конструктор для игры.
-     */
-    public OchkoUI() {
-        this.in = new Scanner(System.in);
-    }
-
-    /**
-     * Конструктор для тестов c целью подмены ввода.
-     */
-    public OchkoUI(Scanner scanner) {
-        this.in = scanner;
-    }
-
+public class ConsoleView {
     public void displayWelcomeMessage() {
-        System.out.println("Добро пожаловать в Блэкджек!");
+        System.out.println("Welcome to Blackjack!");
     }
 
     public void displayRound(int roundIndex) {
-        System.out.println("Round " + roundIndex);
+        System.out.println("\nRound " + roundIndex);
     }
 
     public void displayScore(int wonPlayer, int wonDealer) {
@@ -53,19 +34,6 @@ public class OchkoUI {
         hand.showHand(isDealerFirstTurn);
     }
 
-    public int getPlayerDecision() {
-        System.out.println("Enter \"1\", to take a card, and \"0\", to stop...");
-        while (!in.hasNextInt()) {
-            System.out.println("Invalid input! Please enter a number.");
-            in.next();
-        }
-        return in.nextInt();
-    }
-
-    public void displayInvalidInput() {
-        System.out.println("Invalid input! Type 0 or 1.");
-    }
-
     public void displayDealerTakesCard() {
         System.out.println("Dealer takes a card...");
     }
@@ -86,5 +54,9 @@ public class OchkoUI {
         } else {
             System.out.println("Diler has a blackjack. You've lost.");
         }
+    }
+
+    public void displayInvalidInput() {
+        System.out.println("Invalid input! Type 0 or 1.");
     }
 }

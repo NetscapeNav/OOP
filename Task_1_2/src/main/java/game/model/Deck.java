@@ -1,4 +1,4 @@
-package org.example;
+package game.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,11 +14,9 @@ public class Deck {
      */
     public static ArrayList<Card> getDeck() {
         ArrayList<Card> deck = new ArrayList<Card>();
-        char[] suits = {'S', 'H', 'C', 'D'};
-        int index = 0;
-        for (int i = 2; i <= 14; i++) {
-            for (char suit : suits) {
-                deck.add(new Card(i, suit));
+        for (Suit suit : Suit.values()) {
+            for (Rank rank : Rank.values()) {
+                deck.add(new Card(rank, suit));
             }
         }
         shuffle(deck);

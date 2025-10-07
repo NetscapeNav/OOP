@@ -1,4 +1,4 @@
-package org.example;
+package game.model;
 
 import java.util.ArrayList;
 
@@ -48,14 +48,9 @@ public class Hand {
         int score = 0;
         int aceCount = 0;
         for (Card card : hand) {
-            if (card.getValue() == 14) {
+            score += card.getValue();
+            if (card.getRank() == Rank.ACE) {
                 aceCount++;
-                score += 11;
-            } else if (card.getValue() > 10) {
-                score += 10;
-                continue;
-            } else {
-                score += card.getValue();
             }
         }
         while (score > 21 && aceCount > 0) {
