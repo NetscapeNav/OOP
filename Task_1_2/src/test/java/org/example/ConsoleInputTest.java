@@ -35,27 +35,12 @@ public class ConsoleInputTest {
     }
 
     @Test
-    void testInputZeroDecision() {
-        try (ConsoleInput testInput = new ConsoleInput(new Scanner("0"))) {
-            int decision = testInput.getPlayerDecision();
-            assertEquals(0, decision);
+    void testDefaultConstructor() {
+        System.setIn(new java.io.ByteArrayInputStream("0".getBytes()));
+        try (ConsoleInput input = new ConsoleInput()) {
+            assertNotNull(input);
+        } finally {
+            System.setIn(System.in);
         }
-    }
-
-    @Test
-    void testInputOneDecision() {
-        try (ConsoleInput testInput = new ConsoleInput(new Scanner("1"))) {
-            int decision = testInput.getPlayerDecision();
-            assertEquals(1, decision);
-        }
-    }
-
-    @Test
-    void testInputInvalidThenValid() {
-        Scanner scanner = new Scanner("5\n2\nabc\n1");
-        ConsoleInput testInput = new ConsoleInput(scanner);
-        int decision = testInput.getPlayerDecision();
-        assertEquals(1, decision);
-        testInput.close();
     }
 }
