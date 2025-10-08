@@ -60,4 +60,20 @@ public class OchkoGameTest {
             assertEquals(0, game.getWonDealer());
         }
     }
+
+    @Test
+    void testPlayerWins() {
+        try (ConsoleInput testInput = new ConsoleInput(new Scanner("1\n0\n"))) {
+            ConsoleView testView = new ConsoleView();
+            OchkoGame game = new OchkoGame(testView, testInput);
+            ArrayList<Card> specificDeck = new ArrayList<>(Arrays.asList(
+                    new Card(Rank.TEN, Suit.SPADES), new Card(Rank.EIGHT, Suit.SPADES),
+                    new Card(Rank.TWO, Suit.HEARTS), new Card(Rank.SIX, Suit.HEARTS),
+                    new Card(Rank.ACE, Suit.CLUBS), new Card(Rank.KING, Suit.DIAMONDS)
+            ));
+            game.round(specificDeck);
+            assertEquals(1, game.getWonPlayer());
+            assertEquals(0, game.getWonDealer());
+        }
+    }
 }
