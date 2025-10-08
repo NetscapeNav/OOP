@@ -5,13 +5,14 @@ import org.junit.jupiter.api.Test;
 import ui.ConsoleInput;
 import ui.LocalizationManager;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Locale;
 import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConsoleInputTest {
     @BeforeAll
@@ -47,5 +48,14 @@ public class ConsoleInputTest {
             int decision = testInput.getPlayerDecision();
             assertEquals(1, decision);
         }
+    }
+
+    @Test
+    void testInputInvalidThenValid() {
+        Scanner scanner = new Scanner("5\n2\nabc\n1");
+        ConsoleInput testInput = new ConsoleInput(scanner);
+        int decision = testInput.getPlayerDecision();
+        assertEquals(1, decision);
+        testInput.close();
     }
 }
