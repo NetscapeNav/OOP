@@ -2,61 +2,68 @@ package ui;
 
 import game.model.Hand;
 
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+
 public class ConsoleView {
+    private final PrintWriter out;
+
+    public ConsoleView() {
+        this.out = new PrintWriter(System.out, true, Charset.forName("UTF-8"));
+    }
+
     public void displayWelcomeMessage() {
-        System.out.println("Welcome to Blackjack!");
+        out.println(LocalizationManager.getString("welcome"));
     }
 
     public void displayRound(int roundIndex) {
-        System.out.println("\nRound " + roundIndex);
+        out.println(LocalizationManager.getString("round", roundIndex));
     }
 
     public void displayScore(int wonPlayer, int wonDealer) {
-        System.out.println("It's " + wonPlayer + ":" + wonDealer);
+        out.println(LocalizationManager.getString("score", wonPlayer, wonDealer));
     }
 
     public void displayCardsDealt() {
-        System.out.println("The cards have been given");
+        out.println(LocalizationManager.getString("cardsDealt"));
     }
 
     public void displayPlayerTurn() {
-        System.out.println("-----------------");
-        System.out.println("Your turn");
+        out.println(LocalizationManager.getString("playerTurn"));
     }
 
     public void displayDealerTurn() {
-        System.out.println("-----------------");
-        System.out.println("Dealer's turn");
+        out.println(LocalizationManager.getString("dealerTurn"));
     }
 
     public void displayHand(String owner, Hand hand, boolean isDealerFirstTurn) {
-        System.out.println(owner + "'s cards:");
-        hand.showHand(isDealerFirstTurn);
+        out.println(LocalizationManager.getString("ownerCards", owner));
+        out.println(hand.getHandRepresentation(isDealerFirstTurn));
     }
 
     public void displayDealerTakesCard() {
-        System.out.println("Dealer takes a card...");
+        out.println(LocalizationManager.getString("dealerTakesCard"));
     }
 
     public void displayWinner(int roundWon) {
         if (roundWon == 0) {
-            System.out.println("You've lost.");
+            out.println(LocalizationManager.getString("playerLost"));
         } else if (roundWon == 1) {
-            System.out.println("It's a tie...");
+            out.println(LocalizationManager.getString("tie"));
         } else {
-            System.out.println("You've won!");
+            out.println(LocalizationManager.getString("playerWon"));
         }
     }
 
     public void displayBlackjack(boolean playerWon) {
         if (playerWon) {
-            System.out.println("Blackjack! You've won!");
+            out.println(LocalizationManager.getString("blackjackWin"));
         } else {
-            System.out.println("Diler has a blackjack. You've lost.");
+            out.println(LocalizationManager.getString("blackjackLoss"));
         }
     }
 
     public void displayInvalidInput() {
-        System.out.println("Invalid input! Type 0 or 1.");
+        out.println(LocalizationManager.getString("invalidInput"));
     }
 }

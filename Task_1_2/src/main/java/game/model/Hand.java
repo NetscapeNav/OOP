@@ -59,4 +59,27 @@ public class Hand {
         }
         return score;
     }
+
+    /**
+     * Создает строковое представление руки для вывода на экран.
+     * @param firstClosed Если true, первая карта скрывается.
+     * @return Строка, представляющая руку.
+     */
+    public String getHandRepresentation(boolean firstClosed) {
+        if (firstClosed) {
+            if (hand.isEmpty()) return "[]";
+            return "[" + hand.get(0).toString() + ", <closed card>]";
+        } else {
+            // Используем переопределенный toString для полного отображения
+            return this.toString();
+        }
+    }
+
+    /**
+     * Переопределяем стандартный метод toString для красивого вывода.
+     */
+    @Override
+    public String toString() {
+        return hand.toString() + " => (" + getScore() + ")";
+    }
 }
