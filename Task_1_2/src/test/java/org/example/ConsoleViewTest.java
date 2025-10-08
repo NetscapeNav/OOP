@@ -27,13 +27,13 @@ class ConsoleViewTest {
         try {
             ConsoleView view = new ConsoleView();
             view.displayWinner(2);
-            assertTrue(outContent.toString().contains("You've won!"));
+            assertTrue(outContent.toString().contains("Вы выиграли!"));
             outContent.reset();
             view.displayWinner(0);
-            assertTrue(outContent.toString().contains("You've lost."));
+            assertTrue(outContent.toString().contains("Вы проиграли."));
             outContent.reset();
             view.displayWinner(1);
-            assertTrue(outContent.toString().contains("It's a tie..."));
+            assertTrue(outContent.toString().contains("Ничья..."));
         } finally {
             System.setOut(originalOut);
         }
@@ -47,7 +47,7 @@ class ConsoleViewTest {
         try {
             ConsoleView view = new ConsoleView();
             view.displayRound(1);
-            assertTrue(outContent.toString().contains("Round 1"));
+            assertTrue(outContent.toString().contains("Раунд 1"));
             outContent.reset();
         } finally {
             System.setOut(originalOut);
@@ -77,7 +77,7 @@ class ConsoleViewTest {
         try {
             ConsoleView view = new ConsoleView();
             view.displayCardsDealt();
-            assertTrue(outContent.toString().contains("The cards have been given"));
+            assertTrue(outContent.toString().contains("Карты раздали"));
             outContent.reset();
         } finally {
             System.setOut(originalOut);
