@@ -32,4 +32,12 @@ public class ConsoleInputTest {
             System.setOut(originalOut);
         }
     }
+
+    @Test
+    void testInputZeroDecision() {
+        try (ConsoleInput testInput = new ConsoleInput(new Scanner("0"))) {
+            int decision = testInput.getPlayerDecision();
+            assertEquals(0, decision);
+        }
+    }
 }
