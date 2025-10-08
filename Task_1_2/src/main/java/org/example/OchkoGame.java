@@ -5,6 +5,7 @@ import game.model.Deck;
 import game.model.Hand;
 import ui.ConsoleInput;
 import ui.ConsoleView;
+import ui.LocalizationManager;
 
 import java.util.ArrayList;
 
@@ -82,8 +83,8 @@ public class OchkoGame {
 
     private boolean checkBlackjack(Hand handPlayer, Hand handDealer) {
         if (handPlayer.getScore() == 21) {
-            view.displayHand("Your", handPlayer, false);
-            view.displayHand("Dealer", handDealer, true);
+            view.displayHand(LocalizationManager.getString("ownerPlayer"), handPlayer, false);
+            view.displayHand(LocalizationManager.getString("ownerDealer"), handDealer, true);
             view.displayBlackjack(true);
             wonPlayer += 1;
             return true;
@@ -94,8 +95,8 @@ public class OchkoGame {
     private void turnPlayer(ArrayList<Card> deck, Hand handPlayer, Hand handDealer) {
         view.displayPlayerTurn();
         while (handPlayer.getScore() < 21) {
-            view.displayHand("Your", handPlayer, false);
-            view.displayHand("Dealer", handDealer, true);
+            view.displayHand(LocalizationManager.getString("ownerPlayer"), handPlayer, false);
+            view.displayHand(LocalizationManager.getString("ownerDealer"), handDealer, true);
             int decisionPlayer = input.getPlayerDecision();
 
             if (decisionPlayer == 0) {
@@ -103,7 +104,7 @@ public class OchkoGame {
             } else if (decisionPlayer == 1) {
                 handPlayer.addCard(deck.remove(0));
                 if (handPlayer.getScore() >= 21) {
-                    view.displayHand("Your", handPlayer, false);
+                    view.displayHand(LocalizationManager.getString("ownerPlayer"), handPlayer, false);
                     break;
                 }
             } else {
@@ -114,13 +115,13 @@ public class OchkoGame {
 
     private void turnDealer(ArrayList<Card> deck, Hand handPlayer, Hand handDealer) {
         view.displayDealerTurn();
-        view.displayHand("Your", handPlayer, false);
-        view.displayHand("Dealer", handDealer, false);
+        view.displayHand(LocalizationManager.getString("ownerPlayer"), handPlayer, false);
+        view.displayHand(LocalizationManager.getString("ownerDealer"), handDealer, false);
         while (handDealer.getScore() < 17) {
             view.displayDealerTakesCard();
             handDealer.addCard(deck.remove(0));
-            view.displayHand("Your", handPlayer, false);
-            view.displayHand("Dealer", handDealer, false);
+            view.displayHand(LocalizationManager.getString("ownerPlayer"), handPlayer, false);
+            view.displayHand(LocalizationManager.getString("ownerDealer"), handDealer, false);
         }
     }
 

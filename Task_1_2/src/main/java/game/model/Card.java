@@ -1,5 +1,7 @@
 package game.model;
 
+import ui.LocalizationManager;
+
 /**
  * Класс представляет одну игральную карту.
  */
@@ -36,27 +38,10 @@ public class Card {
      * @return Строка вида "Queen of Hearts".
      */
     public String toString() {
-        String rankStr;
-        String suitStr;
+        String rankStr = LocalizationManager.getString("rank" + this.rank.name());
+        String suitStr = LocalizationManager.getString("suit" + this.suit.name());
 
-        switch (this.rank) {
-            case JACK: rankStr = "Jack"; break;
-            case QUEEN: rankStr = "Queen"; break;
-            case KING: rankStr = "King"; break;
-            case ACE: rankStr = "Ace"; break;
-            default:
-                rankStr = String.valueOf(this.rank.getValue());
-        }
-
-        switch (this.suit) {
-            case SPADES: suitStr = "Spades"; break;
-            case HEARTS: suitStr = "Hearts"; break;
-            case CLUBS: suitStr = "Clubs"; break;
-            case DIAMONDS: suitStr = "Diamonds"; break;
-            default: suitStr = "?";
-        }
-
-        return rankStr + " of " + suitStr;
+        return rankStr + " " + suitStr;
     }
 }
 

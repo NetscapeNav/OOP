@@ -1,5 +1,8 @@
 package game.model;
 
+import ui.ConsoleView;
+import ui.LocalizationManager;
+
 import java.util.ArrayList;
 
 /**
@@ -68,7 +71,8 @@ public class Hand {
     public String getHandRepresentation(boolean firstClosed) {
         if (firstClosed) {
             if (hand.isEmpty()) return "[]";
-            return "[" + hand.get(0).toString() + ", <closed card>]";
+            String closedCardStr = LocalizationManager.getString("closedcard");
+            return "[" + hand.get(0).toString() + ", <" + closedCardStr + ">]";
         } else {
             // Используем переопределенный toString для полного отображения
             return this.toString();

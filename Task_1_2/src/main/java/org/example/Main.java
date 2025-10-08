@@ -13,7 +13,7 @@ public class Main {
             OchkoGame game = new OchkoGame(view, input);
             game.start();
         } catch (Exception e) {
-            System.err.println("Произошла ошибка во время игры: " + e.getMessage());
+            System.err.println("Error: " + e.getMessage());
         }
     }
 }

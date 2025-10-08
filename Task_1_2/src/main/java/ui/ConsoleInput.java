@@ -1,20 +1,25 @@
 package ui;
 
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 
 public class ConsoleInput implements AutoCloseable {
     private Scanner scanner;
+    private final PrintWriter out;
 
     public ConsoleInput() {
         this.scanner = new Scanner(System.in);
+        this.out = new PrintWriter(System.out, true, Charset.forName("UTF-8"));
     }
 
     public ConsoleInput(Scanner scanner) {
         this.scanner = scanner;
+        this.out = new PrintWriter(System.out, true, Charset.forName("UTF-8"));
     }
 
     public int getPlayerDecision() {
-        System.out.println("Enter \"1\", to take a card, and \"0\", to stop...");
+        out.println(LocalizationManager.getString("playerPrompt"));
         while (true) {
             String line = scanner.nextLine();
             if ("1".equals(line)) {
@@ -22,7 +27,7 @@ public class ConsoleInput implements AutoCloseable {
             } else if ("0".equals(line)) {
                 return 0;
             } else {
-                System.out.println("Invalid input! Please enter a number.");
+                out.println(LocalizationManager.getString("invalidInput"));
             }
         }
     }
@@ -30,6 +35,5 @@ public class ConsoleInput implements AutoCloseable {
     @Override
     public void close() {
         scanner.close();
-        System.out.println("Scanner closed.");
     }
 }
