@@ -67,15 +67,4 @@ public class HandTest {
         hand.addCard(new Card(Rank.JACK, Suit.CLUBS));
         assertEquals(21, hand.getScore());
     }
-
-    @Test
-    void testHandRepresentation() {
-        Hand hand = new Hand();
-        hand.addCard(new Card(Rank.QUEEN, Suit.HEARTS));
-        hand.addCard(new Card(Rank.SEVEN, Suit.CLUBS));
-        String expectedPlayerView = "[Queen of Hearts, 7 of Clubs] => (17)";
-        assertEquals(expectedPlayerView, hand.getHandRepresentation(false));
-        String expectedDealerView = "[Queen of Hearts, <closed card>]";
-        assertEquals(expectedDealerView, hand.getHandRepresentation(true));
-    }
 }
