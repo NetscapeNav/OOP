@@ -67,4 +67,18 @@ public class HandTest {
         hand.addCard(new Card(Rank.JACK, Suit.CLUBS));
         assertEquals(21, hand.getScore());
     }
+
+    @Test
+    void testEmptyHandRepresentation() {
+        Hand hand = new Hand();
+        assertEquals("[]", hand.showHand(true));
+    }
+
+    @Test
+    void testGetCardCount() {
+        Hand hand = new Hand();
+        hand.addCard(new Card(Rank.FIVE, Suit.SPADES));
+        hand.addCard(new Card(Rank.EIGHT, Suit.HEARTS));
+        assertEquals(2, hand.getCardCount());
+    }
 }

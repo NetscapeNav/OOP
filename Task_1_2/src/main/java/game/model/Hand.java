@@ -23,21 +23,16 @@ public class Hand {
      * Показывает карты в руке. Может скрыть первую карту (для дилера).
      *
      * @param firstClosed Если true, первая карта скрывается. Если false, показываются все.
+     * @return Строка, представляющая руку.
      */
-    public void showHand(boolean firstClosed) {
+    public String showHand(boolean firstClosed) {
         if (firstClosed) {
-            System.out.println("[" + hand.get(0).toString() + ", <closed card>]");
+            if (hand.isEmpty()) return "[]";
+            String closedCardStr = LocalizationManager.getString("closedcard");
+            return "[" + hand.get(0).toString() + ", <" + closedCardStr + ">]";
         } else {
-            String response = "";
-            response += "[";
-            for (int i = 0; i < hand.size(); i++) {
-                response += hand.get(i).toString();
-                if (i < hand.size() - 1) {
-                    response += ", ";
-                }
-            }
-            response += "] => (" + getScore() + ")";
-            System.out.println(response);
+            // Используем переопределенный toString для полного отображения
+            return this.toString();
         }
     }
 
@@ -61,22 +56,6 @@ public class Hand {
             aceCount--;
         }
         return score;
-    }
-
-    /**
-     * Создает строковое представление руки для вывода на экран.
-     * @param firstClosed Если true, первая карта скрывается.
-     * @return Строка, представляющая руку.
-     */
-    public String getHandRepresentation(boolean firstClosed) {
-        if (firstClosed) {
-            if (hand.isEmpty()) return "[]";
-            String closedCardStr = LocalizationManager.getString("closedcard");
-            return "[" + hand.get(0).toString() + ", <" + closedCardStr + ">]";
-        } else {
-            // Используем переопределенный toString для полного отображения
-            return this.toString();
-        }
     }
 
     /**

@@ -38,7 +38,7 @@ public class ConsoleView {
 
     public void displayHand(String owner, Hand hand, boolean isDealerFirstTurn) {
         out.println(LocalizationManager.getString("ownerCards", owner));
-        out.println(hand.getHandRepresentation(isDealerFirstTurn));
+        out.println(hand.showHand(isDealerFirstTurn));
     }
 
     public void displayDealerTakesCard() {
