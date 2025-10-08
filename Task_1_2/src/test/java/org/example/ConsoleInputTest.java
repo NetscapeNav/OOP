@@ -40,4 +40,12 @@ public class ConsoleInputTest {
             assertEquals(0, decision);
         }
     }
+
+    @Test
+    void testInputOneDecision() {
+        try (ConsoleInput testInput = new ConsoleInput(new Scanner("1"))) {
+            int decision = testInput.getPlayerDecision();
+            assertEquals(1, decision);
+        }
+    }
 }
