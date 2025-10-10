@@ -42,8 +42,8 @@ public class UnitTest {
     void testVariable() throws Exception {
         Variable var = new Variable("x");
         assertEquals(10, var.eval("x = 10; y = 20"));
-        assertEquals("x", var.print());
         assertEquals(5, var.eval("x = 5"));
+        assertEquals("x", var.print());
 
         Expression de1 = var.derivative("x");
         assertEquals(1, de1.eval("x = 5"));
