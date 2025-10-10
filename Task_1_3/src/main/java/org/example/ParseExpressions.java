@@ -1,26 +1,35 @@
 package org.example;
 
+import org.example.exception.ParsingException;
 import org.expression.*;
 
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Map;
+
 public class ParseExpressions {
-    private final String input;
+    private String input;
     private int pos;
 
-    public ParseExpressions(String input) {
+    private static final Map<Character, Class<? extends Expression>> OPERATOR_MAP = Map.of(
+            '+', Add.class,
+            '-', Sub.class,
+            '*', Mul.class,
+            '/', Div.class
+    );
+
+    public Expression parse(String input) throws ParsingException {
         this.input = input;
         this.pos = 0;
-    }
-
-    public Expression parse() {
         Expression result = parseExpression();
         skipSpaces();
         if (pos < input.length()) {
-            throw new RuntimeException("Unexpected characters at end of input: '" + input.substring(pos) + "'");
+            throw new ParsingException("Unexpected characters at end of input: '" + input.substring(pos) + "'");
         }
         return result;
     }
 
-    private Expression parseExpression() {
+    private Expression parseExpression() throws ParsingException {
         /* 1. Пропускаем пробелы
          * 2. Проверяем символ
          *  2.1. Если цифра — Number. Считываем все цифры и преобразуем
@@ -36,7 +45,7 @@ public class ParseExpressions {
 
         skipSpaces();
         if (pos >= input.length()) {
-            throw new RuntimeException("Unexpected end of input");
+            throw new ParsingException("Unexpected end of input");
         }
         char ch = input.charAt(pos);
 
@@ -47,7 +56,46 @@ public class ParseExpressions {
         } else if (ch == '(') {
             return parseInternalExpression();
         } else {
-            throw new RuntimeException("Unexpected character: '" + ch + "' at position " + pos);
+            throw new ParsingException("Unexpected character: '" + ch + "' at position " + pos);
+        }
+    }
+
+    private Expression parseInternalExpression() throws ParsingException {
+        pos++;
+        skipSpaces();
+        Expression left = parseExpression();
+        skipSpaces();
+        if (pos >= input.length()) {
+            throw new ParsingException("Unexpected end of input after left expression");
+        }
+        char op = input.charAt(pos);
+        if (!OPERATOR_MAP.containsKey(op)) {
+            throw new ParsingException("Expected operator (+, -, *, /) but found: '" + op + "' at position " + pos);
+        }
+        pos++;
+        skipSpaces();
+        Expression right = parseExpression();
+        skipSpaces();
+        if (pos >= input.length() || input.charAt(pos) != ')') {
+            throw new ParsingException("Expected ')' but found: " +
+                    (pos < input.length() ? "'" + input.charAt(pos) + "'" : "end of input") + " at position " + pos);
+        }
+        pos++;
+
+        return createExpression(op, left, right);
+    }
+
+    private Expression createExpression(char op, Expression left, Expression right) throws ParsingException {
+        Class<? extends Expression> expressionClass = OPERATOR_MAP.get(op);
+        if (expressionClass == null) {
+            throw new ParsingException("Unknown operator: " + op);
+        }
+        try {
+            Constructor<? extends Expression> constructor =
+                    expressionClass.getConstructor(Expression.class, Expression.class);
+            return constructor.newInstance(left, right);
+        } catch (Exception e) {
+            throw new ParsingException("Failed to create expression for operator '" + op + "': " + e.getMessage());
         }
     }
 
@@ -67,41 +115,6 @@ public class ParseExpressions {
         }
         String value = input.substring(start, pos);
         return new Variable(value);
-    }
-
-    private Expression parseInternalExpression() {
-        pos++;
-        skipSpaces();
-        Expression left = parseExpression();
-        skipSpaces();
-        if (pos >= input.length()) {
-            throw new RuntimeException("Unexpected end of input after left expression");
-        }
-        char op = input.charAt(pos);
-        if (!isValidOperator(op)) {
-            throw new RuntimeException("Expected operator (+, -, *, /) but found: '" + op + "' at position " + pos);
-        }
-        pos++;
-        skipSpaces();
-        Expression right = parseExpression();
-        skipSpaces();
-        if (pos >= input.length() || input.charAt(pos) != ')') {
-            throw new RuntimeException("Expected ')' but found: " +
-                    (pos < input.length() ? "'" + input.charAt(pos) + "'" : "end of input") + " at position " + pos);
-        }
-        pos++;
-
-        switch (op) {
-            case '+': return new Add(left, right);
-            case '-': return new Sub(left, right);
-            case '*': return new Mul(left, right);
-            case '/': return new Div(left, right);
-            default:  throw new RuntimeException("Unknown operator: " + op);
-        }
-    }
-
-    private boolean isValidOperator(char op) {
-        return op == '+' || op == '-' || op == '*' || op == '/';
     }
 
     private void skipSpaces() {

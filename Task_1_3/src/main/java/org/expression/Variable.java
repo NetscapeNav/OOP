@@ -1,5 +1,7 @@
 package org.expression;
 
+import org.example.exception.EvaluationException;
+
 public class Variable extends Expression {
     private int value;
     private String name;
@@ -14,8 +16,8 @@ public class Variable extends Expression {
     }
 
     @Override
-    public void print() {
-        System.out.print(name);
+    public String print() {
+        return name;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class Variable extends Expression {
     }
 
     @Override
-    public int eval(String equations) {
+    public int eval(String equations) throws EvaluationException {
         String[] parts = equations.split(";");
         for (String part : parts) {
             part = part.trim();
@@ -37,6 +39,6 @@ public class Variable extends Expression {
                 return Integer.parseInt(valueStr);
             }
         }
-        throw new RuntimeException("No value assigned for variable: " + name);
+        throw new EvaluationException("No value assigned for variable: " + name);
     }
 }

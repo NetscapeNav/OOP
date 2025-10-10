@@ -1,4 +1,5 @@
 import org.example.ParseExpressions;
+import org.example.exception.ParsingException;
 import org.expression.*;
 import org.expression.Number;
 import org.expression.Variable;
@@ -24,7 +25,7 @@ public class UnitTest {
     }
 
     @Test
-    void testNumber() {
+    void testNumber() throws Exception {
         Number num = new Number(5);
         assertEquals(5, num.method());
 
@@ -33,12 +34,11 @@ public class UnitTest {
         Expression de1 = num.derivative("x");
         assertEquals(0, de1.eval("x = 10"));
 
-        num.print();
-        assertEquals("5", outputStream.toString());
+        assertEquals("5", num.print());
     }
 
     @Test
-    void testVariable() {
+    void testVariable() throws Exception {
         Variable var = new Variable("x");
         assertEquals(10, var.eval("x = 10; y = 20"));
         assertEquals(5, var.eval("x = 5"));
@@ -49,12 +49,11 @@ public class UnitTest {
         Expression de2 = var.derivative("y");
         assertEquals(0, de2.eval("x = 5; y = 10"));
 
-        var.print();
-        assertEquals("x", outputStream.toString());
+        assertEquals("x", var.print());
     }
 
     @Test
-    void testAdd() {
+    void testAdd() throws Exception {
         Number num1 = new Number(5);
         Number num2 = new Number(10);
         Add num = new Add(num1, num2);
@@ -68,12 +67,11 @@ public class UnitTest {
         Expression de = num.derivative("x");
         assertEquals(1, de.eval("x = 5"));
 
-        num.print();
-        assertEquals("(5 + x)", outputStream.toString());
+        assertEquals("(5 + x)", num.print());
     }
 
     @Test
-    void testSub() {
+    void testSub() throws Exception {
         Number num1 = new Number(5);
         Number num2 = new Number(10);
         Sub num = new Sub(num1, num2);
@@ -86,12 +84,11 @@ public class UnitTest {
         Expression de = num.derivative("x");
         assertEquals(-1, de.eval("x = 5"));
 
-        num.print();
-        assertEquals("(5 - x)", outputStream.toString());
+        assertEquals("(5 - x)", num.print());
     }
 
     @Test
-    void Mul() {
+    void Mul() throws Exception {
         Number num1 = new Number(5);
         Number num2 = new Number(10);
         Mul num = new Mul(num1, num2);
@@ -104,12 +101,11 @@ public class UnitTest {
         Expression de = num.derivative("x");
         assertEquals(5, de.eval("x = 5"));
 
-        num.print();
-        assertEquals("(5 * x)", outputStream.toString());
+        assertEquals("(5 * x)", num.print());
     }
 
     @Test
-    void testDiv() {
+    void testDiv() throws Exception {
         Number num1 = new Number(5);
         Number num2 = new Number(10);
         Div num = new Div(num2, num1);
@@ -122,30 +118,28 @@ public class UnitTest {
         Expression de = num.derivative("x");
         assertEquals(0, de.eval("x = 5"));
 
-        num.print();
-        assertEquals("(10 / x)", outputStream.toString());
+        assertEquals("(10 / x)", num.print());
     }
 
     @Test
-    void testParseExpression() {
+    void testParseExpression() throws Exception {
         ParseExpressions parser = new ParseExpressions("(x + 5)");
         Expression expr = parser.parse();
         assertEquals(15, expr.eval("x = 10"));
         assertEquals(8, expr.eval("x = 3"));
 
-        expr.print();
-        assertEquals("(x + 5)", outputStream.toString());
+        assertEquals("(x + 5)", expr.print());
 
         ParseExpressions parserSmth = new ParseExpressions("(x + 5) smth");
-        Exception e1 = assertThrows(RuntimeException.class, parserSmth::parse);
+        Exception e1 = assertThrows(ParsingException.class, parserSmth::parse);
         assertEquals("Unexpected characters at end of input: 'smth'", e1.getMessage());
 
         ParseExpressions parserInvalidSymbol = new ParseExpressions("% 5");
-        Exception e2 = assertThrows(RuntimeException.class, parserInvalidSymbol::parse);
+        Exception e2 = assertThrows(ParsingException.class, parserInvalidSymbol::parse);
         assertEquals("Unexpected character: '%' at position 0", e2.getMessage());
 
         ParseExpressions parserInvalidOp = new ParseExpressions("(x ^ 2)");
-        Exception e3 = assertThrows(RuntimeException.class, parserInvalidOp::parse);
+        Exception e3 = assertThrows(ParsingException.class, parserInvalidOp::parse);
         assertEquals("Expected operator (+, -, *, /) but found: '^' at position 3", e3.getMessage());
     }
 }

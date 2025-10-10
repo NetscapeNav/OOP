@@ -1,5 +1,7 @@
 package org.expression;
 
+import org.example.exception.EvaluationException;
+
 public class Div extends Expression {
     private Expression add1;
     private Expression add2;
@@ -10,17 +12,17 @@ public class Div extends Expression {
     }
 
     @Override
-    public int method() {
-        return add1.method() / add2.method();
+    public int method() throws EvaluationException {
+        int rightValue = add2.method();
+        if (rightValue == 0) {
+            throw new EvaluationException("Division by zero");
+        }
+        return add1.method() / rightValue;
     }
 
     @Override
-    public void print() {
-        System.out.print("(");
-        add1.print();
-        System.out.print(" / ");
-        add2.print();
-        System.out.print(")");
+    public String print() {
+        return String.format("(%s / %s)", add1.print(), add2.print());
     }
 
     @Override
@@ -34,9 +36,12 @@ public class Div extends Expression {
     }
 
     @Override
-    public int eval(String equation) {
+    public int eval(String equation) throws EvaluationException {
         int leftValue = add1.eval(equation);
         int rightValue = add2.eval(equation);
+        if (rightValue == 0) {
+            throw new EvaluationException("Division by zero");
+        }
         return leftValue / rightValue;
     }
 }

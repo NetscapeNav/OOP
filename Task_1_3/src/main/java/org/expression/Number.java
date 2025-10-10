@@ -1,5 +1,7 @@
 package org.expression;
 
+import org.example.exception.EvaluationException;
+
 public class Number extends Expression {
     private int value;
 
@@ -13,8 +15,8 @@ public class Number extends Expression {
     }
 
     @Override
-    public void print() {
-        System.out.print(value);
+    public String print() {
+        return String.valueOf(value);
     }
 
     @Override
@@ -23,7 +25,7 @@ public class Number extends Expression {
     }
 
     @Override
-    public int eval(String equation) {
+    public int eval(String equation) throws EvaluationException {
         return value;
     }
 }

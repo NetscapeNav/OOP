@@ -1,18 +1,39 @@
 package org.example;
 
+import org.example.exception.EvaluationException;
+import org.example.exception.ParsingException;
 import org.expression.*;
+
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        ParseExpressions parser = new ParseExpressions("(3 + (2 * x))");
-        Expression e = parser.parse();
-        //Expression e = new Add(new org.expression.Number(3), new Mul(new org.expression.Number(2), new Variable("x")));
-        e.print();
-        System.out.println();
-        Expression de = e.derivative("x");
-        de.print();
-        System.out.println();
-        int result = e.eval("x = 10; y = 13");
-        System.out.println(result);
+        ParseExpressions parser = new ParseExpressions();
+        Scanner scanner = new Scanner(System.in);
+        try {
+            Expression e = parser.parse("(3 + (2 / x))");
+            System.out.println(e.print());
+            Expression de = e.derivative("x");
+            System.out.println(de.print());
+            int result = e.eval("x = 2; y = 13");
+            System.out.println(result);
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+        try {
+            System.out.print("Enter an expression: ");
+            String input = scanner.nextLine();
+            Expression e = parser.parse(input);
+            System.out.println("Success.");
+            System.out.println("Your expression: " + e.print());
+            Expression de = e.derivative("x");
+            System.out.println("Derivative about 'x': " + de.print());
+            System.out.print("Enter value of variables (e.g., x = 10; y = 13): ");
+            String values = scanner.nextLine();
+            int result = e.eval(values);
+            System.out.println("Result of calculation: " + result);
+        } catch (ParsingException | EvaluationException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
     }
 }
