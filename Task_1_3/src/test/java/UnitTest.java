@@ -1,4 +1,5 @@
 import org.example.ParseExpressions;
+import org.example.exception.EvaluationException;
 import org.example.exception.ParsingException;
 import org.expression.*;
 import org.expression.Number;
@@ -41,6 +42,7 @@ public class UnitTest {
     void testVariable() throws Exception {
         Variable var = new Variable("x");
         assertEquals(10, var.eval("x = 10; y = 20"));
+        assertEquals("x", var.print());
         assertEquals(5, var.eval("x = 5"));
 
         Expression de1 = var.derivative("x");
@@ -119,6 +121,13 @@ public class UnitTest {
         assertEquals(0, de.eval("x = 5"));
 
         assertEquals("(10 / x)", num.print());
+    }
+
+    @Test
+    void testEvaluationExceptionCreation() {
+        String errorMessage = "This is a test";
+        EvaluationException exception = new EvaluationException(errorMessage);
+        assertEquals(errorMessage, exception.getMessage());
     }
 
     @Test
