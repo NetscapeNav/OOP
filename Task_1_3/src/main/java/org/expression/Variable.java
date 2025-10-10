@@ -2,6 +2,8 @@ package org.expression;
 
 import org.example.exception.EvaluationException;
 
+import java.util.Map;
+
 public class Variable extends Expression {
     private int value;
     private String name;
@@ -30,15 +32,11 @@ public class Variable extends Expression {
     }
 
     @Override
-    public int eval(String equations) throws EvaluationException {
-        String[] parts = equations.split(";");
-        for (String part : parts) {
-            part = part.trim();
-            if (part.startsWith(name + " = ")) {
-                String valueStr = part.substring(name.length() + 3).trim();
-                return Integer.parseInt(valueStr);
-            }
+    public int eval(Map<String, Integer> context) throws EvaluationException {
+        Integer value = context.get(name);
+        if (value == null) {
+            throw new EvaluationException("No value assigned for variable: " + name);
         }
-        throw new EvaluationException("No value assigned for variable: " + name);
+        return value;
     }
 }

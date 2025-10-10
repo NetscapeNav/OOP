@@ -2,6 +2,8 @@ package org.expression;
 
 import org.example.exception.EvaluationException;
 
+import java.util.Map;
+
 public class Sub extends Expression {
     private Expression add1;
     private Expression add2;
@@ -27,9 +29,9 @@ public class Sub extends Expression {
     }
 
     @Override
-    public int eval(String equation) throws EvaluationException {
-        int leftValue = add1.eval(equation);
-        int rightValue = add2.eval(equation);
+    public int eval(Map<String, Integer> context) throws EvaluationException {
+        int leftValue = add1.eval(context);
+        int rightValue = add2.eval(context);
         return leftValue - rightValue;
     }
 }

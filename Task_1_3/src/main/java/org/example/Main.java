@@ -11,7 +11,7 @@ public class Main {
         ParseExpressions parser = new ParseExpressions();
         Scanner scanner = new Scanner(System.in);
         try {
-            Expression e = parser.parse("(3 + (2 / x))");
+            Expression e = parser.parse("(x + (x * 2))");
             System.out.println(e.print());
             Expression de = e.derivative("x");
             System.out.println(de.print());

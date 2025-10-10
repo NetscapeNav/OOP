@@ -2,6 +2,8 @@ package org.expression;
 
 import org.example.exception.EvaluationException;
 
+import java.util.Map;
+
 public class Number extends Expression {
     private int value;
 
@@ -25,7 +27,7 @@ public class Number extends Expression {
     }
 
     @Override
-    public int eval(String equation) throws EvaluationException {
+    public int eval(Map<String, Integer> context) throws EvaluationException {
         return value;
     }
 }
