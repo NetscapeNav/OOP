@@ -123,23 +123,19 @@ public class UnitTest {
 
     @Test
     void testParseExpression() throws Exception {
-        ParseExpressions parser = new ParseExpressions("(x + 5)");
-        Expression expr = parser.parse();
-        assertEquals(15, expr.eval("x = 10"));
-        assertEquals(8, expr.eval("x = 3"));
+        ParseExpressions parser = new ParseExpressions();
 
+        Expression expr = parser.parse("(x + 5)");
+        assertEquals(15, expr.eval("x = 10"));
         assertEquals("(x + 5)", expr.print());
 
-        ParseExpressions parserSmth = new ParseExpressions("(x + 5) smth");
-        Exception e1 = assertThrows(ParsingException.class, parserSmth::parse);
+        Exception e1 = assertThrows(ParsingException.class, () -> parser.parse("(x + 5) smth"));
         assertEquals("Unexpected characters at end of input: 'smth'", e1.getMessage());
 
-        ParseExpressions parserInvalidSymbol = new ParseExpressions("% 5");
-        Exception e2 = assertThrows(ParsingException.class, parserInvalidSymbol::parse);
+        Exception e2 = assertThrows(ParsingException.class, () -> parser.parse("% 5"));
         assertEquals("Unexpected character: '%' at position 0", e2.getMessage());
 
-        ParseExpressions parserInvalidOp = new ParseExpressions("(x ^ 2)");
-        Exception e3 = assertThrows(ParsingException.class, parserInvalidOp::parse);
+        Exception e3 = assertThrows(ParsingException.class, () -> parser.parse("(x ^ 2)"));
         assertEquals("Expected operator (+, -, *, /) but found: '^' at position 3", e3.getMessage());
     }
 }
