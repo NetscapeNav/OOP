@@ -1,0 +1,1 @@
+typeSearchIndex = [{"p":"graphpackage","l":"Adjacency"},{"p":"graphpackage","l":"AdjList"},{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"graph","l":"Graph"},{"p":"graphpackage","l":"Incidence"},{"p":"org.example","l":"Main"}];updateSearchResults();
