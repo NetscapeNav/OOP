@@ -28,7 +28,7 @@ public class Main {
             System.out.println("Your expression: " + e.print());
             Expression de = e.derivative("x");
             System.out.println("Derivative about 'x': " + de.print());
-            System.out.print("Enter value of variables (e.g., x = 10; y = 13): ");
+            System.out.print("Enter value of variables (e.g. x = 10; y = 13): ");
             String values = scanner.nextLine();
             int result = e.eval(values);
             System.out.println("Result of calculation: " + result);
