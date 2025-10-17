@@ -1,18 +1,19 @@
 import graph.Graph;
-import graphpackage.AdjList;
+import graphpackage.Adjacency;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class testAdjList {
+public class testAdjacency {
     private Graph<String> graph;
 
     @BeforeEach
     void setUp() {
-        graph = new AdjList<>();
+        graph = new Adjacency<>();
     }
 
     @Test

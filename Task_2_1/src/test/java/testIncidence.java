@@ -1,18 +1,20 @@
 import graph.Graph;
-import graphpackage.AdjList;
+import graphpackage.Incidence;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class testAdjList {
+public class testIncidence {
     private Graph<String> graph;
 
     @BeforeEach
     void setUp() {
-        graph = new AdjList<>();
+        graph = new Incidence<>();
     }
 
     @Test
