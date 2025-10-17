@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        ParseExpressions parser = new ParseExpressions();
+        ExpressionParser parser = new ExpressionParser();
         Scanner scanner = new Scanner(System.in);
         try {
             Expression e = parser.parse("(x + (x * 2))");

@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class Variable extends Expression {
     private int value;
-    private String name;
+    private final String name;
 
     public Variable(String name) {
         this.name = name;

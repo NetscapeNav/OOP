@@ -5,7 +5,7 @@ import org.example.exception.EvaluationException;
 import java.util.Map;
 
 public class Number extends Expression {
-    private int value;
+    private final int value;
 
     public Number(int x) {
         value = x;

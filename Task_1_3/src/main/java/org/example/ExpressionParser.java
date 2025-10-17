@@ -7,7 +7,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ParseExpressions {
+public class ExpressionParser {
     private String input;
     private int pos;
 

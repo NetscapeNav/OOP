@@ -1,4 +1,4 @@
-import org.example.ParseExpressions;
+import org.example.ExpressionParser;
 import org.example.exception.EvaluationException;
 import org.example.exception.ParsingException;
 import org.expression.*;
@@ -16,7 +16,7 @@ import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UnitTest {
+public class ParserAndExperssionTest {
     private ByteArrayOutputStream outputStream;
 
     @BeforeEach
@@ -132,7 +132,7 @@ public class UnitTest {
 
     @Test
     void testParseExpression() throws Exception {
-        ParseExpressions parser = new ParseExpressions();
+        ExpressionParser parser = new ExpressionParser();
 
         Expression expr = parser.parse("(x + 5)");
         assertEquals(15, expr.eval("x = 10"));

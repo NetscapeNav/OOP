@@ -5,8 +5,8 @@ import org.example.exception.EvaluationException;
 import java.util.Map;
 
 public class Div extends Expression {
-    private Expression add1;
-    private Expression add2;
+    private final Expression add1;
+    private final Expression add2;
 
     public Div(Expression x, Expression y) {
         add1 = x;
