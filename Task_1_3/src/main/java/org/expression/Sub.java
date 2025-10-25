@@ -14,8 +14,8 @@ public class Sub extends Expression {
     }
 
     @Override
-    public int method() throws EvaluationException {
-        return add1.method() - add2.method();
+    public int evalWithOnlyNumbers() throws EvaluationException {
+        return add1.evalWithOnlyNumbers() - add2.evalWithOnlyNumbers();
     }
 
     @Override

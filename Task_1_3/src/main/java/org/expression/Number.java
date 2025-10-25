@@ -12,7 +12,7 @@ public class Number extends Expression {
     }
 
     @Override
-    public int method() {
+    public int evalWithOnlyNumbers() {
         return value;
     }
 

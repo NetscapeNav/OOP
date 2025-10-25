@@ -13,7 +13,7 @@ public class Variable extends Expression {
     }
 
     @Override
-    public int method() {
+    public int evalWithOnlyNumbers() {
         return value;
     }
 

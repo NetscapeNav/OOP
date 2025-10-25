@@ -28,7 +28,7 @@ public class ParserAndExperssionTest {
     @Test
     void testNumber() throws Exception {
         Number num = new Number(5);
-        assertEquals(5, num.method());
+        assertEquals(5, num.evalWithOnlyNumbers());
 
         assertEquals(5, num.eval("x = 10"));
 
@@ -59,7 +59,7 @@ public class ParserAndExperssionTest {
         Number num1 = new Number(5);
         Number num2 = new Number(10);
         Add num = new Add(num1, num2);
-        assertEquals(15, num.method());
+        assertEquals(15, num.evalWithOnlyNumbers());
         assertEquals(15, num.eval("x = 10"));
 
         Variable var = new Variable("x");
@@ -77,7 +77,7 @@ public class ParserAndExperssionTest {
         Number num1 = new Number(5);
         Number num2 = new Number(10);
         Sub num = new Sub(num1, num2);
-        assertEquals(-5, num.method());
+        assertEquals(-5, num.evalWithOnlyNumbers());
 
         Variable var = new Variable("x");
         num = new Sub(num1, var);
@@ -94,7 +94,7 @@ public class ParserAndExperssionTest {
         Number num1 = new Number(5);
         Number num2 = new Number(10);
         Mul num = new Mul(num1, num2);
-        assertEquals(50, num.method());
+        assertEquals(50, num.evalWithOnlyNumbers());
 
         Variable var = new Variable("x");
         num = new Mul(num1, var);
@@ -111,7 +111,7 @@ public class ParserAndExperssionTest {
         Number num1 = new Number(5);
         Number num2 = new Number(10);
         Div num = new Div(num2, num1);
-        assertEquals(2, num.method());
+        assertEquals(2, num.evalWithOnlyNumbers());
 
         Variable var = new Variable("x");
         num = new Div(num2, var);

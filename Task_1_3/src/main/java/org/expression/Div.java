@@ -14,12 +14,12 @@ public class Div extends Expression {
     }
 
     @Override
-    public int method() throws EvaluationException {
-        int rightValue = add2.method();
+    public int evalWithOnlyNumbers() throws EvaluationException {
+        int rightValue = add2.evalWithOnlyNumbers();
         if (rightValue == 0) {
             throw new EvaluationException("Division by zero");
         }
-        return add1.method() / rightValue;
+        return add1.evalWithOnlyNumbers() / rightValue;
     }
 
     @Override
