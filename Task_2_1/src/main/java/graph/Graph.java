@@ -1,8 +1,11 @@
 package graph;
 
+import graphpackage.Incidence;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 public interface Graph<N> {
     void addNode(N node);
@@ -12,4 +15,11 @@ public interface Graph<N> {
     List<N> getNodeNeighbours(N node);
     void readFromFile(File file) throws IOException;
     List<N> topologicalSort();
+    String toString();
+
+    Set<N> getAllNodes();
+    @Override
+    boolean equals(Object obj);
+    @Override
+    int hashCode();
 }

@@ -1,5 +1,6 @@
 package graphpackage;
 
+import exceptions.NodeNotFoundException;
 import graph.Graph;
 
 import java.io.File;
@@ -51,7 +52,7 @@ public class Adjacency<N> implements Graph<N> {
         Integer sourceIndex = nodeToIndex.get(source);
         Integer destIndex = nodeToIndex.get(destination);
         if (sourceIndex == null || destIndex == null) {
-            throw new IllegalArgumentException("Source or destination doesn't exist.");
+            throw new NodeNotFoundException("Source or destination doesn't exist.");
         }
 
         matrix.get(sourceIndex).set(destIndex, 1);
@@ -137,5 +138,59 @@ public class Adjacency<N> implements Graph<N> {
         }
 
         return sortedList;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Adjacency Matrix:\n");
+        sb.append("Nodes: ").append(indexToNode).append("\n");
+        for (List<Integer> row : matrix) {
+            sb.append(row).append("\n");
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public Set<N> getAllNodes() {
+        return nodeToIndex.keySet();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Graph)) {
+            return false;
+        }
+        Graph other = (Graph) obj;
+        Set<N> thisNodes = this.getAllNodes();
+        Set otherNodes = other.getAllNodes();
+        if (!(thisNodes.equals(otherNodes))) {
+            return false;
+        }
+        try {
+            for (N node : thisNodes) {
+                Set<N> thisNeighbours = new HashSet<>(this.getNodeNeighbours(node));
+                Set otherNeighbours = new HashSet<>(other.getNodeNeighbours(node));
+                if (!thisNeighbours.equals(otherNeighbours)) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        Set<N> nodes = getAllNodes();
+        int hash = nodes.hashCode();
+        int neighboursHashSum = 0;
+        for (N node : nodes) {
+            neighboursHashSum += new HashSet<>(this.getNodeNeighbours(node)).hashCode();
+        }
+        return 31 * hash + neighboursHashSum;
     }
 }

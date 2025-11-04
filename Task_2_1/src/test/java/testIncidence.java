@@ -90,4 +90,16 @@ public class testIncidence {
             graph.topologicalSort();
         });
     }
+
+    @Test
+    void testToString() {
+        graph.addNode("A");
+        graph.addNode("B");
+        graph.addEdge("A", "B");
+        String s = graph.toString();
+
+        assertNotNull(s);
+        assertTrue(s.contains("A"));
+        assertTrue(s.contains("B"));
+    }
 }

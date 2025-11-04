@@ -1,5 +1,6 @@
 package graphpackage;
 
+import exceptions.NodeNotFoundException;
 import graph.Graph;
 
 import java.io.File;
@@ -23,7 +24,7 @@ public class AdjList<N> implements Graph<N> {
     @Override
     public void addEdge(N source, N destination) {
         if (!adjacencyList.containsKey(source) || !adjacencyList.containsKey(destination)) {
-            throw new IllegalArgumentException("Source or destination doesn't exist.");
+            throw new NodeNotFoundException("Source or destination doesn't exist.");
         }
         adjacencyList.get(source).add(destination);
     }
@@ -90,5 +91,54 @@ public class AdjList<N> implements Graph<N> {
         }
 
         return sortedList;
+    }
+
+    @Override
+    public String toString() {
+        return "AdjList " + adjacencyList.toString();
+    }
+
+    @Override
+    public Set<N> getAllNodes() {
+        return adjacencyList.keySet();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Graph)) {
+            return false;
+        }
+        Graph other = (Graph) obj;
+        Set<N> thisNodes = this.getAllNodes();
+        Set otherNodes = other.getAllNodes();
+        if (!(thisNodes.equals(otherNodes))) {
+            return false;
+        }
+        try {
+            for (N node : thisNodes) {
+                Set<N> thisNeighbours = new HashSet<>(this.getNodeNeighbours(node));
+                Set otherNeighbours = new HashSet<>(other.getNodeNeighbours(node));
+                if (!thisNeighbours.equals(otherNeighbours)) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        Set<N> nodes = getAllNodes();
+        int hash = nodes.hashCode();
+        int neighboursHashSum = 0;
+        for (N node : nodes) {
+            neighboursHashSum += new HashSet<>(this.getNodeNeighbours(node)).hashCode(); //
+        }
+        return 31 * hash + neighboursHashSum;
     }
 }
