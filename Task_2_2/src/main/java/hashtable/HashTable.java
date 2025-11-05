@@ -180,6 +180,14 @@ public class HashTable<K, V> implements Iterable<HashTable.Entry<K, V>> {
         put(key, value);
     }
 
+    public boolean containsKey(K key) {
+        return get(key) != null;
+    }
+
+    public int size() {
+        return size;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
