@@ -2,8 +2,7 @@ import hashtable.HashTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HashTableTest {
     private HashTable<String, Integer> table;
@@ -24,6 +23,11 @@ public class HashTableTest {
         table.put("key1", 100);
         table.put("key1", 200);
         assertEquals(200, table.get("key1"));
+    }
+
+    @Test
+    void testGetNonexistent() {
+        assertNull(table.get("doesntexist"));
     }
 
     @Test
