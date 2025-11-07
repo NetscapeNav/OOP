@@ -132,7 +132,7 @@ public class HashTable<K, V> implements Iterable<HashTable.Entry<K, V>> {
     }
 
     private int getIndex(K key) {
-        return Math.abs(key.hashCode()) % table.length;
+        return (key.hashCode() & 0x7FFFFFFF) % table.length;
     }
 
     public void put(K key, V value) {
@@ -181,7 +181,13 @@ public class HashTable<K, V> implements Iterable<HashTable.Entry<K, V>> {
     }
 
     public boolean containsKey(K key) {
-        return get(key) != null;
+        int hash = getIndex(key);
+        for (Entry<K, V> entry : table[hash]) {
+            if (entry.getKey().equals(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int size() {
