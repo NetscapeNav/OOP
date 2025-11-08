@@ -17,7 +17,7 @@ public class Main {
             System.out.println("Neighbours of node 'A': " + graph.getNodeNeighbours("A"));
             List<String> sortedList = graph.topologicalSort();
             System.out.println(sortedList);
-        }catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("File reading error: " + e.getMessage());
         } catch (IllegalStateException e) {
             System.err.println("Error: " + e.getMessage());
