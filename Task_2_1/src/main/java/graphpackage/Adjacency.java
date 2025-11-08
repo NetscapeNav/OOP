@@ -3,7 +3,9 @@ package graphpackage;
 import exceptions.NodeNotFoundException;
 import graph.Graph;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -86,9 +88,9 @@ public class Adjacency<N> implements Graph<N> {
 
     @Override
     public void readFromFile(File file) throws IOException {
-        try (Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
+        try (BufferedReader scanner = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line =scanner.readLine()) != null) {
                 String[] parts = line.split(" ");
                 if (parts.length == 2) {
                     N sourceNode = (N) parts[0];
