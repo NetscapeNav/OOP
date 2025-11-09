@@ -26,8 +26,10 @@ public class testGraphEquality {
 
         assertEquals(g1, g2);
         assertEquals(g2, g3);
+        assertEquals(g1, g3);
 
         assertEquals(g1.hashCode(), g2.hashCode());
         assertEquals(g2.hashCode(), g3.hashCode());
+        assertEquals(g1.hashCode(), g3.hashCode());
     }
 }

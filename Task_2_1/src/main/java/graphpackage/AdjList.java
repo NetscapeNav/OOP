@@ -105,40 +105,11 @@ public class AdjList<N> implements Graph<N> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof Graph)) {
-            return false;
-        }
-        Graph other = (Graph) obj;
-        Set<N> thisNodes = this.getAllNodes();
-        Set otherNodes = other.getAllNodes();
-        if (!(thisNodes.equals(otherNodes))) {
-            return false;
-        }
-        try {
-            for (N node : thisNodes) {
-                Set<N> thisNeighbours = new HashSet<>(this.getNodeNeighbours(node));
-                Set otherNeighbours = new HashSet<>(other.getNodeNeighbours(node));
-                if (!thisNeighbours.equals(otherNeighbours)) {
-                    return false;
-                }
-            }
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
+        return areGraphesEqual(obj);
     }
 
     @Override
     public int hashCode() {
-        Set<N> nodes = getAllNodes();
-        int hash = nodes.hashCode();
-        int neighboursHashSum = 0;
-        for (N node : nodes) {
-            neighboursHashSum += new HashSet<>(this.getNodeNeighbours(node)).hashCode(); //
-        }
-        return 31 * hash + neighboursHashSum;
+        return calculateHashCode();
     }
 }

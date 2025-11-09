@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
 
-public class AdjListExceptionTest {
+public class testAdjListException {
 
     @Test
     public void testAddEdgeNodeNotFound() {
