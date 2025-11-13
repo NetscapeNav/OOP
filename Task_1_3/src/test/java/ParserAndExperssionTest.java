@@ -1,0 +1,150 @@
+import org.example.ExpressionParser;
+import org.example.exception.EvaluationException;
+import org.example.exception.ParsingException;
+import org.expression.*;
+import org.expression.Number;
+import org.expression.Variable;
+import org.expression.Add;
+import org.expression.Sub;
+import org.expression.Mul;
+import org.expression.Div;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ParserAndExperssionTest {
+    private ByteArrayOutputStream outputStream;
+
+    @BeforeEach
+    void setUp() {
+        outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+    }
+
+    @Test
+    void testNumber() throws Exception {
+        Number num = new Number(5);
+        assertEquals(5, num.evalWithOnlyNumbers());
+
+        assertEquals(5, num.eval("x = 10"));
+
+        Expression de1 = num.derivative("x");
+        assertEquals(0, de1.eval("x = 10"));
+
+        assertEquals("5", num.print());
+    }
+
+    @Test
+    void testVariable() throws Exception {
+        Variable var = new Variable("x");
+        assertEquals(10, var.eval("x = 10; y = 20"));
+        assertEquals(5, var.eval("x = 5"));
+        assertEquals("x", var.print());
+
+        Expression de1 = var.derivative("x");
+        assertEquals(1, de1.eval("x = 5"));
+
+        Expression de2 = var.derivative("y");
+        assertEquals(0, de2.eval("x = 5; y = 10"));
+
+        assertEquals("x", var.print());
+    }
+
+    @Test
+    void testAdd() throws Exception {
+        Number num1 = new Number(5);
+        Number num2 = new Number(10);
+        Add num = new Add(num1, num2);
+        assertEquals(15, num.evalWithOnlyNumbers());
+        assertEquals(15, num.eval("x = 10"));
+
+        Variable var = new Variable("x");
+        num = new Add(num1, var);
+        assertEquals(15, num.eval("x = 10"));
+
+        Expression de = num.derivative("x");
+        assertEquals(1, de.eval("x = 5"));
+
+        assertEquals("(5 + x)", num.print());
+    }
+
+    @Test
+    void testSub() throws Exception {
+        Number num1 = new Number(5);
+        Number num2 = new Number(10);
+        Sub num = new Sub(num1, num2);
+        assertEquals(-5, num.evalWithOnlyNumbers());
+
+        Variable var = new Variable("x");
+        num = new Sub(num1, var);
+        assertEquals(-5, num.eval("x = 10"));
+
+        Expression de = num.derivative("x");
+        assertEquals(-1, de.eval("x = 5"));
+
+        assertEquals("(5 - x)", num.print());
+    }
+
+    @Test
+    void Mul() throws Exception {
+        Number num1 = new Number(5);
+        Number num2 = new Number(10);
+        Mul num = new Mul(num1, num2);
+        assertEquals(50, num.evalWithOnlyNumbers());
+
+        Variable var = new Variable("x");
+        num = new Mul(num1, var);
+        assertEquals(50, num.eval("x = 10"));
+
+        Expression de = num.derivative("x");
+        assertEquals(5, de.eval("x = 5"));
+
+        assertEquals("(5 * x)", num.print());
+    }
+
+    @Test
+    void testDiv() throws Exception {
+        Number num1 = new Number(5);
+        Number num2 = new Number(10);
+        Div num = new Div(num2, num1);
+        assertEquals(2, num.evalWithOnlyNumbers());
+
+        Variable var = new Variable("x");
+        num = new Div(num2, var);
+        assertEquals(2, num.eval("x = 5"));
+
+        Expression de = num.derivative("x");
+        assertEquals(0, de.eval("x = 5"));
+
+        assertEquals("(10 / x)", num.print());
+    }
+
+    @Test
+    void testEvaluationExceptionCreation() {
+        String errorMessage = "This is a test";
+        EvaluationException exception = new EvaluationException(errorMessage);
+        assertEquals(errorMessage, exception.getMessage());
+    }
+
+    @Test
+    void testParseExpression() throws Exception {
+        ExpressionParser parser = new ExpressionParser();
+
+        Expression expr = parser.parse("(x + 5)");
+        assertEquals(15, expr.eval("x = 10"));
+        assertEquals("(x + 5)", expr.print());
+
+        Exception e1 = assertThrows(ParsingException.class, () -> parser.parse("(x + 5) smth"));
+        assertEquals("Unexpected characters at end of input: 'smth'", e1.getMessage());
+
+        Exception e2 = assertThrows(ParsingException.class, () -> parser.parse("% 5"));
+        assertEquals("Unexpected character: '%' at position 0", e2.getMessage());
+
+        Exception e3 = assertThrows(ParsingException.class, () -> parser.parse("(x ^ 2)"));
+        assertEquals("Expected operator (+, -, *, /) but found: '^' at position 3", e3.getMessage());
+    }
+}
