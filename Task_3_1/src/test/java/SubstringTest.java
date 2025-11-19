@@ -27,4 +27,10 @@ public class SubstringTest {
         List<Long> resultsEmpty = SubstringSearch.find("src/test/resources/test.txt", "");
         assertEquals(Collections.emptyList(), resultsEmpty, "Empty pattern should return empty list.");
     }
+
+    @Test
+    public void testNoMatch() throws IOException {
+        List<Long> resultsNoMatch = SubstringSearch.find("src/test/resources/test.txt", "тест");
+        assertEquals(Collections.emptyList(), resultsNoMatch, "Substring not present should return empty list.");
+    }
 }
