@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             SubstringSearch finder = new SubstringSearch();
-            List<Long> results = SubstringSearch.find("test.txt", "бра");
+            List<Long> results = SubstringSearch.find("scherlock.txt", "Alice");
             System.out.println(results);
         } catch (IOException e) {
             throw new RuntimeException(e);
