@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SubstringTest {
     @Test
-    public void test() {
+    public void test() throws IOException {
         try {
             SubstringSearch finder = new SubstringSearch();
             List<Long> results = SubstringSearch.find("src/test/resources/test.txt", "бра");
