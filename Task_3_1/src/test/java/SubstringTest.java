@@ -11,7 +11,7 @@ public class SubstringTest {
     public void test() {
         try {
             SubstringSearch finder = new SubstringSearch();
-            List<Long> results = SubstringSearch.find("test.txt", "бра");
+            List<Long> results = SubstringSearch.find("src/test/resources/test.txt", "бра");
             List<Long> expected = List.of(1L, 8L);
             assertEquals(expected, results);
         } catch (IOException e) {
