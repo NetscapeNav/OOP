@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"table","l":"Student.Builder"},{"p":"table","l":"Grade"},{"p":"table","l":"GradeScore"},{"p":"table","l":"GradeType"},{"p":"org.example","l":"Main"},{"p":"table","l":"Student"},{"p":"table","l":"StudyForm"},{"p":"table","l":"Subject"},{"p":"table","l":"Table"}];updateSearchResults();
