@@ -64,20 +64,20 @@ class testStudent {
 
     @Test
     void testFullReport() {
-        Student student = new Student.Builder("Ivanova", "Maria", "Bio", StudyForm.PAID)
-                .middleName("Ivanovna")
+        Student student = new Student.Builder("Мария", "Иванова", "Биология", StudyForm.PAID)
+                .middleName("Ивановна")
                 .build();
 
         Table t = student.getTranscript();
         t.setCurrentSemester(1);
-        t.addGrade(new Grade(new Subject("Biology", GradeType.EXAM, 1), GradeScore.EXCELLENT, true));
+        t.addGrade(new Grade(new Subject("Зоология", GradeType.EXAM, 1), GradeScore.EXCELLENT, true));
 
         String report = student.getFullReport();
 
         assertNotNull(report);
-        assertTrue(report.contains("Ivanova Maria Ivanovna"));
-        assertTrue(report.contains("Bio"));
-        assertTrue(report.contains("Biology"));
-        assertTrue(report.contains("EXCELLENT"));
+        assertTrue(report.contains("Иванова Мария Ивановна"));
+        assertTrue(report.contains("Биология"));
+        assertTrue(report.contains("Зоология"));
+        assertTrue(report.contains("Отлично"));
     }
 }

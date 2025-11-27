@@ -44,19 +44,19 @@ class testTable {
     void testFilterMethods() {
         Table table = new Table();
         table.setCurrentSemester(2);
-        Grade g1 = new Grade(new Subject("Math 1", GradeType.EXAM, 1), GradeScore.GOOD, true);
-        Grade g2 = new Grade(new Subject("Math 2", GradeType.EXAM, 2), GradeScore.GOOD, false);
+        Grade g1 = new Grade(new Subject("Математика 1", GradeType.EXAM, 1), GradeScore.GOOD, true);
+        Grade g2 = new Grade(new Subject("Математика 2", GradeType.EXAM, 2), GradeScore.GOOD, false);
 
         table.addGrade(g1);
         table.addGrade(g2);
 
         List<Grade> current = table.getCurrentSemesterGrades();
         assertEquals(1, current.size());
-        assertEquals("Math 2", current.get(0).getSubject().getName());
+        assertEquals("Математика 2", current.get(0).getSubject().getName());
 
         List<Grade> finals = table.getFinalGrades();
         assertEquals(1, finals.size());
-        assertEquals("Math 1", finals.get(0).getSubject().getName());
+        assertEquals("Математика 1", finals.get(0).getSubject().getName());
     }
 
     @Test
