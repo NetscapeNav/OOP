@@ -43,4 +43,41 @@ class testStudent {
         t.addGrade(new Grade(new Subject("S3", GradeType.EXAM, 3), GradeScore.SATISFACTORY, true));
         assertFalse(student.canGetRedDiploma());
     }
+
+    @Test
+    void testScholarship() {
+        Student student = new Student.Builder("Petrov", "Petr", "IT", StudyForm.BUDGET).build();
+        Table t = student.getTranscript();
+        t.setCurrentSemester(2);
+
+        t.addGrade(new Grade(new Subject("Math", GradeType.EXAM, 2), GradeScore.EXCELLENT, true));
+        assertTrue(student.canGetScholarship(), "Отличник должен получать стипендию");
+        assertTrue(student.canGetIncreasedScholarship(), "Отличник должен получать повышенную");
+
+        t.addGrade(new Grade(new Subject("History", GradeType.EXAM, 2), GradeScore.GOOD, true));
+        assertTrue(student.canGetScholarship(), "Хорошист должен получать стипендию");
+        assertFalse(student.canGetIncreasedScholarship(), "Хорошист НЕ должен получать повышенную");
+
+        t.addGrade(new Grade(new Subject("Physics", GradeType.EXAM, 2), GradeScore.SATISFACTORY, true));
+        assertFalse(student.canGetScholarship(), "Троечник не получает стипендию");
+    }
+
+    @Test
+    void testFullReport() {
+        Student student = new Student.Builder("Ivanova", "Maria", "Bio", StudyForm.PAID)
+                .middleName("Ivanovna")
+                .build();
+
+        Table t = student.getTranscript();
+        t.setCurrentSemester(1);
+        t.addGrade(new Grade(new Subject("Biology", GradeType.EXAM, 1), GradeScore.EXCELLENT, true));
+
+        String report = student.getFullReport();
+
+        assertNotNull(report);
+        assertTrue(report.contains("Ivanova Maria Ivanovna"));
+        assertTrue(report.contains("Bio"));
+        assertTrue(report.contains("Biology"));
+        assertTrue(report.contains("EXCELLENT"));
+    }
 }

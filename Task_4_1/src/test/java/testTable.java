@@ -39,4 +39,33 @@ class testTable {
                 grades.add(new Grade(new Subject("Hack", GradeType.EXAM, 1), GradeScore.GOOD, true))
         );
     }
+
+    @Test
+    void testFilterMethods() {
+        Table table = new Table();
+        table.setCurrentSemester(2);
+        Grade g1 = new Grade(new Subject("Math 1", GradeType.EXAM, 1), GradeScore.GOOD, true);
+        Grade g2 = new Grade(new Subject("Math 2", GradeType.EXAM, 2), GradeScore.GOOD, false);
+
+        table.addGrade(g1);
+        table.addGrade(g2);
+
+        List<Grade> current = table.getCurrentSemesterGrades();
+        assertEquals(1, current.size());
+        assertEquals("Math 2", current.get(0).getSubject().getName());
+
+        List<Grade> finals = table.getFinalGrades();
+        assertEquals(1, finals.size());
+        assertEquals("Math 1", finals.get(0).getSubject().getName());
+    }
+
+    @Test
+    void testToString() {
+        Table table = new Table();
+        table.setCurrentSemester(1);
+        assertTrue(table.toString().contains("Зачетка пуста"));
+
+        table.addGrade(new Grade(new Subject("Test", GradeType.CREDIT, 1), GradeScore.GOOD, true));
+        assertTrue(table.toString().contains("Test"));
+    }
 }
