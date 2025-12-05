@@ -50,6 +50,13 @@ public class HashTableTest {
     }
 
     @Test
+    void testContainsKey() {
+        table.put("test", 1);
+        assertTrue(table.containsKey("test"));
+        assertFalse(table.containsKey("missing"));
+    }
+
+    @Test
     void testIterator() {
         table.put("a", 1);
         table.put("b", 2);

@@ -2,6 +2,8 @@ package org.example;
 
 import hashtable.HashTable;
 
+import java.util.HashMap;
+
 public class Main {
     public static void main(String[] args) {
         HashTable<String, Number> hashTable = new HashTable<>();
