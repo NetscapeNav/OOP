@@ -1,5 +1,6 @@
 import file.SubstringSearch;
 import org.example.Main;
+import java.io.File;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -39,5 +40,26 @@ public class SubstringTest {
     @Test
     void testMainExecutionCoverage() {
         assertDoesNotThrow(() -> Main.main(new String[]{}));
+    }
+
+    @Test
+    void testLargeFile() throws Exception {
+        String fileName = "large_test_file.txt";
+        String target = "FINDME";
+        // Генерируем файл на 1 ГБ (можно меньше для отладки, например 100 МБ)
+        long size = 1024L * 1024 * 1024;
+
+        System.out.println("Генерация файла...");
+        List<Long> expectedIndices = LargeFileGenerator.generateResource(fileName, target, size);
+        System.out.println("Файл создан. Ожидаем найти " + expectedIndices.size() + " вхождений.");
+
+        // Ваш класс и метод поиска
+        SubstringSearch finder = new SubstringSearch();
+        List<Long> actualIndices = finder.find(fileName, target);
+
+        assertEquals(expectedIndices, actualIndices);
+
+        // Удаляем файл (или используйте @TempDir JUnit 5)
+        new File(fileName).delete();
     }
 }
