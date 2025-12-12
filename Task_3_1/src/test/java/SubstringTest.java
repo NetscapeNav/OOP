@@ -45,21 +45,23 @@ public class SubstringTest {
     @Test
     void testLargeFile() throws Exception {
         String fileName = "large_test_file.txt";
-        String target = "FINDME";
-        // Генерируем файл на 1 ГБ (можно меньше для отладки, например 100 МБ)
+        String target = "findme";
         long size = 1024L * 1024 * 1024;
 
-        System.out.println("Генерация файла...");
-        List<Long> expectedIndices = LargeFileGenerator.generateResource(fileName, target, size);
-        System.out.println("Файл создан. Ожидаем найти " + expectedIndices.size() + " вхождений.");
+        File file = new File(fileName);
 
-        // Ваш класс и метод поиска
-        SubstringSearch finder = new SubstringSearch();
-        List<Long> actualIndices = finder.find(fileName, target);
+        try {
+            System.out.println("Генерируем файл...");
+            List<Long> expectedIndices = LargeFileGenerator.generateFile(fileName, target, size);
+            System.out.println("Файл создан. Ожидается найти " + expectedIndices.size() + " вхождений.");
 
-        assertEquals(expectedIndices, actualIndices);
+            List<Long> actualIndices = SubstringSearch.find(fileName, target);
 
-        // Удаляем файл (или используйте @TempDir JUnit 5)
-        new File(fileName).delete();
+            assertEquals(expectedIndices, actualIndices);
+        } finally {
+            if (file.exists()) {
+                file.delete();
+            }
+        }
     }
 }
