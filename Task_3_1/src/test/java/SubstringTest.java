@@ -43,6 +43,29 @@ public class SubstringTest {
     }
 
     @Test
+    public void testUnicode() throws IOException {
+        String fileName = "unicode_test.txt";
+        String content = "Hello 👋 world 🌍! こんにちは";
+        String target = "こんにちは";
+
+        File file = new File(fileName);
+
+        try (java.io.BufferedWriter writer = new java.io.BufferedWriter(
+                new java.io.FileWriter(fileName, java.nio.charset.StandardCharsets.UTF_8))) {
+            writer.write(content);
+        }
+
+        try {
+            List<Long> results = SubstringSearch.find(fileName, target);
+            assertEquals(1, results.size());
+        } finally {
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+    }
+
+    @Test
     void testLargeFile() throws Exception {
         String fileName = "large_test_file.txt";
         String target = "findme";

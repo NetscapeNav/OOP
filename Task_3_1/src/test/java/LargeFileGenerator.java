@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Random;
 
 public class LargeFileGenerator {
-
     public static List<Long> generateFile(String fileName, String target, long sizeBytes) throws IOException {
         List<Long> trueIndices = new ArrayList<>();
         Random random = new Random();
