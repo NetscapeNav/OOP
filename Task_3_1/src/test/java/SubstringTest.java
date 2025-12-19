@@ -23,6 +23,28 @@ public class SubstringTest {
     }
 
     @Test
+    public void testUTF8() throws IOException {
+        try {
+            List<Long> results = SubstringSearch.find("src/test/resources/utf8.txt", "🌍");
+            List<Long> expected = List.of(2L);
+            assertEquals(expected, results);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testAbaba() throws IOException {
+        try {
+            List<Long> results = SubstringSearch.find("src/test/resources/ababa.txt", "aba");
+            List<Long> expected = List.of(0L, 2L);
+            assertEquals(expected, results);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
     public void testNull() throws IOException {
         List<Long> resultsNull = SubstringSearch.find("src/test/resources/test.txt", null);
         assertEquals(Collections.emptyList(), resultsNull, "Null pattern should return empty list.");
@@ -57,6 +79,9 @@ public class SubstringTest {
 
         try {
             List<Long> results = SubstringSearch.find(fileName, target);
+            List<Long> expected = List.of(19L);
+
+            assertEquals(expected, results);
             assertEquals(1, results.size());
         } finally {
             if (file.exists()) {

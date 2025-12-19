@@ -8,7 +8,6 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         try {
-            SubstringSearch finder = new SubstringSearch();
             List<Long> results = SubstringSearch.find("scherlock.txt", "Alice");
             System.out.println(results);
         } catch (IOException e) {
