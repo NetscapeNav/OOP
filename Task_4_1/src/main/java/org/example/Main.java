@@ -4,12 +4,11 @@ import table.*;
 
 public class Main {
     public static void main(String[] args) {
-        Student student = new Student.Builder(
-                "Ирина",
-                "Власова",
-                "Информатика",
-                StudyForm.PAID
-        )
+        Student student = Student.builder()
+                .firstName("Ирина")
+                .lastName("Власова")
+                .speciality("Информатика")
+                .studyForm(StudyForm.PAID)
                 .middleName("Георгиевна")
                 .qualifyingWorkGrade(5)
                 .build();

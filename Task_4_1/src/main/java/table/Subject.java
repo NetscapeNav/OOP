@@ -1,7 +1,10 @@
 package table;
 
+import lombok.Data;
+
 import java.util.regex.Pattern;
 
+@Data
 public class Subject {
     private String name;
     private GradeType type;
@@ -27,15 +30,4 @@ public class Subject {
         this.type = type;
         this.semester = semester;
     }
-
-    public String getName() { return name; }
-
-    public GradeType getType() {
-        return type;
-    }
-
-    public int getSemester() {
-        return semester;
-    }
-
 }

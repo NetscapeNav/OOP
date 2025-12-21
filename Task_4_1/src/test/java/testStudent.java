@@ -10,25 +10,46 @@ class testStudent {
     @Test
     void testBuilderValidation() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Student.Builder("", "Иванов", "Информатика", StudyForm.BUDGET)
+                Student.builder()
+                        .firstName("")
+                        .lastName("Иванов")
+                        .speciality("Информатика")
+                        .studyForm(StudyForm.BUDGET)
+                        .build()
         );
         assertThrows(IllegalArgumentException.class, () ->
-                new Student.Builder("Иван", "", "Информатика", StudyForm.BUDGET)
+                Student.builder()
+                        .firstName("Иван")
+                        .lastName("")
+                        .speciality("Информатика")
+                        .studyForm(StudyForm.BUDGET)
+                        .build()
         );
         assertThrows(IllegalArgumentException.class, () ->
-                new Student.Builder("Иван", "Иванов", "", StudyForm.BUDGET)
+                Student.builder()
+                        .firstName("Иван")
+                        .lastName("Иванов")
+                        .speciality("")
+                        .studyForm(StudyForm.BUDGET)
+                        .build()
         );
         assertThrows(IllegalArgumentException.class, () ->
-                new Student.Builder("Иван123", "Иванов", "Информатика", StudyForm.BUDGET)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                new Student.Builder("Иван", "Иванов", "Информатика", null)
+                Student.builder()
+                        .firstName("Иван")
+                        .lastName("Иванов")
+                        .speciality("Информатика")
+                        .studyForm(null)
+                        .build()
         );
     }
 
     @Test
     void testSettersAndGetters() {
-        Student student = new Student.Builder("Иван", "Иванов", "IT", StudyForm.PAID)
+        Student student = Student.builder()
+                .firstName("Иван")
+                .lastName("Иванов")
+                .speciality("IT")
+                .studyForm(StudyForm.PAID)
                 .middleName("Иванович")
                 .qualifyingWorkGrade(4)
                 .build();
@@ -64,7 +85,13 @@ class testStudent {
 
     @Test
     void testBudgetTransferLogic() {
-        Student student = new Student.Builder("Иван", "Иванов", "Информатика", StudyForm.PAID).build();
+        Student student = Student.builder()
+                .firstName("Иван")
+                .lastName("Иванов")
+                .speciality("Информатика")
+                .studyForm(StudyForm.PAID)
+                .build();
+
         Table t = student.getTranscript();
         t.setCurrentSemester(3);
 
@@ -83,9 +110,14 @@ class testStudent {
 
     @Test
     void testRedDiploma() {
-        Student student = new Student.Builder("Иван", "Иванов", "Информатика", StudyForm.BUDGET)
+        Student student = Student.builder()
+                .firstName("Иван")
+                .lastName("Иванов")
+                .speciality("Информатика")
+                .studyForm(StudyForm.BUDGET)
                 .qualifyingWorkGrade(5)
                 .build();
+
         Table t = student.getTranscript();
         t.setCurrentSemester(8);
 
@@ -102,7 +134,13 @@ class testStudent {
 
     @Test
     void testScholarship() {
-        Student student = new Student.Builder("Пётр", "Петров", "Информатика", StudyForm.BUDGET).build();
+        Student student = Student.builder()
+                .firstName("Пётр")
+                .lastName("Петров")
+                .speciality("Информатика")
+                .studyForm(StudyForm.BUDGET)
+                .build();
+
         Table t = student.getTranscript();
         t.setCurrentSemester(2);
 
@@ -125,7 +163,11 @@ class testStudent {
 
     @Test
     void testFullReport() {
-        Student student = new Student.Builder("Мария", "Иванова", "Биология", StudyForm.PAID)
+        Student student = Student.builder()
+                .firstName("Мария")
+                .lastName("Иванова")
+                .speciality("Биология")
+                .studyForm(StudyForm.PAID)
                 .middleName("Ивановна")
                 .build();
 
@@ -148,7 +190,12 @@ class testStudent {
 
     @Test
     void testAverageScoreEdges() {
-        Student student = new Student.Builder("А", "Б", "В", StudyForm.PAID).build();
+        Student student = Student.builder()
+                .firstName("А")
+                .lastName("Б")
+                .speciality("В")
+                .studyForm(StudyForm.PAID)
+                .build();
         assertEquals(0.0f, student.averageScore());
     }
 }

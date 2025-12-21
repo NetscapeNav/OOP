@@ -1,20 +1,26 @@
 package table;
 
-import java.util.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 public class Table {
-    private List<Grade> grades = new ArrayList<>();
-    private int currentSemester;
 
-    public Table() {}
+    private List<Grade> grades = new ArrayList<>();
+    @Getter
+    private int currentSemester;
 
     public Table(Table other) {
         this.currentSemester = other.currentSemester;
-        this.grades = new ArrayList<>();
-        for (Grade grade : other.grades) {
-            this.grades.add(new Grade(grade));
-        }
+        this.grades = other.grades.stream()
+                .map(Grade::new)
+                .collect(Collectors.toList());
     }
 
     public void addGrade(Grade grade) {
@@ -29,7 +35,6 @@ public class Table {
     }
 
     public List<Grade> getGrades() { return Collections.unmodifiableList(new ArrayList<>(grades)); }
-    public int getCurrentSemester() { return currentSemester; }
 
     public void setGrades(List<Grade> grades) {
         this.grades = grades != null ? grades : new ArrayList<>();
@@ -43,65 +48,30 @@ public class Table {
     }
 
     public List<Grade> getLastTwoExamSessions() {
-        if (grades == null || grades.isEmpty()) {
-            return new ArrayList<>();
-        }
+        List<Integer> targetSemesters = grades.stream()
+                .filter(g -> g.getSubject().getType() == GradeType.EXAM)
+                .map(g -> g.getSubject().getSemester())
+                .distinct()
+                .sorted(Comparator.reverseOrder())
+                .filter(sem -> sem < currentSemester)
+                .limit(2)
+                .collect(Collectors.toList());
 
-        Set<Integer> examSemester = new HashSet<>();
-        for (Grade grade : grades) {
-            Subject subject = grade.getSubject();
-            if (subject.getType() == GradeType.EXAM) {
-                examSemester.add(subject.getSemester());
-            }
-        }
-
-        List<Integer> sortedSemester = new ArrayList<>(examSemester);
-        sortedSemester.sort(Collections.reverseOrder());
-
-        List<Integer> targetSemester = new ArrayList<>();
-        for (Integer sem : sortedSemester) {
-            if (sem < currentSemester) {
-                targetSemester.add(sem);
-                if (targetSemester.size() == 2) break;
-            }
-        }
-
-        List<Grade> result = new ArrayList<>();
-        for (Grade grade : grades) {
-            Subject subject = grade.getSubject();
-            if (targetSemester.contains(subject.getSemester())) {
-                result.add(grade);
-            }
-        }
-
-        return Collections.unmodifiableList(result);
+        return grades.stream()
+                .filter(g -> targetSemesters.contains(g.getSubject().getSemester()))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public List<Grade> getFinalGrades() {
-        if (grades == null) {
-            return new ArrayList<>();
-        }
-        List<Grade> result = new ArrayList<>();
-        for (Grade grade : grades) {
-            if (grade.isFinal()) result.add(grade);
-        }
-
-        return result;
+        return grades.stream()
+                .filter(Grade::isFinal)
+                .collect(Collectors.toList());
     }
 
     public List<Grade> getCurrentSemesterGrades() {
-        if (grades == null) {
-            return new ArrayList<>();
-        }
-        List<Grade> result = new ArrayList<>();
-        for (Grade grade : grades) {
-            Subject subject = grade.getSubject();
-            if (subject.getSemester() == currentSemester) {
-                result.add(grade);
-            }
-        }
-
-        return result;
+        return grades.stream()
+                .filter(g -> g.getSubject().getSemester() == currentSemester)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -112,12 +82,11 @@ public class Table {
         if (grades.isEmpty()) {
             sb.append(" (Зачетка пуста)\n");
         } else {
-            grades.sort(Comparator.comparingInt((Grade g) -> g.getSubject().getSemester()));
-
-            for (Grade grade : grades) {
-                sb.append(" Семестр ").append(grade.getSubject().getSemester())
-                        .append(": ").append(grade.toString()).append("\n");
-            }
+            String gradesStr = grades.stream()
+                    .sorted(Comparator.comparingInt(g -> g.getSubject().getSemester()))
+                    .map(g -> " Семестр " + g.getSubject().getSemester() + ": " + g.toString())
+                    .collect(Collectors.joining("\n"));
+            sb.append(gradesStr).append("\n");
         }
         return sb.toString();
     }

@@ -1,10 +1,14 @@
 package table;
 
+import lombok.Data;
+import lombok.NonNull;
+
 import java.util.Date;
 
+@Data
 public class Grade {
-    private final GradeScore score;
-    private final Date date;
+    @NonNull private final GradeScore score;
+    @NonNull private final Date date;
     private final Subject subject;
     private final boolean isFinal;
 
@@ -25,13 +29,9 @@ public class Grade {
         this.date = new Date(other.date.getTime());
     }
 
-    public GradeScore getScore() { return score; }
-
     public int getIntScore() { return score.getValue(); }
 
     public Date getDate() { return new Date(date.getTime()); }
-
-    public Subject getSubject() { return subject; }
 
     public boolean isFinal() { return isFinal; }
 
