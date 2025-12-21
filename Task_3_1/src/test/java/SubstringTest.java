@@ -112,4 +112,38 @@ public class SubstringTest {
             }
         }
     }
+
+    @Test
+    void testBuffer() throws IOException {
+        String fileName = "buffer_boundary_test.txt";
+        String pattern = "BOUNDARY";
+
+        int bufferSize = 8192;
+        int paddingLength = bufferSize - 3;
+
+        StringBuilder content = new StringBuilder();
+        for (int i = 0; i < paddingLength; i++) {
+            content.append('a');
+        }
+        content.append(pattern);
+        content.append("tail_content");
+
+        File file = new File(fileName);
+
+        try (java.io.BufferedWriter writer = new java.io.BufferedWriter(
+                new java.io.FileWriter(fileName, java.nio.charset.StandardCharsets.UTF_8))) {
+            writer.write(content.toString());
+        }
+
+        try {
+            List<Long> results = SubstringSearch.find(fileName, pattern);
+            List<Long> expected = List.of((long) paddingLength);
+
+            assertEquals(expected, results, "Подстрока, пересекающая границу буфера (8192), должна быть найдена");
+        } finally {
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+    }
 }
