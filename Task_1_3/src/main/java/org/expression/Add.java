@@ -14,6 +14,21 @@ public class Add extends Expression {
     }
 
     @Override
+    public Expression simplify() {
+        Expression simpLeft = add1.simplify();
+        Expression simpRight = add2.simplify();
+        if (simpLeft instanceof Number && simpRight instanceof Number) {
+            try {
+                int sum = simpLeft.evalWithOnlyNumbers() + simpRight.evalWithOnlyNumbers();
+                return new Number(sum);
+            } catch (EvaluationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return new Add(simpLeft, simpRight);
+    }
+
+    @Override
     public int evalWithOnlyNumbers() throws EvaluationException {
         return add1.evalWithOnlyNumbers() + add2.evalWithOnlyNumbers();
     }

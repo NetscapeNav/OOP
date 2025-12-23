@@ -13,6 +13,9 @@ public class Variable extends Expression {
     }
 
     @Override
+    public Expression simplify() { return this; }
+
+    @Override
     public int evalWithOnlyNumbers() {
         return value;
     }
@@ -38,5 +41,18 @@ public class Variable extends Expression {
             throw new EvaluationException("No value assigned for variable: " + name);
         }
         return value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Variable variable = (Variable) obj;
+        return name.equals(variable);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 }

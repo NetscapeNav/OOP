@@ -13,6 +13,40 @@ public class Sub extends Expression {
         add2 = y;
     }
 
+    private boolean isNumber(Expression exp, int value) {
+        if (exp instanceof Number) {
+            try {
+                return exp.evalWithOnlyNumbers() == value;
+            } catch (EvaluationException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Expression simplify() {
+        Expression simpLeft = add1.simplify();
+        Expression simpRight = add2.simplify();
+        if (simpLeft instanceof Number && simpRight instanceof Number) {
+            try {
+                int sub = simpLeft.evalWithOnlyNumbers() - simpRight.evalWithOnlyNumbers();
+                return new Number(sub);
+            } catch (EvaluationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        if (simpLeft.equals(simpRight)) {
+            return new Number(0);
+        }
+        if (isNumber(simpRight, 0)) {
+            return simpLeft;
+        }
+
+        return new Sub(simpLeft, simpRight);
+    }
+
     @Override
     public int evalWithOnlyNumbers() throws EvaluationException {
         return add1.evalWithOnlyNumbers() - add2.evalWithOnlyNumbers();

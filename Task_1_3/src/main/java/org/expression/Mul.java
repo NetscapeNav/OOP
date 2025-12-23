@@ -13,6 +13,44 @@ public class Mul extends Expression {
         add2 = y;
     }
 
+    private boolean isNumber(Expression exp, int value) {
+        if (exp instanceof Number) {
+            try {
+                return exp.evalWithOnlyNumbers() == value;
+            } catch (EvaluationException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Expression simplify() {
+        Expression simpLeft = add1.simplify();
+        Expression simpRight = add2.simplify();
+        if (simpLeft instanceof Number && simpRight instanceof Number) {
+            try {
+                int mul = simpLeft.evalWithOnlyNumbers() * simpRight.evalWithOnlyNumbers();
+                return new Number(mul);
+            } catch (EvaluationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        if (isNumber(simpLeft, 0) || isNumber(simpRight, 0)) {
+            return new Number(0);
+        }
+
+        if (isNumber(simpLeft, 1)) {
+            return simpRight;
+        }
+        if (isNumber(simpRight, 1)) {
+            return simpLeft;
+        }
+
+        return new Mul(simpLeft, simpRight);
+    }
+
     @Override
     public int evalWithOnlyNumbers() throws EvaluationException {
         return add1.evalWithOnlyNumbers() * add2.evalWithOnlyNumbers();

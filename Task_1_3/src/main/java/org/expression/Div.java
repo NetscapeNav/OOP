@@ -14,6 +14,21 @@ public class Div extends Expression {
     }
 
     @Override
+    public Expression simplify() {
+        Expression simpLeft = add1.simplify();
+        Expression simpRight = add2.simplify();
+        if (simpLeft instanceof Number && simpRight instanceof Number) {
+            try {
+                int div = simpLeft.evalWithOnlyNumbers() / simpRight.evalWithOnlyNumbers();
+                return new Number(div);
+            } catch (EvaluationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return new Div(simpLeft, simpRight);
+    }
+
+    @Override
     public int evalWithOnlyNumbers() throws EvaluationException {
         int rightValue = add2.evalWithOnlyNumbers();
         if (rightValue == 0) {
