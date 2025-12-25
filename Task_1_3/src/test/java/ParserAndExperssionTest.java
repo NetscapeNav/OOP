@@ -167,6 +167,53 @@ public class ParserAndExperssionTest {
     }
 
     @Test
+    void testEqualsAndHashCode() {
+        Number n1 = new Number(5);
+        Number n2 = new Number(5);
+        Number n3 = new Number(6);
+        assertEquals(n1, n2);
+        assertNotEquals(n1, n3);
+        assertEquals(n1.hashCode(), n2.hashCode());
+        assertNotEquals(n1, new Object());
+        assertNotEquals(n1, null);
+        
+        Variable v1 = new Variable("x");
+        Variable v2 = new Variable("x");
+        Variable v3 = new Variable("y");
+        assertEquals(v1, v2);
+        assertNotEquals(v1, v3);
+        assertEquals(v1.hashCode(), v2.hashCode());
+
+        Add a1 = new Add(n1, v1);
+        Add a2 = new Add(n1, v1);
+        Add a3 = new Add(v1, n1);
+        assertEquals(a1, a2);
+        assertNotEquals(a1, a3);
+        assertEquals(a1.hashCode(), a2.hashCode());
+
+        Sub s1 = new Sub(n1, v1);
+        Sub s2 = new Sub(n1, v1);
+        Sub s3 = new Sub(v1, n1);
+        assertEquals(s1, s2);
+        assertNotEquals(s1, s3);
+        assertEquals(s1.hashCode(), s2.hashCode());
+
+        Mul m1 = new Mul(n1, v1);
+        Mul m2 = new Mul(n1, v1);
+        Mul m3 = new Mul(v1, n1);
+        assertEquals(m1, m2);
+        assertNotEquals(m1, m3);
+        assertEquals(m1.hashCode(), m2.hashCode());
+
+        Div d1 = new Div(n1, v1);
+        Div d2 = new Div(n1, v1);
+        Div d3 = new Div(v1, n1);
+        assertEquals(d1, d2);
+        assertNotEquals(d1, d3);
+        assertEquals(d1.hashCode(), d2.hashCode());
+    }
+
+    @Test
     void testParserPrecedence() throws Exception {
         ExpressionParser parser = new ExpressionParser();
 
