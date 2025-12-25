@@ -164,6 +164,9 @@ public class ParserAndExperssionTest {
 
         Expression e5 = new Mul(new Add(new Number(1), new Number(1)), new Variable("x"));
         assertEquals("(2 * x)", e5.simplify().print());
+
+        Expression e6 = new Sub(new Variable("x"), new Number(0));
+        assertEquals("x", e6.simplify().print());
     }
 
     @Test
@@ -176,7 +179,7 @@ public class ParserAndExperssionTest {
         assertEquals(n1.hashCode(), n2.hashCode());
         assertNotEquals(n1, new Object());
         assertNotEquals(n1, null);
-        
+
         Variable v1 = new Variable("x");
         Variable v2 = new Variable("x");
         Variable v3 = new Variable("y");
