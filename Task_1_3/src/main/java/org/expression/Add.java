@@ -49,4 +49,18 @@ public class Add extends Expression {
         int rightValue = add2.eval(context);
         return leftValue + rightValue;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Add add = (Add) obj;
+
+        return add1.equals(add.add1) && add2.equals(add.add2);
+    }
+
+    @Override
+    public int hashCode() {
+        return add1.hashCode() ^ add2.hashCode();
+    }
 }

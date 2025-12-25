@@ -74,4 +74,18 @@ public class Mul extends Expression {
         int rightValue = add2.eval(context);
         return leftValue * rightValue;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Mul mul = (Mul) obj;
+
+        return add1.equals(mul.add1) && add2.equals(mul.add2);
+    }
+
+    @Override
+    public int hashCode() {
+        return add1.hashCode() ^ add2.hashCode();
+    }
 }

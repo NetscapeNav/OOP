@@ -61,4 +61,18 @@ public class Div extends Expression {
         }
         return leftValue / rightValue;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Div div = (Div) obj;
+
+        return add1.equals(div.add1) && add2.equals(div.add2);
+    }
+
+    @Override
+    public int hashCode() {
+        return add1.hashCode() ^ add2.hashCode();
+    }
 }

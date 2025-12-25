@@ -68,4 +68,18 @@ public class Sub extends Expression {
         int rightValue = add2.eval(context);
         return leftValue - rightValue;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Sub sub = (Sub) obj;
+
+        return add1.equals(sub.add1) && add2.equals(sub.add2);
+    }
+
+    @Override
+    public int hashCode() {
+        return add1.hashCode() ^ add2.hashCode();
+    }
 }

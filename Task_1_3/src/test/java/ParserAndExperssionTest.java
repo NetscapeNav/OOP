@@ -147,4 +147,33 @@ public class ParserAndExperssionTest {
         Exception e3 = assertThrows(ParsingException.class, () -> parser.parse("(x ^ 2)"));
         assertEquals("Expected operator (+, -, *, /) but found: '^' at position 3", e3.getMessage());
     }
+
+    @Test
+    void testSimplification() {
+        Expression e1 = new Add(new Number(1), new Number(2));
+        assertEquals("3", e1.simplify().print());
+
+        Expression e2 = new Mul(new Variable("x"), new Number(0));
+        assertEquals("0", e2.simplify().print());
+
+        Expression e3 = new Mul(new Variable("x"), new Number(1));
+        assertEquals("x", e3.simplify().print());
+
+        Expression e4 = new Sub(new Variable("x"), new Variable("x"));
+        assertEquals("0", e4.simplify().print());
+
+        Expression e5 = new Mul(new Add(new Number(1), new Number(1)), new Variable("x"));
+        assertEquals("(2 * x)", e5.simplify().print());
+    }
+
+    @Test
+    void testParserPrecedence() throws Exception {
+        ExpressionParser parser = new ExpressionParser();
+
+        Expression e = parser.parse("2 + 2 * 2");
+        assertEquals(6, e.evalWithOnlyNumbers());
+
+        Expression e2 = parser.parse("x + y - z");
+        assertEquals("((x + y) - z)", e2.print());
+    }
 }
