@@ -23,7 +23,7 @@ public class Table extends Element {
     public String serialize() {
         if (rows.isEmpty()) return "";
 
-        int cols = rows.getFirst().length;
+        int cols = rows.get(0).length;
         int[] colWidths = new int[cols];
 
         int actualRows = Math.min(rows.size(), rowLimit);
@@ -42,7 +42,7 @@ public class Table extends Element {
 
         sb.append("|");
         for (int c = 0; c < cols; c++) {
-            sb.append(" ").append(pad(rows.getFirst()[c], colWidths[c])).append(" |");
+            sb.append(" ").append(pad(rows.get(0)[c], colWidths[c])).append(" |");
         }
         sb.append("\n");
 
