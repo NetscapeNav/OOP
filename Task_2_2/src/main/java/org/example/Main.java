@@ -10,5 +10,6 @@ public class Main {
         hashTable.put("one", 1);
         hashTable.update("one", 1.0);
         System.out.println(hashTable.get("one"));
+
     }
 }
