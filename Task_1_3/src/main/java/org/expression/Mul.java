@@ -13,6 +13,44 @@ public class Mul extends Expression {
         add2 = y;
     }
 
+    private boolean isNumber(Expression exp, int value) {
+        if (exp instanceof Number) {
+            try {
+                return exp.evalWithOnlyNumbers() == value;
+            } catch (EvaluationException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Expression simplify() {
+        Expression simpLeft = add1.simplify();
+        Expression simpRight = add2.simplify();
+        if (simpLeft instanceof Number && simpRight instanceof Number) {
+            try {
+                int mul = simpLeft.evalWithOnlyNumbers() * simpRight.evalWithOnlyNumbers();
+                return new Number(mul);
+            } catch (EvaluationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        if (isNumber(simpLeft, 0) || isNumber(simpRight, 0)) {
+            return new Number(0);
+        }
+
+        if (isNumber(simpLeft, 1)) {
+            return simpRight;
+        }
+        if (isNumber(simpRight, 1)) {
+            return simpLeft;
+        }
+
+        return new Mul(simpLeft, simpRight);
+    }
+
     @Override
     public int evalWithOnlyNumbers() throws EvaluationException {
         return add1.evalWithOnlyNumbers() * add2.evalWithOnlyNumbers();
@@ -35,5 +73,19 @@ public class Mul extends Expression {
         int leftValue = add1.eval(context);
         int rightValue = add2.eval(context);
         return leftValue * rightValue;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Mul mul = (Mul) obj;
+
+        return add1.equals(mul.add1) && add2.equals(mul.add2);
+    }
+
+    @Override
+    public int hashCode() {
+        return add1.hashCode() ^ add2.hashCode();
     }
 }

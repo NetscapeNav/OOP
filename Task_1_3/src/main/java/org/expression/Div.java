@@ -14,6 +14,21 @@ public class Div extends Expression {
     }
 
     @Override
+    public Expression simplify() {
+        Expression simpLeft = add1.simplify();
+        Expression simpRight = add2.simplify();
+        if (simpLeft instanceof Number && simpRight instanceof Number) {
+            try {
+                int div = simpLeft.evalWithOnlyNumbers() / simpRight.evalWithOnlyNumbers();
+                return new Number(div);
+            } catch (EvaluationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return new Div(simpLeft, simpRight);
+    }
+
+    @Override
     public int evalWithOnlyNumbers() throws EvaluationException {
         int rightValue = add2.evalWithOnlyNumbers();
         if (rightValue == 0) {
@@ -45,5 +60,19 @@ public class Div extends Expression {
             throw new EvaluationException("Division by zero");
         }
         return leftValue / rightValue;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Div div = (Div) obj;
+
+        return add1.equals(div.add1) && add2.equals(div.add2);
+    }
+
+    @Override
+    public int hashCode() {
+        return add1.hashCode() ^ add2.hashCode();
     }
 }

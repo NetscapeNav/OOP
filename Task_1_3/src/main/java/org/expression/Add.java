@@ -14,6 +14,21 @@ public class Add extends Expression {
     }
 
     @Override
+    public Expression simplify() {
+        Expression simpLeft = add1.simplify();
+        Expression simpRight = add2.simplify();
+        if (simpLeft instanceof Number && simpRight instanceof Number) {
+            try {
+                int sum = simpLeft.evalWithOnlyNumbers() + simpRight.evalWithOnlyNumbers();
+                return new Number(sum);
+            } catch (EvaluationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return new Add(simpLeft, simpRight);
+    }
+
+    @Override
     public int evalWithOnlyNumbers() throws EvaluationException {
         return add1.evalWithOnlyNumbers() + add2.evalWithOnlyNumbers();
     }
@@ -33,5 +48,19 @@ public class Add extends Expression {
         int leftValue = add1.eval(context);
         int rightValue = add2.eval(context);
         return leftValue + rightValue;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Add add = (Add) obj;
+
+        return add1.equals(add.add1) && add2.equals(add.add2);
+    }
+
+    @Override
+    public int hashCode() {
+        return add1.hashCode() ^ add2.hashCode();
     }
 }

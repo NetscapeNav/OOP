@@ -12,6 +12,9 @@ public class Number extends Expression {
     }
 
     @Override
+    public Expression simplify() { return this; }
+
+    @Override
     public int evalWithOnlyNumbers() {
         return value;
     }
@@ -29,5 +32,18 @@ public class Number extends Expression {
     @Override
     public int eval(Map<String, Integer> context) throws EvaluationException {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Number number = (Number) obj;
+        return value == number.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(value);
     }
 }

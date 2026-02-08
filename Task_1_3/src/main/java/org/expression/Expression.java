@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Expression {
+    public abstract Expression simplify();
     public abstract int evalWithOnlyNumbers() throws EvaluationException;
     public abstract String print();
     public abstract Expression derivative(String varName);
