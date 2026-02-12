@@ -12,12 +12,15 @@ public class TestPerfomance {
         long end = System.currentTimeMillis();
         System.out.println("Time required: " + (end - start) + " (Checker())");
 
+
         ThreadChecker threadChecker = new ThreadChecker();
         int cores = Runtime.getRuntime().availableProcessors();
-        start = System.currentTimeMillis();
-        threadChecker.has_composite(data, cores);
-        end = System.currentTimeMillis();
-        System.out.println("Time required: " + (end - start) + " (ThreadChecker())");
+        for (int i = 1; i <= cores + 4; i++) {
+            start = System.currentTimeMillis();
+            threadChecker.has_composite(data, i);
+            end = System.currentTimeMillis();
+            System.out.println("Time required: " + (end - start) + " (ThreadChecker(), " + i + " cores)");
+        }
 
 
         ParallelsChecker parallelsChecker = new ParallelsChecker();
@@ -30,7 +33,7 @@ public class TestPerfomance {
     private static int[] generatePrimeArray(int size) {
         int[] result = new int[size];
         int count = 0;
-        int num = 10000000;
+        int num = 20000000;
         while (count < size) {
             if (isPrime(num)) {
                 result[count] = num;
