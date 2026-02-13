@@ -1,6 +1,20 @@
 package prime_first;
 
-public class ThreadChecker {
+public class ThreadChecker implements PrimeFinder {
+    private int threadCount;
+
+    public ThreadChecker() {
+        this.threadCount = Runtime.getRuntime().availableProcessors();
+    }
+
+    public ThreadChecker(int threadCount) {
+        this.threadCount = threadCount;
+    }
+
+    public boolean has_composite(int[] array) {
+        return has_composite(array, this.threadCount);
+    }
+
     public boolean has_composite(int[] array, int threadCount) {
         if (array.length == 0) return false;
 
@@ -18,6 +32,9 @@ public class ThreadChecker {
             try {
                 checks[i].join();
                 if (checks[i].getResult()) {
+                    for (int j = i; j < threadCount; j++) {
+                        checks[j].interrupt();
+                    }
                     return true;
                 }
             } catch (InterruptedException e) {
@@ -44,22 +61,13 @@ public class ThreadChecker {
             return result;
         }
 
-        private boolean is_composite(int num) {
-            if (num < 2) {
-                return false;
-            }
-            for (int i = 2; i*i <= num; i++) {
-                if (num % i == 0) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         @Override
         public void run() {
             for (int i = start; i < end; i++) {
-                if (is_composite(array[i])) {
+                if (Thread.currentThread().isInterrupted()) {
+                    return;
+                }
+                if (PrimeUtils.isComposite(array[i])) {
                     result = true;
                     return;
                 }
