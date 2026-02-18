@@ -1,7 +1,7 @@
 package prime_first;
 
 public class ThreadChecker implements PrimeFinder {
-    private int threadCount;
+    private final int threadCount;
 
     public ThreadChecker() {
         this.threadCount = Runtime.getRuntime().availableProcessors();
@@ -46,9 +46,9 @@ public class ThreadChecker implements PrimeFinder {
     }
 
     private static class Check extends Thread {
-        private int start;
-        private int end;
-        private int[] array;
+        private final int start;
+        private final int end;
+        private final int[] array;
         private boolean result = false;
 
         public Check(int[] array, int start, int end) {
