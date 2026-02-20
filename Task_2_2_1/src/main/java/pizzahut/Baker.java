@@ -1,4 +1,4 @@
-package org.example;
+package pizzahut;
 
 public class Baker implements Runnable {
     private final int bakerSpeed;

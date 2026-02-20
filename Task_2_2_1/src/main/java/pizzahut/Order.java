@@ -1,4 +1,4 @@
-package org.example;
+package pizzahut;
 
 public class Order {
     private final int id;
