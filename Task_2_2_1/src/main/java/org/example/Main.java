@@ -18,62 +18,20 @@ public class Main {
             return;
         }
 
-        BlockingQueue<Order> orderQueue = new BlockingQueue<>(1000);
-        BlockingQueue<Order> deliveryQueue = new BlockingQueue<>(config.storage);
+        Pizzeria pizzeria = new Pizzeria(config);
 
-        List<Thread> workerThreads = new ArrayList<>();
+        pizzeria.start();
 
-        for (Config.BakerConfig bakerConfig : config.bakers) {
-            Baker baker = new Baker(bakerConfig.speed, orderQueue, deliveryQueue);
-            Thread t = new Thread(baker);
-            workerThreads.add(t);
-            t.start();
-        }
-
-        for (Config.DeliveryConfig deliveryConfig : config.delivers) {
-            DeliveryMan delivery = new DeliveryMan(deliveryConfig.time, deliveryConfig.storage, deliveryQueue);
-            Thread t = new Thread(delivery);
-            workerThreads.add(t);
-            t.start();
-        }
-
-        System.out.println("Пиццерия открыта!");
         for (int i = 1; i <= 15; i++) {
             try {
-                Order order = new Order(i, Order.State.PENDING);
                 System.out.println("Поступил новый заказ: [" + i + "]");
-                orderQueue.put(order);
+                pizzeria.order(new Order(i, Order.State.PENDING));
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
 
-        System.out.println("Пиццерия закрывается!");
-        try {
-            while (!orderQueue.isEmpty()) {
-                Thread.sleep(500);
-            }
-            while (!deliveryQueue.isEmpty()) {
-                Thread.sleep(500);
-            }
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        for (Thread t : workerThreads) {
-            t.interrupt();
-        }
-
-        for (Thread t : workerThreads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        System.out.println("Пиццерия закрылась");
+        pizzeria.stop();
     }
 }
