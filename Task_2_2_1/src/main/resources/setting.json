@@ -1,0 +1,24 @@
+{
+  "pizzeria": {
+    "bakers": [
+      {"speed": 5},
+      {"speed": 6},
+      {"speed": 8}
+    ],
+    "delivers": [
+      {
+        "storage": 3,
+        "time": 200
+      },
+      {
+        "storage": 5,
+        "time": 500
+      },
+      {
+        "storage": 2,
+        "time": 300
+      }
+    ],
+    "storage": 10
+  }
+}
