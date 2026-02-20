@@ -9,7 +9,7 @@ public class Order {
         this.status = status;
     }
 
-    enum State {
+    public enum State {
         PENDING, COOKING, COOKED, STORAGED, DELIVERING, DELIVERED
     }
 

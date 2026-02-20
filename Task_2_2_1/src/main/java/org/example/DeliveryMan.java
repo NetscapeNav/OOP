@@ -2,8 +2,6 @@ package org.example;
 
 import java.util.List;
 
-import static java.lang.Thread.sleep;
-
 public class DeliveryMan implements Runnable {
     private final int deliverySpeed;
     private final int deliveryStorage;

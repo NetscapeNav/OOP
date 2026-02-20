@@ -11,6 +11,6 @@ public class PizzaLoader {
     public static Config load(Reader reader) {
         Gson gson = new Gson();
         RootConfig root = gson.fromJson(reader, RootConfig.class);
-        return root.pizzeria; // Возвращаем уже чистые настройки
+        return root.pizzeria;
     }
 }
