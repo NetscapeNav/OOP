@@ -8,7 +8,7 @@ public class TestPerfomance {
 
         Checker checker = new Checker();
         long start = System.currentTimeMillis();
-        checker.has_composite(data);
+        checker.hasComposite(data);
         long end = System.currentTimeMillis();
         System.out.println("Time required: " + (end - start) + " (Checker())");
 
@@ -17,7 +17,7 @@ public class TestPerfomance {
         int cores = Runtime.getRuntime().availableProcessors();
         for (int i = 1; i <= cores + 4; i++) {
             start = System.currentTimeMillis();
-            threadChecker.has_composite(data, i);
+            threadChecker.hasСomposite(data, i);
             end = System.currentTimeMillis();
             System.out.println("Time required: " + (end - start) + " (ThreadChecker(), " + i + " cores)");
         }
@@ -25,7 +25,7 @@ public class TestPerfomance {
 
         ParallelsChecker parallelsChecker = new ParallelsChecker();
         start = System.currentTimeMillis();
-        parallelsChecker.has_composite(data);
+        parallelsChecker.hasComposite(data);
         end = System.currentTimeMillis();
         System.out.println("Time required: " + (end - start) + " (ParallelsChecker())");
     }

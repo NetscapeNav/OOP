@@ -1,7 +1,5 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import prime_first.Checker;
-import prime_first.ParallelsChecker;
 import prime_first.ThreadChecker;
 
 public class TestThreadChecker {
@@ -15,24 +13,24 @@ public class TestThreadChecker {
     @Test
     public void testPrimes() {
         ThreadChecker checker = new ThreadChecker();
-        Assertions.assertFalse(checker.has_composite(primes, 3));
+        Assertions.assertFalse(checker.hasСomposite(primes, 3));
     }
 
     @Test
     public void testNotPrimes() {
         ThreadChecker checker = new ThreadChecker();
-        Assertions.assertTrue(checker.has_composite(not_primes, 3));
+        Assertions.assertTrue(checker.hasСomposite(not_primes, 3));
     }
 
     @Test
     public void testNotPrimeOnce() {
         ThreadChecker checker = new ThreadChecker();
-        Assertions.assertTrue(checker.has_composite(not_prime_once, 3));
+        Assertions.assertTrue(checker.hasСomposite(not_prime_once, 3));
     }
 
     @Test
     public void testLargePrimes() {
         ThreadChecker checker = new ThreadChecker();
-        Assertions.assertTrue(checker.has_composite(largeMixed, 3));
+        Assertions.assertTrue(checker.hasСomposite(largeMixed, 3));
     }
 }

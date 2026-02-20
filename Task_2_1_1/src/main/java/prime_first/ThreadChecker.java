@@ -11,11 +11,11 @@ public class ThreadChecker implements PrimeFinder {
         this.threadCount = threadCount;
     }
 
-    public boolean has_composite(int[] array) {
-        return has_composite(array, this.threadCount);
+    public boolean hasComposite(int[] array) {
+        return hasСomposite(array, this.threadCount);
     }
 
-    public boolean has_composite(int[] array, int threadCount) {
+    public boolean hasСomposite(int[] array, int threadCount) {
         if (array.length == 0) return false;
 
         Check[] checks = new Check[threadCount];

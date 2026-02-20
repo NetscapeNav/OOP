@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ParallelsChecker implements PrimeFinder {
     @Override
-    public boolean has_composite(int[] array) {
+    public boolean hasComposite(int[] array) {
         return Arrays.stream(array).parallel()
                 .anyMatch(PrimeUtils::isComposite);
     }

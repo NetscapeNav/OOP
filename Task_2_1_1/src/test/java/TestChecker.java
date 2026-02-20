@@ -13,24 +13,24 @@ public class TestChecker {
     @Test
     public void testPrimes() {
         Checker checker = new Checker();
-        Assertions.assertFalse(checker.has_composite(primes));
+        Assertions.assertFalse(checker.hasComposite(primes));
     }
 
     @Test
     public void testNotPrimes() {
         Checker checker = new Checker();
-        Assertions.assertTrue(checker.has_composite(not_primes));
+        Assertions.assertTrue(checker.hasComposite(not_primes));
     }
 
     @Test
     public void testNotPrimeOnce() {
         Checker checker = new Checker();
-        Assertions.assertTrue(checker.has_composite(not_prime_once));
+        Assertions.assertTrue(checker.hasComposite(not_prime_once));
     }
 
     @Test
     public void testLargePrimes() {
         Checker checker = new Checker();
-        Assertions.assertTrue(checker.has_composite(largeMixed));
+        Assertions.assertTrue(checker.hasComposite(largeMixed));
     }
 }

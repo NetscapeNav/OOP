@@ -1,6 +1,5 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import prime_first.Checker;
 import prime_first.ParallelsChecker;
 
 public class TestParallelsChecker {
@@ -14,24 +13,24 @@ public class TestParallelsChecker {
     @Test
     public void testPrimes() {
         ParallelsChecker checker = new ParallelsChecker();
-        Assertions.assertFalse(checker.has_composite(primes));
+        Assertions.assertFalse(checker.hasComposite(primes));
     }
 
     @Test
     public void testNotPrimes() {
         ParallelsChecker checker = new ParallelsChecker();
-        Assertions.assertTrue(checker.has_composite(not_primes));
+        Assertions.assertTrue(checker.hasComposite(not_primes));
     }
 
     @Test
     public void testNotPrimeOnce() {
         ParallelsChecker checker = new ParallelsChecker();
-        Assertions.assertTrue(checker.has_composite(not_prime_once));
+        Assertions.assertTrue(checker.hasComposite(not_prime_once));
     }
 
     @Test
     public void testLargePrimes() {
         ParallelsChecker checker = new ParallelsChecker();
-        Assertions.assertTrue(checker.has_composite(largeMixed));
+        Assertions.assertTrue(checker.hasComposite(largeMixed));
     }
 }
