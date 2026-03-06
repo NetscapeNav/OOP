@@ -57,10 +57,4 @@ public class BlockingQueue<T> {
     public synchronized boolean isEmpty() {
         return queue.isEmpty();
     }
-
-    public synchronized void waitUntilEmpty() throws InterruptedException {
-        while (!queue.isEmpty()) {
-            wait();
-        }
-    }
 }
