@@ -1,0 +1,40 @@
+package pizzahut;
+
+public class Baker implements Runnable {
+    private final int bakerSpeed;
+    private final BlockingQueue<Order> bakerQueue;
+    private final BlockingQueue<Order> deliveryQueue;
+
+    public Baker(int bakerSpeed, BlockingQueue<Order> bakerQueue, BlockingQueue<Order> deliveryQueue) {
+        this.bakerSpeed = bakerSpeed;
+        this.bakerQueue = bakerQueue;
+        this.deliveryQueue = deliveryQueue;
+    }
+
+    @Override
+    public void run() {
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                Order item = bakerQueue.take();
+
+                if (item == null) {
+                    break;
+                }
+
+                item.setState(Order.State.COOKING);
+                Logger.printOrderState(item);
+
+                Thread.sleep(bakerSpeed * 100L);
+
+                item.setState(Order.State.COOKED);
+                Logger.printOrderState(item);
+
+                deliveryQueue.put(item);
+                item.setState(Order.State.STORAGED);
+                Logger.printOrderState(item);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}
