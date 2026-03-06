@@ -17,7 +17,7 @@ public class Pizzeria {
     }
 
     public void start() {
-        System.out.println("Пиццерия открыта!");
+        Logger.info("Пиццерия открыта!");
 
         for (Config.BakerConfig bakerConfig : config.bakers) {
             Baker baker = new Baker(bakerConfig.speed, bakerQueue, deliveryQueue);
@@ -43,15 +43,10 @@ public class Pizzeria {
     }
 
     public void stop() {
-        System.out.println("Пиццерия закрывается!");
+        Logger.info("Пиццерия закрывается!");
         try {
-            while (!bakerQueue.isEmpty()) {
-                Thread.sleep(500);
-            }
-            while (!deliveryQueue.isEmpty()) {
-                Thread.sleep(500);
-            }
-            Thread.sleep(2000);
+            bakerQueue.waitUntilEmpty();
+            deliveryQueue.waitUntilEmpty();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -68,7 +63,7 @@ public class Pizzeria {
             }
         }
 
-        System.out.println("Пиццерия закрылась");
+        Logger.info("Пиццерия закрылась");
     }
 
 }

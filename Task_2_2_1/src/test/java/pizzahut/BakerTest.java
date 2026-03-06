@@ -16,7 +16,7 @@ class BakerTest {
         Thread thread = new Thread(baker);
         thread.start();
 
-        Order order = new Order(1, Order.State.PENDING);
+        Order order = new Order(1);
         bakerQueue.put(order);
 
         Order delivered = deliveryQueue.take();
@@ -38,7 +38,7 @@ class BakerTest {
 
         int orderCount = 5;
         for (int i = 0; i < orderCount; i++) {
-            bakerQueue.put(new Order(i, Order.State.PENDING));
+            bakerQueue.put(new Order(i));
         }
 
         for (int i = 0; i < orderCount; i++) {
@@ -75,7 +75,7 @@ class BakerTest {
         Thread thread = new Thread(baker);
         thread.start();
 
-        Order order = new Order(100, Order.State.PENDING);
+        Order order = new Order(100);
         bakerQueue.put(order);
 
         Order processed = deliveryQueue.take();

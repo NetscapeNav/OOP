@@ -35,7 +35,7 @@ class PizzeriaTest {
         Pizzeria pizzeria = new Pizzeria(config);
         pizzeria.start();
 
-        Order order = new Order(1, Order.State.PENDING);
+        Order order = new Order(1);
         pizzeria.order(order);
 
         try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
@@ -54,7 +54,7 @@ class PizzeriaTest {
 
         List<Order> orders = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            Order order = new Order(i, Order.State.PENDING);
+            Order order = new Order(i);
             orders.add(order);
             pizzeria.order(order);
         }
@@ -86,7 +86,7 @@ class PizzeriaTest {
 
         List<Order> orders = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            Order order = new Order(i, Order.State.PENDING);
+            Order order = new Order(i);
             orders.add(order);
             pizzeria.order(order);
         }
@@ -108,7 +108,7 @@ class PizzeriaTest {
 
         List<Order> orders = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
-            Order order = new Order(i, Order.State.PENDING);
+            Order order = new Order(i);
             orders.add(order);
             pizzeria.order(order);
         }

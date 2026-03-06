@@ -8,21 +8,21 @@ class OrderTest {
 
     @Test
     void constructorSetsIdAndState() {
-        Order order = new Order(1, Order.State.PENDING);
+        Order order = new Order(1);
         assertEquals(1, order.getId());
         assertEquals(Order.State.PENDING, order.getState());
     }
 
     @Test
     void setStateChangesState() {
-        Order order = new Order(42, Order.State.PENDING);
+        Order order = new Order(42);
         order.setState(Order.State.COOKING);
         assertEquals(Order.State.COOKING, order.getState());
     }
 
     @Test
     void fullLifecycleTransitions() {
-        Order order = new Order(7, Order.State.PENDING);
+        Order order = new Order(7);
         Order.State[] lifecycle = {
             Order.State.COOKING,
             Order.State.COOKED,
@@ -38,8 +38,8 @@ class OrderTest {
 
     @Test
     void getIdReturnsCorrectValue() {
-        Order o1 = new Order(0, Order.State.PENDING);
-        Order o2 = new Order(999, Order.State.PENDING);
+        Order o1 = new Order(0);
+        Order o2 = new Order(999);
         assertEquals(0, o1.getId());
         assertEquals(999, o2.getId());
     }

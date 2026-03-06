@@ -4,9 +4,9 @@ public class Order {
     private final int id;
     private State status;
 
-    public Order(int id, State status) {
+    public Order(int id) {
         this.id = id;
-        this.status = status;
+        this.status = State.PENDING;
     }
 
     public enum State {
@@ -15,7 +15,6 @@ public class Order {
 
     public void setState(State state) {
         status = state;
-        System.out.println("[" + id + "] " + status);
     }
 
     public State getState() {

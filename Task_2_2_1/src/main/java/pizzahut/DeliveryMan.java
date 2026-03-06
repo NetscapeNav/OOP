@@ -20,18 +20,21 @@ public class DeliveryMan implements Runnable {
                 List<Order> items = deliveryQueue.takeUpTo(deliveryStorage);
                 for (Order item : items) {
                     item.setState(Order.State.DELIVERING);
+                    Logger.printOrderState(item);
                 }
                 try {
                     Thread.sleep(deliverySpeed * 10L);
                 } catch (InterruptedException e) {
                     for (Order item : items) {
                         item.setState(Order.State.DELIVERED);
+                        Logger.printOrderState(item);
                     }
                     Thread.currentThread().interrupt();
                     return;
                 }
                 for (Order item : items) {
                     item.setState(Order.State.DELIVERED);
+                    Logger.printOrderState(item);
                 }
             }
         } catch (InterruptedException e) {

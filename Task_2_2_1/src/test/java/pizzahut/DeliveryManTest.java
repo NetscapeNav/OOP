@@ -14,7 +14,8 @@ class DeliveryManTest {
         Thread thread = new Thread(deliveryMan);
         thread.start();
 
-        Order order = new Order(1, Order.State.STORAGED);
+        Order order = new Order(1);
+        order.setState(Order.State.STORAGED);
         deliveryQueue.put(order);
 
         Thread.sleep(500);
@@ -34,7 +35,8 @@ class DeliveryManTest {
 
         Order[] orders = new Order[3];
         for (int i = 0; i < 3; i++) {
-            orders[i] = new Order(i, Order.State.STORAGED);
+            orders[i] = new Order(i);
+            orders[i].setState(Order.State.STORAGED);
             deliveryQueue.put(orders[i]);
         }
 
@@ -57,7 +59,8 @@ class DeliveryManTest {
 
         Order[] orders = new Order[4];
         for (int i = 0; i < 4; i++) {
-            orders[i] = new Order(i, Order.State.STORAGED);
+            orders[i] = new Order(i);
+            orders[i].setState(Order.State.STORAGED);
             deliveryQueue.put(orders[i]);
         }
 
@@ -93,7 +96,8 @@ class DeliveryManTest {
         Thread thread = new Thread(deliveryMan);
         thread.start();
 
-        Order order = new Order(1, Order.State.STORAGED);
+        Order order = new Order(1);
+        order.setState(Order.State.STORAGED);
         deliveryQueue.put(order);
 
         Thread.sleep(200);
@@ -113,7 +117,8 @@ class DeliveryManTest {
         Thread thread = new Thread(deliveryMan);
         thread.start();
 
-        Order order = new Order(99, Order.State.STORAGED);
+        Order order = new Order(99);
+        order.setState(Order.State.STORAGED);
         deliveryQueue.put(order);
 
         while (order.getState() != Order.State.DELIVERING) {

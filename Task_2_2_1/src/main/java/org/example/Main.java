@@ -27,7 +27,7 @@ public class Main {
         for (int i = 1; i <= 15; i++) {
             try {
                 System.out.println("Поступил новый заказ: [" + i + "]");
-                pizzeria.order(new Order(i, Order.State.PENDING));
+                pizzeria.order(new Order(i));
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
