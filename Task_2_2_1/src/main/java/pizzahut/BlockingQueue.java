@@ -8,9 +8,15 @@ import java.util.Queue;
 public class BlockingQueue<T> {
     private final Queue<T> queue = new LinkedList<>();
     private final int limit;
+    private boolean isClosed = false;
 
     public BlockingQueue(int limit) {
         this.limit = limit;
+    }
+
+    public synchronized void close() {
+        isClosed = true;
+        notifyAll();
     }
 
     public synchronized void put(T item) throws InterruptedException {
@@ -23,6 +29,9 @@ public class BlockingQueue<T> {
 
     public synchronized T take() throws InterruptedException {
         while (queue.isEmpty()) {
+            if (isClosed) {
+                return null;
+            }
             wait();
         }
         T item = queue.poll();
@@ -32,6 +41,9 @@ public class BlockingQueue<T> {
 
     public synchronized List<T> takeUpTo(int maxElements) throws InterruptedException {
         while (queue.isEmpty()) {
+            if (isClosed) {
+                return null;
+            }
             wait();
         }
         List<T> items = new ArrayList<>();

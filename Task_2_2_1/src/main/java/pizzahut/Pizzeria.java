@@ -7,13 +7,16 @@ public class Pizzeria {
     private final Config config;
     private final BlockingQueue<Order> bakerQueue;
     private final BlockingQueue<Order> deliveryQueue;
-    private final List<Thread> workerThreads;
+
+    private final List<Thread> bakers;
+    private final List<Thread> delivers;
 
     public Pizzeria(Config config) {
         this.config = config;
         this.bakerQueue = new BlockingQueue<>(1000);
         this.deliveryQueue = new BlockingQueue<>(config.storage);
-        this.workerThreads = new ArrayList<>();
+        this.bakers = new ArrayList<>();
+        this.delivers = new ArrayList<>();
     }
 
     public void start() {
@@ -22,14 +25,14 @@ public class Pizzeria {
         for (Config.BakerConfig bakerConfig : config.bakers) {
             Baker baker = new Baker(bakerConfig.speed, bakerQueue, deliveryQueue);
             Thread t = new Thread(baker);
-            workerThreads.add(t);
+            bakers.add(t);
             t.start();
         }
 
         for (Config.DeliveryConfig deliveryConfig : config.delivers) {
             DeliveryMan delivery = new DeliveryMan(deliveryConfig.time, deliveryConfig.storage, deliveryQueue);
             Thread t = new Thread(delivery);
-            workerThreads.add(t);
+            delivers.add(t);
             t.start();
         }
     }
@@ -44,18 +47,20 @@ public class Pizzeria {
 
     public void stop() {
         Logger.info("Пиццерия закрывается!");
-        try {
-            bakerQueue.waitUntilEmpty();
-            deliveryQueue.waitUntilEmpty();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+
+        bakerQueue.close();
+
+        for (Thread t : bakers) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
 
-        for (Thread t : workerThreads) {
-            t.interrupt();
-        }
+        deliveryQueue.close();
 
-        for (Thread t : workerThreads) {
+        for (Thread t : delivers) {
             try {
                 t.join();
             } catch (InterruptedException e) {

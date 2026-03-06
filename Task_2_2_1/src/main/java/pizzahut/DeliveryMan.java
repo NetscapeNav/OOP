@@ -18,6 +18,11 @@ public class DeliveryMan implements Runnable {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 List<Order> items = deliveryQueue.takeUpTo(deliveryStorage);
+
+                if (items == null) {
+                    break;
+                }
+
                 for (Order item : items) {
                     item.setState(Order.State.DELIVERING);
                     Logger.printOrderState(item);

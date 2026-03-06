@@ -16,6 +16,11 @@ public class Baker implements Runnable {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 Order item = bakerQueue.take();
+
+                if (item == null) {
+                    break;
+                }
+
                 item.setState(Order.State.COOKING);
                 Logger.printOrderState(item);
 
