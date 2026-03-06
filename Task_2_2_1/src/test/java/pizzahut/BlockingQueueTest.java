@@ -191,4 +191,27 @@ class BlockingQueueTest {
 
         assertEquals(totalItems, consumed.size());
     }
+
+    @Test
+    void takeReturnsNullWhenQueueIsClosedAndEmpty() throws InterruptedException {
+        BlockingQueue<Integer> queue = new BlockingQueue<>(10);
+
+        queue.close();
+
+        Integer result = queue.take();
+        assertNull(result, "take() should return null, when queue is closed and empty");
+    }
+
+    @Test
+    void takeReturnsElementsBeforeNullWhenClosed() throws InterruptedException {
+        BlockingQueue<Integer> queue = new BlockingQueue<>(10);
+        queue.put(1);
+        queue.put(2);
+        queue.close();
+
+        assertEquals(1, queue.take());
+        assertEquals(2, queue.take());
+
+        assertNull(queue.take(), "take() should return null, when queue is closed and empty");
+    }
 }
