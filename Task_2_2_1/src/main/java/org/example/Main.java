@@ -17,7 +17,9 @@ public class Main {
             return;
         }
 
-        Pizzeria pizzeria = new Pizzeria(config);
+        MyQueue<Order> bakerQueue = new BlockingQueue<>(config.bakerQueueSize);
+        MyQueue<Order> deliveryQueue = new BlockingQueue<>(config.storage);
+        Pizzeria pizzeria = new Pizzeria(config, bakerQueue, deliveryQueue);
 
         pizzeria.start();
 

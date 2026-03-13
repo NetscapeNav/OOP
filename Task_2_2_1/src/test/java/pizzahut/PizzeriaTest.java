@@ -33,7 +33,7 @@ class PizzeriaTest {
     @Test
     void pizzeriaProcessesSingleOrder() {
         Config config = makeConfig(10, new int[]{1}, new int[][]{{3, 1}});
-        Pizzeria pizzeria = new Pizzeria(config);
+        Pizzeria pizzeria = new Pizzeria(config, new BlockingQueue<>(config.bakerQueueSize), new BlockingQueue<>(config.storage));
         pizzeria.start();
 
         Order order = new Order(1);
@@ -50,7 +50,7 @@ class PizzeriaTest {
         Config config = makeConfig(10,
             new int[]{1, 1},
             new int[][]{{5, 1}, {5, 1}});
-        Pizzeria pizzeria = new Pizzeria(config);
+        Pizzeria pizzeria = new Pizzeria(config, new BlockingQueue<>(config.bakerQueueSize), new BlockingQueue<>(config.storage));
         pizzeria.start();
 
         List<Order> orders = new ArrayList<>();
@@ -71,7 +71,7 @@ class PizzeriaTest {
     @Test
     void pizzeriaStartsAndStopsCleanly() {
         Config config = makeConfig(5, new int[]{1}, new int[][]{{2, 1}});
-        Pizzeria pizzeria = new Pizzeria(config);
+        Pizzeria pizzeria = new Pizzeria(config, new BlockingQueue<>(config.bakerQueueSize), new BlockingQueue<>(config.storage));
         pizzeria.start();
 
         pizzeria.stop();
@@ -82,7 +82,7 @@ class PizzeriaTest {
         Config config = makeConfig(10,
             new int[]{1, 2, 3},
             new int[][]{{5, 1}});
-        Pizzeria pizzeria = new Pizzeria(config);
+        Pizzeria pizzeria = new Pizzeria(config, new BlockingQueue<>(config.bakerQueueSize), new BlockingQueue<>(config.storage));
         pizzeria.start();
 
         List<Order> orders = new ArrayList<>();
@@ -104,7 +104,7 @@ class PizzeriaTest {
         Config config = makeConfig(10,
             new int[]{1},
             new int[][]{{2, 1}, {2, 1}, {2, 1}});
-        Pizzeria pizzeria = new Pizzeria(config);
+        Pizzeria pizzeria = new Pizzeria(config, new BlockingQueue<>(config.bakerQueueSize), new BlockingQueue<>(config.storage));
         pizzeria.start();
 
         List<Order> orders = new ArrayList<>();

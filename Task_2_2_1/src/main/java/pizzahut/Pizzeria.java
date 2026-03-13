@@ -11,10 +11,10 @@ public class Pizzeria {
     private final List<Thread> bakers;
     private final List<Thread> delivers;
 
-    public Pizzeria(Config config) {
+    public Pizzeria(Config config, MyQueue<Order> bakerQueue, MyQueue<Order> deliveryQueue) {
         this.config = config;
-        this.bakerQueue = new BlockingQueue<>(config.bakerQueueSize);
-        this.deliveryQueue = new BlockingQueue<>(config.storage);
+        this.bakerQueue = bakerQueue;
+        this.deliveryQueue = deliveryQueue;
         this.bakers = new ArrayList<>();
         this.delivers = new ArrayList<>();
     }
