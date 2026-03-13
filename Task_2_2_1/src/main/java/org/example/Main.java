@@ -1,9 +1,6 @@
 package org.example;
 
-import pizzahut.Config;
-import pizzahut.Order;
-import pizzahut.PizzaLoader;
-import pizzahut.Pizzeria;
+import pizzahut.*;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -26,7 +23,7 @@ public class Main {
 
         for (int i = 1; i <= 15; i++) {
             try {
-                System.out.println("Поступил новый заказ: [" + i + "]");
+                Logger.info("Поступил новый заказ: [" + i + "]");
                 pizzeria.order(new Order(i));
                 Thread.sleep(100);
             } catch (InterruptedException e) {
