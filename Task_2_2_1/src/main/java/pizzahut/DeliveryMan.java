@@ -5,9 +5,9 @@ import java.util.List;
 public class DeliveryMan implements Runnable {
     private final int deliverySpeed;
     private final int deliveryStorage;
-    private final BlockingQueue<Order> deliveryQueue;
+    private final MyQueue<Order> deliveryQueue;
 
-    public DeliveryMan(int bakerSpeed, int deliveryStorage, BlockingQueue<Order> deliveryQueue) {
+    public DeliveryMan(int bakerSpeed, int deliveryStorage, MyQueue<Order> deliveryQueue) {
         this.deliverySpeed = bakerSpeed;
         this.deliveryStorage = deliveryStorage;
         this.deliveryQueue = deliveryQueue;

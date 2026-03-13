@@ -21,6 +21,9 @@ class BakerTest {
 
         Order delivered = deliveryQueue.take();
         assertSame(order, delivered);
+        while (delivered.getState() != Order.State.STORAGED) {
+            Thread.sleep(10);
+        }
         assertEquals(Order.State.STORAGED, delivered.getState());
 
         thread.interrupt();
@@ -43,6 +46,9 @@ class BakerTest {
 
         for (int i = 0; i < orderCount; i++) {
             Order result = deliveryQueue.take();
+            while (result.getState() != Order.State.STORAGED) {
+                Thread.sleep(10);
+            }
             assertEquals(Order.State.STORAGED, result.getState());
         }
 
@@ -79,6 +85,9 @@ class BakerTest {
         bakerQueue.put(order);
 
         Order processed = deliveryQueue.take();
+        while (processed.getState() != Order.State.STORAGED) {
+            Thread.sleep(10);
+        }
         assertEquals(Order.State.STORAGED, processed.getState());
         assertEquals(100, processed.getId());
 

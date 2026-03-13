@@ -5,15 +5,15 @@ import java.util.List;
 
 public class Pizzeria {
     private final Config config;
-    private final BlockingQueue<Order> bakerQueue;
-    private final BlockingQueue<Order> deliveryQueue;
+    private final MyQueue<Order> bakerQueue;
+    private final MyQueue<Order> deliveryQueue;
 
     private final List<Thread> bakers;
     private final List<Thread> delivers;
 
     public Pizzeria(Config config) {
         this.config = config;
-        this.bakerQueue = new BlockingQueue<>(1000);
+        this.bakerQueue = new BlockingQueue<>(config.bakerQueueSize);
         this.deliveryQueue = new BlockingQueue<>(config.storage);
         this.bakers = new ArrayList<>();
         this.delivers = new ArrayList<>();

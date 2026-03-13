@@ -2,10 +2,10 @@ package pizzahut;
 
 public class Baker implements Runnable {
     private final int bakerSpeed;
-    private final BlockingQueue<Order> bakerQueue;
-    private final BlockingQueue<Order> deliveryQueue;
+    private final MyQueue<Order> bakerQueue;
+    private final MyQueue<Order> deliveryQueue;
 
-    public Baker(int bakerSpeed, BlockingQueue<Order> bakerQueue, BlockingQueue<Order> deliveryQueue) {
+    public Baker(int bakerSpeed, MyQueue<Order> bakerQueue, MyQueue<Order> deliveryQueue) {
         this.bakerSpeed = bakerSpeed;
         this.bakerQueue = bakerQueue;
         this.deliveryQueue = deliveryQueue;

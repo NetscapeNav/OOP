@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Config {
     public int storage;
+    public int bakerQueueSize;
     public List<BakerConfig> bakers;
     public List<DeliveryConfig> delivers;
 

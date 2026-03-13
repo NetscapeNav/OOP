@@ -64,6 +64,7 @@ class ConfigTest {
     void defaultFieldsAreNull() {
         Config config = new Config();
         assertEquals(0, config.storage);
+        assertEquals(0, config.bakerQueueSize);
         assertNull(config.bakers);
         assertNull(config.delivers);
     }

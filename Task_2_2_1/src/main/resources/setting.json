@@ -19,6 +19,7 @@
         "time": 300
       }
     ],
-    "storage": 10
+    "storage": 10,
+    "bakerQueueSize": 1000
   }
 }

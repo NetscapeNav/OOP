@@ -13,6 +13,7 @@ class PizzeriaTest {
     private Config makeConfig(int storage, int[] bakerSpeeds, int[][] deliveryConfigs) {
         Config config = new Config();
         config.storage = storage;
+        config.bakerQueueSize = 1000;
         config.bakers = new ArrayList<>();
         for (int speed : bakerSpeeds) {
             Config.BakerConfig b = new Config.BakerConfig();

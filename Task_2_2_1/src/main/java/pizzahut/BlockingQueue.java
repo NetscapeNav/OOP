@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class BlockingQueue<T> {
+public class BlockingQueue<T> implements MyQueue<T> {
     private final Queue<T> queue = new LinkedList<>();
     private final int limit;
     private boolean isClosed = false;
