@@ -34,7 +34,7 @@ public class GameView {
 
         Obstacle obstacle = model.getObstacle();
         if (obstacle != null) {
-            gc.setFill(Color.GRAY);
+            gc.setFill(Color.WHITE);
             for (Cell cell : obstacle.getCells()) {
                 gc.fillRect(cell.getX() * cellSize, cell.getY() * cellSize, cellSize - 1, cellSize - 1);
             }

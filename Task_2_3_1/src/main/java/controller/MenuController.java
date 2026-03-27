@@ -94,6 +94,13 @@ public class MenuController {
         int foodCount = foodCountSpinner.getValue();
         int winLength = winLengthSpinner.getValue();
 
-        return new Level(height, width, tickInterval, foodCount, winLength, new Obstacle(), 0);
+        String selectedLevel = levelComboBox.getValue();
+        if ("Custom".equals(selectedLevel)) {
+            return new Level(height, width, tickInterval, foodCount, winLength, new Obstacle(), 0);
+        } else {
+            int levelIndex = levelComboBox.getSelectionModel().getSelectedIndex() - 1;
+            Level defaultLevel = defaultLevels.get(levelIndex);
+            return new Level(height, width, tickInterval, foodCount, winLength, defaultLevel.getObstacles(), defaultLevel.getLevelNumber());
+        }
     }
 }
