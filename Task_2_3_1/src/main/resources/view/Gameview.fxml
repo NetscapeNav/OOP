@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.GameController"
+      spacing="0" alignment="TOP_CENTER"
+      style="-fx-background-color: #0d0d0d;">
+
+    <HBox spacing="25" alignment="CENTER"
+          style="-fx-background-color: linear-gradient(to right, #0a1a0a, #142814, #0a1a0a); -fx-padding: 10 20; -fx-border-color: #1a3a1a; -fx-border-width: 0 0 1 0;">
+
+        <Label text="SNAKE" style="-fx-text-fill: #00ff41; -fx-font-size: 20px; -fx-font-weight: bold; -fx-font-family: 'Consolas'; -fx-effect: dropshadow(gaussian, rgba(0,255,65,0.4), 8, 0.2, 0, 0);"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <HBox spacing="5" alignment="CENTER">
+            <Label text="SCORE" style="-fx-text-fill: #4a7a4a; -fx-font-size: 11px; -fx-font-family: 'Consolas';"/>
+            <Label fx:id="scoreLabel" text="0" style="-fx-text-fill: #00ff41; -fx-font-size: 16px; -fx-font-weight: bold; -fx-font-family: 'Consolas';"/>
+        </HBox>
+
+        <Label text="│" style="-fx-text-fill: #1a3a1a; -fx-font-size: 16px;"/>
+
+        <HBox spacing="5" alignment="CENTER">
+            <Label text="LENGTH" style="-fx-text-fill: #4a7a4a; -fx-font-size: 11px; -fx-font-family: 'Consolas';"/>
+            <Label fx:id="lengthLabel" text="1" style="-fx-text-fill: #00cc33; -fx-font-size: 16px; -fx-font-weight: bold; -fx-font-family: 'Consolas';"/>
+        </HBox>
+
+        <Label text="│" style="-fx-text-fill: #1a3a1a; -fx-font-size: 16px;"/>
+
+        <HBox spacing="5" alignment="CENTER">
+            <Label text="LEVEL" style="-fx-text-fill: #4a7a4a; -fx-font-size: 11px; -fx-font-family: 'Consolas';"/>
+            <Label fx:id="levelLabel" text="1" style="-fx-text-fill: #009922; -fx-font-size: 16px; -fx-font-weight: bold; -fx-font-family: 'Consolas';"/>
+        </HBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Label fx:id="statusLabel" text="PLAYING"
+               style="-fx-text-fill: #00ff41; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Consolas';"/>
+    </HBox>
+
+    <StackPane style="-fx-padding: 8; -fx-background-color: #0a0a0a;">
+        <Canvas fx:id="gameCanvas" width="600" height="450"/>
+    </StackPane>
+
+    <HBox spacing="12" alignment="CENTER"
+          style="-fx-background-color: linear-gradient(to right, #0a1a0a, #142814, #0a1a0a); -fx-padding: 10 20; -fx-border-color: #1a3a1a; -fx-border-width: 1 0 0 0;">
+
+        <Button text="New Game" onAction="#handleNewGame"
+                style="-fx-background-color: #1a2a1a; -fx-text-fill: #00cc33; -fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-padding: 6 16; -fx-border-color: #2a4a2a; -fx-border-radius: 6; -fx-background-radius: 6; -fx-cursor: hand;"/>
+        <Button text="Pause" onAction="#handlePause"
+                style="-fx-background-color: #1a2a1a; -fx-text-fill: #00cc33; -fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-padding: 6 16; -fx-border-color: #2a4a2a; -fx-border-radius: 6; -fx-background-radius: 6; -fx-cursor: hand;"/>
+        <Button text="Menu" onAction="#handleMainMenu"
+                style="-fx-background-color: #1a2a1a; -fx-text-fill: #888888; -fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-padding: 6 16; -fx-border-color: #2a3a2a; -fx-border-radius: 6; -fx-background-radius: 6; -fx-cursor: hand;"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Label text="Arrows / WASD  |  Space = Pause" style="-fx-text-fill: #2a4a2a; -fx-font-size: 11px; -fx-font-family: 'Consolas';"/>
+    </HBox>
+</VBox>

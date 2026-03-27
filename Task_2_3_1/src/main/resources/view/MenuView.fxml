@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.effect.DropShadow?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.MenuController"
+      spacing="15" alignment="CENTER"
+      style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #0d0d0d, #1a2a1a);">
+
+    <padding>
+        <Insets top="40" right="60" bottom="40" left="60"/>
+    </padding>
+
+    <Label text="🐍 SNAKE"
+           style="-fx-font-size: 56px; -fx-font-weight: bold; -fx-text-fill: #00ff41; -fx-font-family: 'Consolas'; -fx-effect: dropshadow(gaussian, rgba(0,255,65,0.6), 20, 0.3, 0, 0);"/>
+
+    <Label text="A Classic Reimagined"
+           style="-fx-font-size: 14px; -fx-text-fill: #4a7a4a; -fx-font-family: 'Consolas'; -fx-letter-spacing: 3px;"/>
+
+    <HBox alignment="CENTER" style="-fx-padding: 10 0;">
+        <Region style="-fx-background-color: linear-gradient(to right, transparent, #00ff41, transparent); -fx-pref-height: 1; -fx-pref-width: 400;"/>
+    </HBox>
+
+    <VBox spacing="12" alignment="CENTER"
+          style="-fx-background-color: rgba(20,40,20,0.8); -fx-background-radius: 12; -fx-border-color: #1a4a1a; -fx-border-radius: 12; -fx-border-width: 1; -fx-padding: 25;">
+
+        <effect>
+            <DropShadow color="rgba(0,255,65,0.15)" radius="15" spread="0.05"/>
+        </effect>
+
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <Label text="LEVEL" style="-fx-text-fill: #00ff41; -fx-font-size: 13px; -fx-font-family: 'Consolas'; -fx-min-width: 120;"/>
+            <ComboBox fx:id="levelComboBox" prefWidth="180"
+                      style="-fx-background-color: #1a2a1a; -fx-border-color: #2a4a2a; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+        </HBox>
+
+        <HBox spacing="30" alignment="CENTER">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="WIDTH" style="-fx-text-fill: #7aaa7a; -fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-min-width: 55;"/>
+                <Spinner fx:id="widthSpinner" editable="true" prefWidth="90"
+                         style="-fx-background-color: #1a2a1a; -fx-border-color: #2a4a2a; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 13px;"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="HEIGHT" style="-fx-text-fill: #7aaa7a; -fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-min-width: 55;"/>
+                <Spinner fx:id="heightSpinner" editable="true" prefWidth="90"
+                         style="-fx-background-color: #1a2a1a; -fx-border-color: #2a4a2a; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 13px;"/>
+            </HBox>
+        </HBox>
+
+        <HBox spacing="30" alignment="CENTER">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="FOOD" style="-fx-text-fill: #7aaa7a; -fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-min-width: 55;"/>
+                <Spinner fx:id="foodCountSpinner" editable="true" prefWidth="90"
+                         style="-fx-background-color: #1a2a1a; -fx-border-color: #2a4a2a; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 13px;"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="GOAL" style="-fx-text-fill: #7aaa7a; -fx-font-size: 12px; -fx-font-family: 'Consolas'; -fx-min-width: 55;"/>
+                <Spinner fx:id="winLengthSpinner" editable="true" prefWidth="90"
+                         style="-fx-background-color: #1a2a1a; -fx-border-color: #2a4a2a; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 13px;"/>
+            </HBox>
+        </HBox>
+
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <Label text="SPEED" style="-fx-text-fill: #00ff41; -fx-font-size: 13px; -fx-font-family: 'Consolas'; -fx-min-width: 120;"/>
+            <Spinner fx:id="speedSpinner" editable="true" prefWidth="180"
+                     style="-fx-background-color: #1a2a1a; -fx-border-color: #2a4a2a; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 13px;"/>
+            <Label text="ms" style="-fx-text-fill: #4a6a4a; -fx-font-size: 11px; -fx-font-family: 'Consolas';"/>
+        </HBox>
+    </VBox>
+
+    <HBox spacing="20" alignment="CENTER" style="-fx-padding: 15 0 0 0;">
+        <Button fx:id="startButton" text="▶  START GAME" onAction="#onStartClicked"
+                style="-fx-background-color: linear-gradient(to bottom, #00cc33, #009922); -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-font-family: 'Consolas'; -fx-padding: 12 40; -fx-background-radius: 8; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(0,204,51,0.4), 12, 0.2, 0, 2);"/>
+        <Button text="✕  EXIT" onAction="#onExitClicked"
+                style="-fx-background-color: transparent; -fx-text-fill: #666666; -fx-font-size: 14px; -fx-font-family: 'Consolas'; -fx-padding: 12 25; -fx-border-color: #333333; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;"/>
+    </HBox>
+
+    <Label text="Arrow Keys / WASD to move  •  Space to pause"
+           style="-fx-text-fill: #3a5a3a; -fx-font-size: 11px; -fx-font-family: 'Consolas'; -fx-padding: 10 0 0 0;"/>
+</VBox>
