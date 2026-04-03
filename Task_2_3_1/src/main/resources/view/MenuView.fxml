@@ -35,7 +35,7 @@
         <HBox spacing="15" alignment="CENTER_LEFT">
             <Label text="LEVEL" style="-fx-text-fill: #00ff41; -fx-font-size: 13px; -fx-font-family: 'Consolas'; -fx-min-width: 120;"/>
             <ComboBox fx:id="levelComboBox" prefWidth="180"
-                      style="-fx-background-color: #1a2a1a; -fx-border-color: #2a4a2a; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+                      style="-fx-background-color: #ffffff; -fx-border-color: #2a4a2a; -fx-border-radius: 6; -fx-background-radius: 6;"/>
         </HBox>
 
         <HBox spacing="30" alignment="CENTER">
