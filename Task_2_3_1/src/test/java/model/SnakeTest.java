@@ -158,4 +158,32 @@ class SnakeTest {
         Cell head = snake.move();
         assertEquals(snake.getHead(), head);
     }
+    
+    @Test
+    void testTurn180Degrees() {
+        snake.setDirection(Direction.LEFT);
+        snake.move();
+        assertEquals(Direction.RIGHT, snake.getDirection());
+    }
+    
+    @Test
+    void testHasSelfCollisionTrue() {
+        snake.grow();
+        snake.move();
+        snake.grow();
+        snake.move();
+        snake.grow();
+        snake.move();
+        snake.grow();
+        snake.move();
+        
+        snake.setDirection(Direction.UP);
+        snake.move();
+        snake.setDirection(Direction.LEFT);
+        snake.move();
+        snake.setDirection(Direction.DOWN);
+        snake.move();
+
+        assertTrue(snake.hasSelfCollision());
+    }
 }

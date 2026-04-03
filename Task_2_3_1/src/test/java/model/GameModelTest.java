@@ -245,4 +245,31 @@ class GameModelTest {
         m.spawnFood();
         assertEquals(1, m.getFoods().size());
     }
+
+    @Test
+    void testSelfCollisionLost() {
+        Deque<Cell> snakeBody = new LinkedList<>();
+        snakeBody.add(new Cell(5, 5));
+        snakeBody.add(new Cell(4, 5));
+        snakeBody.add(new Cell(4, 4));
+        snakeBody.add(new Cell(5, 4));
+        snakeBody.add(new Cell(6, 4));
+        Snake snake = new Snake(snakeBody, Direction.DOWN, true, 0);
+        Random random = new Random(42);
+        GameField field = new GameField(20, 15, random);
+        List<Food> foods = new ArrayList<>();
+        Obstacle obstacle = new Obstacle();
+        Config config = new Config(Arrays.asList(70.0, 15.0, 15.0));
+        Level level = new Level(15, 20, 200, 3, 100, obstacle, 1, config);
+        WinCondition wc = new WinCondition(100);
+        GameModel m = new GameModel(snake, foods, field, obstacle, level, wc, GameState.PLAYING, 0, random);
+
+        m.tick();
+        m.setPlayerDirection(Direction.LEFT);
+        m.tick();
+        m.setPlayerDirection(Direction.UP);
+        m.tick();
+        
+        assertEquals(GameState.LOST, m.getState());
+    }
 }

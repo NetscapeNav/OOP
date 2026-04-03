@@ -54,4 +54,9 @@ jacocoTestReport {
         xml.required = true
         html.required = true
     }
+    classDirectories.setFrom(
+        sourceSets.main.output.classesDirs.getAsFileTree().matching {
+            exclude 'org/example/Main.class'
+        }
+    )
 }
