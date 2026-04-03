@@ -73,17 +73,7 @@ public class GameModel {
         Set<Cell> reserved = getAllOccupiedCells();
         Cell position = field.getRandomFreeCell(reserved);
         if (position != null) {
-            int randomIndex = random.nextInt(100);
-            FoodType selectedType;
-
-            if (randomIndex < 70) {
-                selectedType = FoodType.NORMAL;
-            } else if (randomIndex < 85) {
-                selectedType = FoodType.BONUS;
-            } else {
-                selectedType = FoodType.SHRINK;
-            }
-
+            FoodType selectedType = level.getConfig().getRandomFoodType(random);
             foods.add(new Food(position, selectedType));
         }
     }

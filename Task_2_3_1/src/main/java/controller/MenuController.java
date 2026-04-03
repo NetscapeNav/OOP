@@ -9,9 +9,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
+import model.Config;
 import model.Level;
 import model.Obstacle;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MenuController {
@@ -94,13 +96,15 @@ public class MenuController {
         int foodCount = foodCountSpinner.getValue();
         int winLength = winLengthSpinner.getValue();
 
+        Config defaultConfig = new Config(Arrays.asList(70.0, 15.0, 15.0));
+
         String selectedLevel = levelComboBox.getValue();
         if ("Custom".equals(selectedLevel)) {
-            return new Level(height, width, tickInterval, foodCount, winLength, new Obstacle(), 0);
+            return new Level(height, width, tickInterval, foodCount, winLength, new Obstacle(), 0, defaultConfig);
         } else {
             int levelIndex = levelComboBox.getSelectionModel().getSelectedIndex() - 1;
             Level defaultLevel = defaultLevels.get(levelIndex);
-            return new Level(height, width, tickInterval, foodCount, winLength, defaultLevel.getObstacles(), defaultLevel.getLevelNumber());
+            return new Level(height, width, tickInterval, foodCount, winLength, defaultLevel.getObstacles(), defaultLevel.getLevelNumber(), defaultLevel.getConfig());
         }
     }
 }

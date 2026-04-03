@@ -16,7 +16,8 @@ class GameModelTest {
         GameField field = new GameField(width, height, random);
         List<Food> foods = new ArrayList<>();
         Obstacle obstacle = new Obstacle();
-        Level level = new Level(height, width, 200, 3, winLength, obstacle, 1);
+        Config config = new Config(Arrays.asList(70.0, 15.0, 15.0));
+        Level level = new Level(height, width, 200, 3, winLength, obstacle, 1, config);
         WinCondition wc = new WinCondition(winLength);
         return new GameModel(snake, foods, field, obstacle, level, wc, GameState.PLAYING, 0, random);
     }
@@ -89,7 +90,8 @@ class GameModelTest {
         List<Food> foods = new ArrayList<>();
         Obstacle obstacle = new Obstacle();
         obstacle.addCell(new Cell(4, 5));
-        Level level = new Level(15, 20, 200, 3, 100, obstacle, 1);
+        Config config = new Config(Arrays.asList(70.0, 15.0, 15.0));
+        Level level = new Level(15, 20, 200, 3, 100, obstacle, 1, config);
         WinCondition wc = new WinCondition(100);
         GameModel m = new GameModel(snake, foods, field, obstacle, level, wc, GameState.PLAYING, 0, random);
 
@@ -168,7 +170,8 @@ class GameModelTest {
         List<Food> foods = new ArrayList<>();
         foods.add(new Food(new Cell(6, 5), FoodType.SHRINK));
         Obstacle obstacle = new Obstacle();
-        Level level = new Level(15, 20, 200, 3, 100, obstacle, 1);
+        Config config = new Config(Arrays.asList(70.0, 15.0, 15.0));
+        Level level = new Level(15, 20, 200, 3, 100, obstacle, 1, config);
         WinCondition wc = new WinCondition(100);
         GameModel m = new GameModel(snake, foods, field, obstacle, level, wc, GameState.PLAYING, 0, random);
 
@@ -199,7 +202,8 @@ class GameModelTest {
         List<Food> foods = new ArrayList<>();
         foods.add(new Food(new Cell(6, 5), FoodType.NORMAL));
         Obstacle obstacle = new Obstacle();
-        Level level = new Level(15, 20, 200, 3, 5, obstacle, 1);
+        Config config = new Config(Arrays.asList(70.0, 15.0, 15.0));
+        Level level = new Level(15, 20, 200, 3, 5, obstacle, 1, config);
         WinCondition wc = new WinCondition(5);
         GameModel m = new GameModel(snake, foods, field, obstacle, level, wc, GameState.PLAYING, 0, random);
 
@@ -233,9 +237,9 @@ class GameModelTest {
         Random random = new Random(42);
         GameField field = new GameField(20, 15, random);
         List<Food> foods = new ArrayList<>();
-        Level level = new Level(15, 20, 200, 3, 100, null, 1);
+        Config config = new Config(Arrays.asList(70.0, 15.0, 15.0));
+        Level level = new Level(15, 20, 200, 3, 100, null, 1, config);
         WinCondition wc = new WinCondition(100);
-
         GameModel m = new GameModel(snake, foods, field, null, level, wc, GameState.PLAYING, 0, random);
         m.spawnFood();
         assertEquals(1, m.getFoods().size());
