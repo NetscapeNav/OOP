@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Level {
@@ -75,7 +76,5 @@ public class Level {
         levels.add(new Level(15, 20, 100, 5, 20, obstaclesThird, 3, defaultConfig));
 
         return levels;
-
-
     }
 }

@@ -46,7 +46,7 @@ public class GameController {
                     }
                 }
                 if (view != null && model != null) {
-                    view.render(model);
+                    view.renderUpdate(model);
                 }
             }
         };
@@ -75,6 +75,7 @@ public class GameController {
         }
         int cellSize = calculateCellSize();
         view = new GameView(gameCanvas, cellSize);
+        view.renderInitial(model);
 
         updateUI();
         lastUpdate = System.nanoTime();

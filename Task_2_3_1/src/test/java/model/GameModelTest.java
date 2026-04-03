@@ -102,6 +102,7 @@ class GameModelTest {
     @Test
     void testSetPlayerDirection() {
         model.setPlayerDirection(Direction.UP);
+        model.tick();
         assertEquals(Direction.UP, model.getSnake().getDirection());
     }
 

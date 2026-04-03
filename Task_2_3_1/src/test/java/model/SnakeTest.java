@@ -79,18 +79,21 @@ class SnakeTest {
         snake.grow();
         snake.move(); 
         snake.setDirection(Direction.LEFT); 
+        snake.move();
         assertEquals(Direction.RIGHT, snake.getDirection());
     }
 
     @Test
     void testSetDirectionAllowsPerpendicularTurn() {
         snake.setDirection(Direction.UP);
+        snake.move();
         assertEquals(Direction.UP, snake.getDirection());
     }
 
     @Test
     void testSetDirectionAllowsSameDirection() {
         snake.setDirection(Direction.RIGHT);
+        snake.move();
         assertEquals(Direction.RIGHT, snake.getDirection());
     }
 

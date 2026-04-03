@@ -7,12 +7,23 @@ public class Snake {
     private Direction direction;
     private boolean alive;
     private int pendingGrowth;
+    private final Deque<Direction> directionQueue = new LinkedList<>();
+
+    private final List<Cell> removedTails = new ArrayList<>();
 
     public Snake(Deque<Cell> body, Direction direction, boolean alive, int pendingGrowth) {
         this.body = body;
         this.direction = direction;
         this.alive = alive;
         this.pendingGrowth = pendingGrowth;
+    }
+
+    public List<Cell> getRemovedTails() {
+        return removedTails;
+    }
+
+    public void clearRemovedTails() {
+        removedTails.clear();
     }
 
     public Cell getHead() {
@@ -35,9 +46,12 @@ public class Snake {
         return direction;
     }
 
-    public void setDirection(Direction direction) {
-        if (direction != this.direction.opposite()) {
-            this.direction = direction;
+    public void setDirection(Direction newDirection) {
+        Direction lastPlannedDirection = directionQueue.isEmpty() ? this.direction : directionQueue.getLast();
+        if (newDirection != lastPlannedDirection && newDirection != lastPlannedDirection.opposite()) {
+            if (directionQueue.size() < 2) {
+                directionQueue.addLast(newDirection);
+            }
         }
     }
 
@@ -73,19 +87,22 @@ public class Snake {
     }
 
     public Cell move() {
+        if (!directionQueue.isEmpty()) {
+            this.direction = directionQueue.pollFirst();
+        }
         Cell newHead = getHead().move(direction);
         body.addFirst(newHead);
         if (pendingGrowth > 0) {
             pendingGrowth--;
         } else {
-            body.removeLast();
+            removedTails.add(body.removeLast());
         }
         return newHead;
     }
 
     public void shrink() {
         if (body.size() > 1) {
-            body.removeLast();
+            removedTails.add(body.removeLast());
         }
     }
 }

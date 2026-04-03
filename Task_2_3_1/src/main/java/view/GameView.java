@@ -16,7 +16,7 @@ public class GameView {
         this.cellSize = cellSize;
     }
 
-    public void render(GameModel model) {
+    public void renderInitial(GameModel model) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         GameField field = model.getField();
 
@@ -36,7 +36,7 @@ public class GameView {
         if (obstacle != null) {
             gc.setFill(Color.WHITE);
             for (Cell cell : obstacle.getCells()) {
-                gc.fillRect(cell.getX() * cellSize, cell.getY() * cellSize, cellSize - 1, cellSize - 1);
+                gc.fillRect(cell.getX() * cellSize + 1, cell.getY() * cellSize + 1, cellSize - 2, cellSize - 2);
             }
         }
 
@@ -58,13 +58,53 @@ public class GameView {
         if (snake != null && snake.isAlive()) {
             gc.setFill(Color.GREEN);
             for (Cell cell : snake.getBody()) {
-                gc.fillRect(cell.getX() * cellSize, cell.getY() * cellSize, cellSize - 1, cellSize - 1);
+                gc.fillRect(cell.getX() * cellSize + 1, cell.getY() * cellSize + 1, cellSize - 2, cellSize - 2);
             }
 
             Cell head = snake.getHead();
             gc.setFill(Color.LIMEGREEN);
-            gc.fillRect(head.getX() * cellSize, head.getY() * cellSize, cellSize - 1, cellSize - 1);
+            gc.fillRect(head.getX() * cellSize + 1, head.getY() * cellSize + 1, cellSize - 2, cellSize - 2);
         }
+    }
+
+    public void renderUpdate(GameModel model) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        Snake snake = model.getSnake();
+        if (snake != null && snake.isAlive()) {
+            java.util.Iterator<Cell> iter = snake.getBody().iterator();
+            if (iter.hasNext()) {
+                Cell head = iter.next();
+                gc.setFill(Color.LIMEGREEN);
+                gc.fillRect(head.getX() * cellSize + 1, head.getY() * cellSize + 1, cellSize - 2, cellSize - 2);
+                
+                if (iter.hasNext()) {
+                    Cell second = iter.next();
+                    gc.setFill(Color.GREEN);
+                    gc.fillRect(second.getX() * cellSize + 1, second.getY() * cellSize + 1, cellSize - 2, cellSize - 2);
+                }
+            }
+
+            for (Cell removedTail : snake.getRemovedTails()) {
+                gc.setFill(Color.BLACK);
+                gc.fillRect(removedTail.getX() * cellSize + 1, removedTail.getY() * cellSize + 1, cellSize - 2, cellSize - 2);
+            }
+        }
+
+        List<Food> foods = model.getFoods();
+        for (Food food : foods) {
+            FoodType type = food.getFoodType();
+            if (type == FoodType.NORMAL) {
+                gc.setFill(Color.RED);
+            } else if (type == FoodType.BONUS) {
+                gc.setFill(Color.GOLD);
+            } else if (type == FoodType.SHRINK) {
+                gc.setFill(Color.PURPLE);
+            }
+            Cell pos = food.getPosition();
+            gc.fillOval(pos.getX() * cellSize + 2, pos.getY() * cellSize + 2, cellSize - 4, cellSize - 4);
+        }
+
         if (model.getState() != GameState.PLAYING) {
             gc.setFill(new Color(0, 0, 0, 0.7));
             gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());

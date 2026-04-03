@@ -36,6 +36,7 @@ public class GameModel {
             return;
         }
 
+        snake.clearRemovedTails();
         Cell newHead = snake.move();
 
         if (!field.isInBounds(newHead) || obstacle.contains(newHead) || snake.hasSelfCollision()) {
