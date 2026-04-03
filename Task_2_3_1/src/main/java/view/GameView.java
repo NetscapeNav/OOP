@@ -72,22 +72,26 @@ public class GameView {
 
         Snake snake = model.getSnake();
         if (snake != null && snake.isAlive()) {
+            // Сначала закрашиваем удалённый хвост (чтобы не затереть голову, если она встала на его место)
+            for (Cell removedTail : snake.getRemovedTails()) {
+                gc.setFill(Color.BLACK);
+                gc.fillRect(removedTail.getX() * cellSize + 1, removedTail.getY() * cellSize + 1, cellSize - 2, cellSize - 2);
+            }
+
             java.util.Iterator<Cell> iter = snake.getBody().iterator();
             if (iter.hasNext()) {
                 Cell head = iter.next();
-                gc.setFill(Color.LIMEGREEN);
-                gc.fillRect(head.getX() * cellSize + 1, head.getY() * cellSize + 1, cellSize - 2, cellSize - 2);
                 
                 if (iter.hasNext()) {
+                    // Шея
                     Cell second = iter.next();
                     gc.setFill(Color.GREEN);
                     gc.fillRect(second.getX() * cellSize + 1, second.getY() * cellSize + 1, cellSize - 2, cellSize - 2);
                 }
-            }
 
-            for (Cell removedTail : snake.getRemovedTails()) {
-                gc.setFill(Color.BLACK);
-                gc.fillRect(removedTail.getX() * cellSize + 1, removedTail.getY() * cellSize + 1, cellSize - 2, cellSize - 2);
+                // Голова (рисуется последней поверх всего)
+                gc.setFill(Color.LIMEGREEN);
+                gc.fillRect(head.getX() * cellSize + 1, head.getY() * cellSize + 1, cellSize - 2, cellSize - 2);
             }
         }
 
