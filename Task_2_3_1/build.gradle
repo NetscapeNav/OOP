@@ -57,9 +57,9 @@ jacocoTestReport {
     classDirectories.setFrom(
         sourceSets.main.output.classesDirs.getAsFileTree().matching {
             exclude 'org/example/Main.class'
-            exclude 'view/GameView.class'
-            exclude 'controller/GameController.class'
-            exclude 'controller/MenuController.class'
+            exclude 'view/GameView*.class'
+            exclude 'controller/GameController*.class'
+            exclude 'controller/MenuController*.class'
         }
     )
 }
