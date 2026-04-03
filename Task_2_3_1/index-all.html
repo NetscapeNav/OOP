@@ -66,6 +66,12 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="model/Cell.html#%3Cinit%3E(int,int)" class="member-name-link">Cell(int, int)</a> - Constructor for class model.<a href="model/Cell.html" title="class in model">Cell</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="model/Snake.html#clearRemovedTails()" class="member-name-link">clearRemovedTails()</a> - Method in class model.<a href="model/Snake.html" title="class in model">Snake</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="model/Config.html" class="type-name-link" title="class in model">Config</a> - Class in <a href="model/package-summary.html">model</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="model/Config.html#%3Cinit%3E(java.util.List)" class="member-name-link">Config(List&lt;Double&gt;)</a> - Constructor for class model.<a href="model/Config.html" title="class in model">Config</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="model/Obstacle.html#contains(model.Cell)" class="member-name-link">contains(Cell)</a> - Method in class model.<a href="model/Obstacle.html" title="class in model">Obstacle</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="controller/package-summary.html">controller</a> - package controller</dt>
@@ -118,6 +124,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="model/Obstacle.html#getCells()" class="member-name-link">getCells()</a> - Method in class model.<a href="model/Obstacle.html" title="class in model">Obstacle</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="model/Config.html#getChances()" class="member-name-link">getChances()</a> - Method in class model.<a href="model/Config.html" title="class in model">Config</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="model/Level.html#getConfig()" class="member-name-link">getConfig()</a> - Method in class model.<a href="model/Level.html" title="class in model">Level</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="model/Snake.html#getDirection()" class="member-name-link">getDirection()</a> - Method in class model.<a href="model/Snake.html" title="class in model">Snake</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="model/GameModel.html#getField()" class="member-name-link">getField()</a> - Method in class model.<a href="model/GameModel.html" title="class in model">GameModel</a></dt>
@@ -148,7 +158,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="model/Food.html#getPosition()" class="member-name-link">getPosition()</a> - Method in class model.<a href="model/Food.html" title="class in model">Food</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="model/Config.html#getRandomFoodType(java.util.Random)" class="member-name-link">getRandomFoodType(Random)</a> - Method in class model.<a href="model/Config.html" title="class in model">Config</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="model/GameField.html#getRandomFreeCell(java.util.Set)" class="member-name-link">getRandomFreeCell(Set&lt;Cell&gt;)</a> - Method in class model.<a href="model/GameField.html" title="class in model">GameField</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="model/Snake.html#getRemovedTails()" class="member-name-link">getRemovedTails()</a> - Method in class model.<a href="model/Snake.html" title="class in model">Snake</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="model/GameModel.html#getScore()" class="member-name-link">getScore()</a> - Method in class model.<a href="model/GameModel.html" title="class in model">GameModel</a></dt>
 <dd>&nbsp;</dd>
@@ -212,7 +226,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="model/Level.html" class="type-name-link" title="class in model">Level</a> - Class in <a href="model/package-summary.html">model</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="model/Level.html#%3Cinit%3E(int,int,int,int,int,model.Obstacle,int)" class="member-name-link">Level(int, int, int, int, int, Obstacle, int)</a> - Constructor for class model.<a href="model/Level.html" title="class in model">Level</a></dt>
+<dt><a href="model/Level.html#%3Cinit%3E(int,int,int,int,int,model.Obstacle,int,model.Config)" class="member-name-link">Level(int, int, int, int, int, Obstacle, int, Config)</a> - Constructor for class model.<a href="model/Level.html" title="class in model">Level</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="model/GameState.html#LOST" class="member-name-link">LOST</a> - Enum constant in enum class model.<a href="model/GameState.html" title="enum class in model">GameState</a></dt>
 <dd>&nbsp;</dd>
@@ -261,7 +275,9 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:R">R</h2>
 <dl class="index">
-<dt><a href="view/GameView.html#render(model.GameModel)" class="member-name-link">render(GameModel)</a> - Method in class view.<a href="view/GameView.html" title="class in view">GameView</a></dt>
+<dt><a href="view/GameView.html#renderInitial(model.GameModel)" class="member-name-link">renderInitial(GameModel)</a> - Method in class view.<a href="view/GameView.html" title="class in view">GameView</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="view/GameView.html#renderUpdate(model.GameModel)" class="member-name-link">renderUpdate(GameModel)</a> - Method in class view.<a href="view/GameView.html" title="class in view">GameView</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="model/Direction.html#RIGHT" class="member-name-link">RIGHT</a> - Enum constant in enum class model.<a href="model/Direction.html" title="enum class in model">Direction</a></dt>
 <dd>&nbsp;</dd>
