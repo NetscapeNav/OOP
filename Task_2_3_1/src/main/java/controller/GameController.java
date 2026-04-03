@@ -57,7 +57,25 @@ public class GameController {
         Deque<Cell> snakeBody = new LinkedList<>();
         int startX = currentLevel.getWidth() / 2;
         int startY = currentLevel.getHeight() / 2;
-        snakeBody.add(new Cell(startX, startY));
+        Cell startCell = new Cell(startX, startY);
+
+        Obstacle obstacle = currentLevel.getObstacles();
+        if (obstacle != null) {
+            while (obstacle.contains(startCell)) {
+                startX++;
+                if (startX >= currentLevel.getWidth()) {
+                    startX = 0;
+                    startY++;
+                }
+                if (startY >= currentLevel.getHeight()) {
+                    startY = 0;
+                    startX = 0;
+                }
+                startCell = new Cell(startX, startY);
+            }
+        }
+
+        snakeBody.add(startCell);
 
         Snake snake = new Snake(snakeBody, Direction.RIGHT, true, 0);
 
