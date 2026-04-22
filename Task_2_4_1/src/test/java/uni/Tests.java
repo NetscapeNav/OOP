@@ -1,11 +1,13 @@
 package uni;
 
 import check.Checker;
+import check.Logger;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +32,33 @@ class Tests {
     }
 
     @Test
+    void testGroupAndStudentGettersAndSetters() {
+        Student student = new Student(1, "Иван Иванов", "ivan", "http://github.com/ivan");
+
+        assertAll("Student validation",
+                () -> assertEquals(1, student.getId()),
+                () -> assertEquals("Иван Иванов", student.getName()),
+                () -> assertEquals("ivan", student.getGithubNick()),
+                () -> assertEquals("http://github.com/ivan", student.getRepoURL())
+        );
+
+        Group group = new Group(123, List.of(student));
+        assertEquals(123, group.getNumber());
+        assertEquals(1, group.getStudents().size());
+        assertEquals("ivan", group.getStudents().get(0).getGithubNick());
+    }
+
+    @Test
+    void testCheckpointGetters() {
+        Date date = new Date();
+        Checkpoint checkpoint = new Checkpoint(1, "КР1", date);
+
+        assertEquals(1, checkpoint.getId());
+        assertEquals("КР1", checkpoint.getName());
+        assertEquals(date, checkpoint.getDate());
+    }
+
+    @Test
     void testConfigParsing() throws Exception {
         String dummyConfig = "tasks {\n" +
                 "    task('9_9') {\n" +
@@ -48,7 +77,12 @@ class Tests {
                 "assignments {\n" +
                 "    assign '9_9' to 100\n" +
                 "}\n" +
+                "checkpoints {\n" +
+                "    point 'КР1', '2026-04-01'\n" +
+                "}\n" +
                 "settings {\n" +
+                "    timeout = 30\n" +
+                "    styleGuide = 'GOOGLE'\n" +
                 "    convertion 50, 4\n" +
                 "}";
 
@@ -121,5 +155,12 @@ class Tests {
         assertTrue(report.exists(), "HTML отчет должен быть создан");
 
         Files.deleteIfExists(configPath);
+    }
+
+    @Test
+    void testLogger() {
+        assertDoesNotThrow(() -> Logger.info("Test message"));
+        assertDoesNotThrow(() -> Logger.error("Test error", new RuntimeException("Test exception")));
+        assertDoesNotThrow(() -> Logger.error("Test error without exception", null));
     }
 }

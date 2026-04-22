@@ -12,4 +12,8 @@ public class Checkpoint {
         this.name = name;
         this.date = date;
     }
+
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public Date getDate() { return date; }
 }
