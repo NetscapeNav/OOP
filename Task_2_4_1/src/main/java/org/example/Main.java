@@ -1,12 +1,12 @@
 package org.example;
 
+import check.Checker;
+import check.Logger;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.util.DelegatingScript;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import uni.Checker;
-import uni.Config;
-import uni.Group;
+import uni.*;
 
 import java.io.File;
 
@@ -28,18 +28,18 @@ public class Main {
             e.printStackTrace();
         }
 
-        System.out.println("Загружено задач: " + rootConfig.getTasks().size());
+        Logger.info("Загружено задач: " + rootConfig.getTasks().size());
 
         for (Group g : rootConfig.getGroups()) {
-            System.out.println("Группа " + g.getNumber() + ", студентов: " + g.getStudents().size());
+            Logger.info("Группа " + g.getNumber() + ", студентов: " + g.getStudents().size());
         }
 
         if (args.length > 0 && args[0].equals("test")) {
             Checker checker = new Checker(rootConfig);
             checker.check();
         } else {
-            System.out.println("\nКоманда не распознана или не введена.");
-            System.out.println("Для запуска проверок используйте аргумент 'test' (например: java -jar app.jar test)");
+            Logger.info("\nКоманда не распознана или не введена.");
+            Logger.info("Для запуска проверок используйте аргумент 'test' (например: java -jar app.jar test)");
         }
     }
 }

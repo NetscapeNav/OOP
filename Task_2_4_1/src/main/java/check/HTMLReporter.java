@@ -1,12 +1,15 @@
-package uni;
+package check;
+
+import uni.Convertion;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class HTMLReporter {
-    private List<Record> records = new ArrayList<>();
+    private List<Record> records = java.util.Collections.synchronizedList(new ArrayList<>());
     
     private static class Record {
         String groupName;
@@ -33,6 +36,13 @@ public class HTMLReporter {
     }
     
     public void generateHTMLReport(List<Convertion> conversions) {
+        synchronized (records) {
+            records.sort(Comparator
+                    .comparing((Record r) -> r.groupName)
+                    .thenComparing(r -> r.studentName)
+                    .thenComparing(r -> r.taskId));
+        }
+
         StringBuilder html = new StringBuilder();
         html.append("<html><head><meta charset='UTF-8'>")
             .append("<style>table {width: 50%; border-collapse: collapse;} th, td {border: 1px solid black; padding: 8px; text-align: center;}</style>")
@@ -44,27 +54,33 @@ public class HTMLReporter {
 
         java.util.Map<String, Integer> studentTotalScores = new java.util.HashMap<>();
 
-        for (Record record : records) {
-            String buildStatus = record.isCompiled ? "+" : "-";
-            String styleStatus = "-";
+        synchronized (records) {
+            for (Record record : records) {
+                String buildStatus = record.isCompiled ? "+" : "-";
+                String styleStatus = "-";
 
-            html.append("<tr>")
-                    .append("<td>").append(record.groupName).append("</td>")
-                    .append("<td>").append(record.studentName).append("</td>")
-                    .append("<td>Task_").append(record.taskId).append("</td>")
-                    .append("<td>").append(buildStatus).append("</td>")
-                    .append("<td>").append(styleStatus).append("</td>")
-                    .append("<td>").append(record.passedTests).append("/").append(record.totalTests).append("</td>")
-                    .append("<td><b>").append(record.finalScore).append("</b></td>")
-                    .append("</tr>");
+                html.append("<tr>")
+                        .append("<td>").append(record.groupName).append("</td>")
+                        .append("<td>").append(record.studentName).append("</td>")
+                        .append("<td>Task_").append(record.taskId).append("</td>")
+                        .append("<td>").append(buildStatus).append("</td>")
+                        .append("<td>").append(styleStatus).append("</td>")
+                        .append("<td>").append(record.passedTests).append("/").append(record.totalTests).append("</td>")
+                        .append("<td><b>").append(record.finalScore).append("</b></td>")
+                        .append("</tr>");
 
-            studentTotalScores.put(record.studentName, studentTotalScores.getOrDefault(record.studentName, 0) + record.finalScore);
+                studentTotalScores.put(record.studentName, studentTotalScores.getOrDefault(record.studentName, 0) + record.finalScore);
+            }
         }
 
         html.append("</table>");
 
         html.append("<h3>Итоговые оценки студентов:</h3><ul>");
-        for (String student : studentTotalScores.keySet()) {
+
+        List<String> sortedStudents = new ArrayList<>(studentTotalScores.keySet());
+        java.util.Collections.sort(sortedStudents);
+        
+        for (String student : sortedStudents) {
             int totalScore = studentTotalScores.get(student);
             int finalMark = 2;
 
@@ -86,8 +102,8 @@ public class HTMLReporter {
 
         try {
             Files.writeString(Path.of("report.html"), html.toString());
-            System.out.println(html.toString());
-            System.out.println("\nОтчёт также сохранен в файл report.html");
+            Logger.info(html.toString());
+            Logger.info("\nОтчёт также сохранен в файл report.html");
         } catch (Exception e) {
             e.printStackTrace();
         }
