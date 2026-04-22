@@ -15,6 +15,12 @@ public class GitService {
     }
 
     public void gitPull(String studentNick) {
+        File gitFolder = new File(dir, ".git");
+        if (!gitFolder.exists() && !gitFolder.isDirectory()) {
+            Logger.info("[" + studentNick + "] Папка не является валидным git-репозиторием. Пропускаем очистку.");
+            return;
+        }
+
         try {
             ProcessBuilder pbReset = new ProcessBuilder("git", "reset", "--hard", "HEAD");
             pbReset.directory(dir);
@@ -24,9 +30,10 @@ public class GitService {
             pbClean.directory(dir);
             pbClean.start().waitFor();
 
+            Logger.info("[" + studentNick + "] Обновляем репозиторий через git pull...");
             ProcessBuilder pb = new ProcessBuilder("git", "pull");
             pb.directory(dir);
-            pb.start().waitFor();
+            pb.start().waitFor(); 
 
             checkoutMainOrMaster(dir);
             Logger.info("[" + studentNick + "] Репозиторий успешно обновлен.");
