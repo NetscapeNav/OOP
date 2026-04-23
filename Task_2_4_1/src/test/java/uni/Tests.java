@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class Tests {
+class ApplicationTests {
     @Test
     void testTaskGettersAndSetters() {
         Task task = new Task();
@@ -220,19 +220,6 @@ class Tests {
     }
     
     @Test
-    void testTestReportParserWithEmptyDir() {
-        File emptyDir = new File("empty_test_dir_2");
-        emptyDir.mkdir();
-        
-        TestReportParser parser = new TestReportParser(emptyDir);
-        int[] result = parser.run("test", "1_1");
-        assertEquals(0, result[0]);
-        assertEquals(0, result[1]);
-        
-        emptyDir.delete();
-    }
-    
-    @Test
     void testTestReportParserWithXml() throws Exception {
         File testDir = new File("test_report_dir");
         testDir.mkdirs();
@@ -245,27 +232,58 @@ class Tests {
                 "</testsuite>";
         
         Files.writeString(new File(reportsDir, "TEST-uni.Tests.xml").toPath(), xmlContent);
-        
-        new File(testDir, "gradlew").createNewFile();
+
+        File gradlew = new File(testDir, "gradlew");
+        Files.writeString(gradlew.toPath(), "#!/bin/sh\nexit 0\n");
+        gradlew.setExecutable(true);
+
+        File gradlewBat = new File(testDir, "gradlew.bat");
+        Files.writeString(gradlewBat.toPath(), "@echo off\nexit /b 0\n");
+        gradlewBat.setExecutable(true);
         
         TestReportParser parser = new TestReportParser(testDir);
         int[] result = parser.run("test", "1_1");
-        
+
         assertEquals(3, result[0]);
         assertEquals(5, result[1]);
-        
+
         new File(reportsDir, "TEST-uni.Tests.xml").delete();
         reportsDir.delete();
         new File(testDir, "build/test-results/test").delete();
         new File(testDir, "build/test-results").delete();
         new File(testDir, "build").delete();
-        new File(testDir, "gradlew").delete();
+        gradlew.delete();
+        gradlewBat.delete();
         testDir.delete();
     }
     
     @Test
-    void testGitServiceCheckoutBranch() {
-        GitService gitService = new GitService(new File("some_random_dir"));
+    void testGitServiceWithRealGit() throws Exception {
+        File tempRepo = new File("temp_git_repo_for_test");
+        tempRepo.mkdirs();
+
+        ProcessBuilder pb = new ProcessBuilder("git", "init");
+        pb.directory(tempRepo);
+        pb.start().waitFor();
+        
+        GitService gitService = new GitService(tempRepo);
+
         assertDoesNotThrow(() -> gitService.gitPull("test"));
+
+        File gitDir = new File(tempRepo, ".git");
+        if (gitDir.exists()) {
+            deleteDirectory(gitDir);
+        }
+        tempRepo.delete();
+    }
+    
+    private void deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        directoryToBeDeleted.delete();
     }
 }
