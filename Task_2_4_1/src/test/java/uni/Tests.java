@@ -2,6 +2,10 @@ package uni;
 
 import check.Checker;
 import check.Logger;
+import checkservices.BuildService;
+import checkservices.GitService;
+import checkservices.StyleChecker;
+import checkservices.TestReportParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -29,11 +33,18 @@ class Tests {
                 () -> assertEquals("2026-05-01", task.getSoftDeadline()),
                 () -> assertEquals("2026-05-15", task.getHardDeadline())
         );
+        
+        Task task2 = new Task("test_id2", "Test Task 2", "2026-06-01", "2026-06-15", 20);
+        assertEquals("test_id2", task2.getId());
     }
 
     @Test
     void testGroupAndStudentGettersAndSetters() {
-        Student student = new Student(1, "Иван Иванов", "ivan", "http://github.com/ivan");
+        Student student = new Student();
+        student.setId(1);
+        student.setName("Иван Иванов");
+        student.setGithubNick("ivan");
+        student.setRepoURL("http://github.com/ivan");
 
         assertAll("Student validation",
                 () -> assertEquals(1, student.getId()),
@@ -41,11 +52,19 @@ class Tests {
                 () -> assertEquals("ivan", student.getGithubNick()),
                 () -> assertEquals("http://github.com/ivan", student.getRepoURL())
         );
+        
+        Student student2 = new Student(2, "Петр Петров", "petr", "http://github.com/petr");
+        assertEquals(2, student2.getId());
 
-        Group group = new Group(123, List.of(student));
+        Group group = new Group();
+        group.setNumber(123);
+        group.setStudents(List.of(student));
         assertEquals(123, group.getNumber());
         assertEquals(1, group.getStudents().size());
         assertEquals("ivan", group.getStudents().get(0).getGithubNick());
+        
+        Group group2 = new Group(456, List.of(student2));
+        assertEquals(456, group2.getNumber());
     }
 
     @Test
@@ -162,5 +181,91 @@ class Tests {
         assertDoesNotThrow(() -> Logger.info("Test message"));
         assertDoesNotThrow(() -> Logger.error("Test error", new RuntimeException("Test exception")));
         assertDoesNotThrow(() -> Logger.error("Test error without exception", null));
+    }
+    
+    @Test
+    void testServicesWithInvalidPaths() {
+        File invalidDir = new File("non_existent_directory_12345");
+        
+        BuildService buildService = new BuildService(invalidDir);
+        assertFalse(buildService.build("test", "1_1"));
+        
+        GitService gitService = new GitService(invalidDir);
+        assertDoesNotThrow(() -> gitService.gitPull("test"));
+        assertDoesNotThrow(() -> gitService.gitClone("invalid_url", "test"));
+        assertEquals(java.time.LocalDate.now(), gitService.getLastCommitDate(invalidDir, "test", "1_1"));
+        
+        File newDir = new File("another_dir");
+        gitService.setDir(newDir);
+        assertEquals(newDir, gitService.getDir());
+        
+        StyleChecker styleChecker = new StyleChecker(invalidDir);
+        assertEquals(0, styleChecker.revise("test", "1_1"));
+        
+        TestReportParser parser = new TestReportParser(invalidDir);
+        int[] result = parser.run("test", "1_1");
+        assertEquals(0, result[0]);
+        assertEquals(0, result[1]);
+    }
+    
+    @Test
+    void testBuildServiceWithEmptyDir() {
+        File emptyDir = new File("empty_test_dir");
+        emptyDir.mkdir();
+        
+        BuildService buildService = new BuildService(emptyDir);
+        assertFalse(buildService.build("test", "1_1"));
+        
+        emptyDir.delete();
+    }
+    
+    @Test
+    void testTestReportParserWithEmptyDir() {
+        File emptyDir = new File("empty_test_dir_2");
+        emptyDir.mkdir();
+        
+        TestReportParser parser = new TestReportParser(emptyDir);
+        int[] result = parser.run("test", "1_1");
+        assertEquals(0, result[0]);
+        assertEquals(0, result[1]);
+        
+        emptyDir.delete();
+    }
+    
+    @Test
+    void testTestReportParserWithXml() throws Exception {
+        File testDir = new File("test_report_dir");
+        testDir.mkdirs();
+        
+        File reportsDir = new File(testDir, "build/test-results/test");
+        reportsDir.mkdirs();
+        
+        String xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<testsuite name=\"uni.Tests\" tests=\"5\" skipped=\"0\" failures=\"1\" errors=\"1\" timestamp=\"2024-05-24T12:00:00\" hostname=\"localhost\" time=\"0.01\">\n" +
+                "</testsuite>";
+        
+        Files.writeString(new File(reportsDir, "TEST-uni.Tests.xml").toPath(), xmlContent);
+        
+        new File(testDir, "gradlew").createNewFile();
+        
+        TestReportParser parser = new TestReportParser(testDir);
+        int[] result = parser.run("test", "1_1");
+        
+        assertEquals(3, result[0]);
+        assertEquals(5, result[1]);
+        
+        new File(reportsDir, "TEST-uni.Tests.xml").delete();
+        reportsDir.delete();
+        new File(testDir, "build/test-results/test").delete();
+        new File(testDir, "build/test-results").delete();
+        new File(testDir, "build").delete();
+        new File(testDir, "gradlew").delete();
+        testDir.delete();
+    }
+    
+    @Test
+    void testGitServiceCheckoutBranch() {
+        GitService gitService = new GitService(new File("some_random_dir"));
+        assertDoesNotThrow(() -> gitService.gitPull("test"));
     }
 }
