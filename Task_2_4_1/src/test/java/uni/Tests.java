@@ -220,6 +220,19 @@ class ApplicationTests {
     }
     
     @Test
+    void testTestReportParserWithEmptyDir() {
+        File emptyDir = new File("empty_test_dir_2");
+        emptyDir.mkdir();
+        
+        TestReportParser parser = new TestReportParser(emptyDir);
+        int[] result = parser.run("test", "1_1");
+        assertEquals(0, result[0]);
+        assertEquals(0, result[1]);
+        
+        emptyDir.delete();
+    }
+    
+    @Test
     void testTestReportParserWithXml() throws Exception {
         File testDir = new File("test_report_dir");
         testDir.mkdirs();
@@ -277,6 +290,211 @@ class ApplicationTests {
         tempRepo.delete();
     }
     
+    @Test
+    void testCheckerDeadlines() throws Exception {
+        File dummyRepo = new File("student_repositories/test_deadlines/Task_1_1");
+        dummyRepo.mkdirs();
+
+        File srcDir = new File(dummyRepo, "src/main/java/test");
+        srcDir.mkdirs();
+        File javaFile = new File(srcDir, "HelloWorld.java");
+        Files.writeString(javaFile.toPath(), "package test; public class HelloWorld { public static void main(String[] args) {} }");
+
+        String dummyConfig = "tasks {\n" +
+                "    task('1_1') {\n" +
+                "        name = 'Integration Task'\n" +
+                "        maxScore = 10\n" +
+                "        softDeadline = '2020-01-01'\n" + 
+                "        hardDeadline = '2022-01-01'\n" + 
+                "    }\n" +
+                "}\n" +
+                "groups {\n" +
+                "    group(888) {\n" +
+                "        student('test_deadlines') {\n" +
+                "            name = 'Deadline Student'\n" +
+                "            repoURL = 'dummy_url'\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n" +
+                "assignments {\n" +
+                "    assign '1_1' to 888\n" +
+                "}";
+
+        Path configPath = Path.of("deadline_config.groovy");
+        Files.writeString(configPath, dummyConfig);
+
+        Config config = new Config();
+        config.include("deadline_config.groovy");
+
+        Checker checker = new Checker(config);
+        assertDoesNotThrow(() -> checker.check());
+
+        Files.deleteIfExists(configPath);
+    }
+    
+    @Test
+    void testCheckerSoftDeadline() throws Exception {
+        File dummyRepo = new File("student_repositories/test_deadlines/Task_1_2");
+        dummyRepo.mkdirs();
+
+        File srcDir = new File(dummyRepo, "src/main/java/test");
+        srcDir.mkdirs();
+        File javaFile = new File(srcDir, "HelloWorld.java");
+        Files.writeString(javaFile.toPath(), "package test; public class HelloWorld { public static void main(String[] args) {} }");
+
+        String dummyConfig = "tasks {\n" +
+                "    task('1_2') {\n" +
+                "        name = 'Integration Task'\n" +
+                "        maxScore = 10\n" +
+                "        softDeadline = '2020-01-01'\n" + 
+                "        hardDeadline = '2040-01-01'\n" + 
+                "    }\n" +
+                "}\n" +
+                "groups {\n" +
+                "    group(888) {\n" +
+                "        student('test_deadlines') {\n" +
+                "            name = 'Deadline Student'\n" +
+                "            repoURL = 'dummy_url'\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n" +
+                "assignments {\n" +
+                "    assign '1_2' to 888\n" +
+                "}";
+
+        Path configPath = Path.of("deadline_config_2.groovy");
+        Files.writeString(configPath, dummyConfig);
+
+        Config config = new Config();
+        config.include("deadline_config_2.groovy");
+
+        Checker checker = new Checker(config);
+        assertDoesNotThrow(() -> checker.check());
+
+        Files.deleteIfExists(configPath);
+    }
+
+    @Test
+    void testCheckerNoAssignedTasks() throws Exception {
+        File baseDir = new File("student_repositories");
+        baseDir.mkdirs();
+        
+        File dummyRepo = new File(baseDir, "test_no_tasks");
+        dummyRepo.mkdirs();
+
+        String dummyConfig = "tasks {\n" +
+                "    task('1_3') {\n" +
+                "        name = 'Integration Task'\n" +
+                "        maxScore = 10\n" +
+                "    }\n" +
+                "}\n" +
+                "groups {\n" +
+                "    group(777) {\n" +
+                "        student('test_no_tasks') {\n" +
+                "            name = 'Student'\n" +
+                "            repoURL = 'dummy_url'\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n" +
+                "assignments {\n" +
+                "}\n"; 
+
+        Path configPath = Path.of("no_tasks_config.groovy");
+        Files.writeString(configPath, dummyConfig);
+
+        Config config = new Config();
+        config.include("no_tasks_config.groovy");
+
+        Checker checker = new Checker(config);
+        assertDoesNotThrow(() -> checker.check());
+
+        Files.deleteIfExists(configPath);
+    }
+
+    @Test
+    void testCheckerTaskNotAssignedToGroup() throws Exception {
+        File baseDir = new File("student_repositories");
+        baseDir.mkdirs();
+        
+        File dummyRepo = new File(baseDir, "test_wrong_group");
+        dummyRepo.mkdirs();
+
+        String dummyConfig = "tasks {\n" +
+                "    task('1_4') {\n" +
+                "        name = 'Integration Task'\n" +
+                "        maxScore = 10\n" +
+                "    }\n" +
+                "    task('1_5') {\n" +
+                "        name = 'Other Task'\n" +
+                "        maxScore = 10\n" +
+                "    }\n" +
+                "}\n" +
+                "groups {\n" +
+                "    group(666) {\n" +
+                "        student('test_wrong_group') {\n" +
+                "            name = 'Student'\n" +
+                "            repoURL = 'dummy_url'\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n" +
+                "assignments {\n" +
+                "    assign '1_5' to 666\n" + 
+                "}\n"; 
+
+        Path configPath = Path.of("wrong_group_config.groovy");
+        Files.writeString(configPath, dummyConfig);
+
+        Config config = new Config();
+        config.include("wrong_group_config.groovy");
+
+        Checker checker = new Checker(config);
+        assertDoesNotThrow(() -> checker.check());
+
+        Files.deleteIfExists(configPath);
+    }
+
+    @Test
+    void testBuildServiceWithGradleMock() throws Exception {
+        File testDir = new File("test_build_dir");
+        testDir.mkdirs();
+        
+        File gradlew = new File(testDir, "gradlew");
+        Files.writeString(gradlew.toPath(), "#!/bin/sh\nexit 0\n");
+        gradlew.setExecutable(true);
+
+        File gradlewBat = new File(testDir, "gradlew.bat");
+        Files.writeString(gradlewBat.toPath(), "@echo off\nexit /b 0\n");
+        gradlewBat.setExecutable(true);
+        
+        BuildService buildService = new BuildService(testDir);
+        assertTrue(buildService.build("test", "1_1"));
+        
+        gradlew.delete();
+        gradlewBat.delete();
+        testDir.delete();
+    }
+    
+    @Test
+    void testBuildServiceWithJavacMock() throws Exception {
+        File testDir = new File("test_javac_dir");
+        testDir.mkdirs();
+        
+        File srcDir = new File(testDir, "src/main/java/test");
+        srcDir.mkdirs();
+        File javaFile = new File(srcDir, "HelloWorld.java");
+        Files.writeString(javaFile.toPath(), "package test; public class HelloWorld { public static void main(String[] args) {} }");
+        
+        BuildService buildService = new BuildService(testDir);
+        assertTrue(buildService.build("test", "1_1"));
+        
+        javaFile.delete();
+        srcDir.delete();
+        new File(testDir, "src/main/java").delete();
+        new File(testDir, "src/main").delete();
+        new File(testDir, "src").delete();
+        testDir.delete();
+    }
+
     private void deleteDirectory(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
         if (allContents != null) {
