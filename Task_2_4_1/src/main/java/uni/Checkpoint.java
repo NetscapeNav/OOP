@@ -1,19 +1,16 @@
 package uni;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Checkpoint {
-    private final int id;
     private final String name;
-    private final Date date;
+    private final LocalDate date;
 
-    public Checkpoint(int id, String name, Date date) {
-        this.id = id;
+    public Checkpoint(String name, String date) {
         this.name = name;
-        this.date = date;
+        this.date = LocalDate.parse(date);
     }
 
-    public int getId() { return id; }
     public String getName() { return name; }
-    public Date getDate() { return date; }
+    public LocalDate getDate() { return date; }
 }

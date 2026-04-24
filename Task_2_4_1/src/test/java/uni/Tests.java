@@ -1,8 +1,10 @@
 package uni;
 
 import check.Checker;
+import check.HTMLReporter;
 import check.Logger;
 import checkservices.BuildService;
+import checkservices.DocGenerator;
 import checkservices.GitService;
 import checkservices.StyleChecker;
 import checkservices.TestReportParser;
@@ -11,12 +13,11 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ApplicationTests {
+class Tests {
     @Test
     void testTaskGettersAndSetters() {
         Task task = new Task();
@@ -69,12 +70,9 @@ class ApplicationTests {
 
     @Test
     void testCheckpointGetters() {
-        Date date = new Date();
-        Checkpoint checkpoint = new Checkpoint(1, "КР1", date);
-
-        assertEquals(1, checkpoint.getId());
+        Checkpoint checkpoint = new Checkpoint("КР1", "2026-04-01");
         assertEquals("КР1", checkpoint.getName());
-        assertEquals(date, checkpoint.getDate());
+        assertEquals(java.time.LocalDate.parse("2026-04-01"), checkpoint.getDate());
     }
 
     @Test
@@ -128,6 +126,13 @@ class ApplicationTests {
         assertEquals(1, config.getConversions().size());
         assertEquals(50, config.getConversions().get(0).getScore());
         assertEquals(4, config.getConversions().get(0).getMark());
+        
+        assertEquals(30, config.getTimeout());
+        assertEquals("GOOGLE", config.getStyleGuide());
+        
+        assertEquals(1, config.getCheckpoints().size());
+        assertEquals("КР1", config.getCheckpoints().get(0).getName());
+        assertEquals(java.time.LocalDate.parse("2026-04-01"), config.getCheckpoints().get(0).getDate());
 
         Files.delete(configPath);
     }
@@ -167,11 +172,17 @@ class ApplicationTests {
         config.include("integration_config.groovy");
 
         Checker checker = new Checker(config);
-
-        assertDoesNotThrow(() -> checker.check());
+        checker.check();
 
         File report = new File("report.html");
         assertTrue(report.exists(), "HTML отчет должен быть создан");
+        
+        List<HTMLReporter.Record> records = checker.getReporter().getRecords();
+        assertEquals(1, records.size(), "Должна быть одна запись в отчете");
+        assertEquals("999", records.get(0).groupName);
+        assertEquals("test_student_integration", records.get(0).studentName);
+        assertTrue(records.get(0).isCompiled, "Код должен быть скомпилирован");
+        assertTrue(records.get(0).docGenerated, "Документация должна быть сгенерирована javadoc'ом");
 
         Files.deleteIfExists(configPath);
     }
@@ -200,12 +211,15 @@ class ApplicationTests {
         assertEquals(newDir, gitService.getDir());
         
         StyleChecker styleChecker = new StyleChecker(invalidDir);
-        assertEquals(0, styleChecker.revise("test", "1_1"));
+        assertEquals(0, styleChecker.revise("test", "1_1", 10));
         
         TestReportParser parser = new TestReportParser(invalidDir);
-        int[] result = parser.run("test", "1_1");
+        int[] result = parser.run("test", "1_1", 10);
         assertEquals(0, result[0]);
         assertEquals(0, result[1]);
+        
+        DocGenerator docGen = new DocGenerator(invalidDir);
+        assertFalse(docGen.generate("test", "1_1", 10));
     }
     
     @Test
@@ -225,7 +239,7 @@ class ApplicationTests {
         emptyDir.mkdir();
         
         TestReportParser parser = new TestReportParser(emptyDir);
-        int[] result = parser.run("test", "1_1");
+        int[] result = parser.run("test", "1_1", 10);
         assertEquals(0, result[0]);
         assertEquals(0, result[1]);
         
@@ -255,7 +269,7 @@ class ApplicationTests {
         gradlewBat.setExecutable(true);
         
         TestReportParser parser = new TestReportParser(testDir);
-        int[] result = parser.run("test", "1_1");
+        int[] result = parser.run("test", "1_1", 10);
 
         assertEquals(3, result[0]);
         assertEquals(5, result[1]);
@@ -327,9 +341,20 @@ class ApplicationTests {
         config.include("deadline_config.groovy");
 
         Checker checker = new Checker(config);
-        assertDoesNotThrow(() -> checker.check());
+        
+        File libDir = new File("lib");
+        libDir.mkdirs();
+        File mockCheckstyle = new File(libDir, "checkstyle-all.jar");
+        mockCheckstyle.createNewFile();
+        
+        checker.check();
+
+        List<HTMLReporter.Record> records = checker.getReporter().getRecords();
+        assertEquals(1, records.size());
+        assertEquals(0, records.get(0).finalScore);
 
         Files.deleteIfExists(configPath);
+        mockCheckstyle.delete();
     }
     
     @Test
@@ -369,8 +394,11 @@ class ApplicationTests {
         config.include("deadline_config_2.groovy");
 
         Checker checker = new Checker(config);
-        assertDoesNotThrow(() -> checker.check());
+        checker.check();
 
+        List<HTMLReporter.Record> records = checker.getReporter().getRecords();
+        assertEquals(1, records.size());
+        
         Files.deleteIfExists(configPath);
     }
 
@@ -406,7 +434,10 @@ class ApplicationTests {
         config.include("no_tasks_config.groovy");
 
         Checker checker = new Checker(config);
-        assertDoesNotThrow(() -> checker.check());
+        checker.check();
+        
+        List<HTMLReporter.Record> records = checker.getReporter().getRecords();
+        assertEquals(0, records.size(), "Студенту не назначены задачи, отчет должен быть пустым");
 
         Files.deleteIfExists(configPath);
     }
@@ -448,11 +479,61 @@ class ApplicationTests {
         config.include("wrong_group_config.groovy");
 
         Checker checker = new Checker(config);
-        assertDoesNotThrow(() -> checker.check());
+        checker.check();
+
+        List<HTMLReporter.Record> records = checker.getReporter().getRecords();
+        assertTrue(records.stream().noneMatch(r -> r.taskId.equals("1_4")), "Задача 1_4 не должна быть в отчете, так как назначена только 1_5");
 
         Files.deleteIfExists(configPath);
     }
 
+    @Test
+    void testCheckerCheckpoints() throws Exception {
+        File dummyRepo = new File("student_repositories/test_checkpoints/Task_2_1");
+        dummyRepo.mkdirs();
+
+        File srcDir = new File(dummyRepo, "src/main/java/test");
+        srcDir.mkdirs();
+        File javaFile = new File(srcDir, "HelloWorld.java");
+        Files.writeString(javaFile.toPath(), "package test; public class HelloWorld { public static void main(String[] args) {} }");
+
+        String dummyConfig = "tasks {\n" +
+                "    task('2_1') {\n" +
+                "        name = 'Integration Task'\n" +
+                "        maxScore = 15\n" +
+                "    }\n" +
+                "}\n" +
+                "groups {\n" +
+                "    group(111) {\n" +
+                "        student('test_checkpoints') {\n" +
+                "            name = 'Checkpoint Student'\n" +
+                "            repoURL = 'dummy_url'\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n" +
+                "assignments {\n" +
+                "    assign '2_1' to 111\n" +
+                "}\n" +
+                "checkpoints {\n" +
+                "    point 'КР1', '2050-01-01'\n" + 
+                "    point 'Прошедшая', '2000-01-01'\n" +
+                "}\n";
+
+        Path configPath = Path.of("checkpoint_config.groovy");
+        Files.writeString(configPath, dummyConfig);
+
+        Config config = new Config();
+        config.include("checkpoint_config.groovy");
+
+        Checker checker = new Checker(config);
+        checker.check();
+
+        List<HTMLReporter.Record> records = checker.getReporter().getRecords();
+        assertEquals(1, records.size());
+        
+        Files.deleteIfExists(configPath);
+    }
+    
     @Test
     void testBuildServiceWithGradleMock() throws Exception {
         File testDir = new File("test_build_dir");

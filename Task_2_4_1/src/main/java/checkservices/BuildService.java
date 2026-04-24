@@ -5,6 +5,7 @@ import check.Logger;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class BuildService {
     private File dir;
@@ -14,10 +15,14 @@ public class BuildService {
     }
 
     public boolean build(String studentNick, String taskId) {
-        return compileStudentCode(studentNick, taskId);
+        return build(studentNick, taskId, 60);
     }
 
-    private boolean compileStudentCode(String studentNick, String taskId) {
+    public boolean build(String studentNick, String taskId, int timeout) {
+        return compileStudentCode(studentNick, taskId, timeout);
+    }
+
+    private boolean compileStudentCode(String studentNick, String taskId, int timeout) {
         if (!dir.exists()) {
             Logger.info("[" + studentNick + " | Task_" + taskId + "] Папка " + dir.getName() + " не найдена!");
             return false;
@@ -28,7 +33,7 @@ public class BuildService {
 
         if (!gradleBat.exists() && !gradleSh.exists()) {
             Logger.info("[" + studentNick + " | Task_" + taskId + "] В папке " + dir.getName() + " нет Gradle Wrapper. Пытаемся собрать с помощью javac...");
-            return compileWithJavac(studentNick, taskId);
+            return compileWithJavac(studentNick, taskId, timeout);
         }
 
         try {
@@ -50,7 +55,15 @@ public class BuildService {
             pb.directory(dir);
             
             Process process = pb.start();
-            int code = process.waitFor();
+            boolean finished = process.waitFor(timeout, TimeUnit.SECONDS);
+
+            if (!finished) {
+                process.destroyForcibly();
+                Logger.info("[" + studentNick + " | Task_" + taskId + "] Таймаут сборки Gradle (" + timeout + " сек)");
+                return false;
+            }
+
+            int code = process.exitValue();
 
             if (code == 0) {
                 Logger.info("[" + studentNick + " | Task_" + taskId + "] Gradle успешно скомпилировал проект!");
@@ -66,7 +79,7 @@ public class BuildService {
         }
     }
 
-    private boolean compileWithJavac(String studentNick, String taskId) {
+    private boolean compileWithJavac(String studentNick, String taskId, int timeout) {
         List<String> javaFiles = findJavaFiles(dir);
         if (javaFiles.isEmpty()) return false;
 
@@ -83,7 +96,15 @@ public class BuildService {
             pb.redirectErrorStream(true);
 
             Process process = pb.start();
-            int code = process.waitFor();
+            boolean finished = process.waitFor(timeout, TimeUnit.SECONDS);
+
+            if (!finished) {
+                process.destroyForcibly();
+                Logger.info("[" + studentNick + " | Task_" + taskId + "] Таймаут компиляции javac (" + timeout + " сек)");
+                return false;
+            }
+
+            int code = process.exitValue();
 
             if (code == 0) {
                 Logger.info("[" + studentNick + " | Task_" + taskId + "] Успешно скомпилировано с помощью javac.");

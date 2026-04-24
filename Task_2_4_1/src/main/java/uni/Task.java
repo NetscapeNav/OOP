@@ -5,8 +5,6 @@ import java.util.Date;
 public class Task {
     private String id;
     private String name;
-    //private Date softDeadline;
-    //private Date hardDeadline;
     private String softDeadline;
     private String hardDeadline;
 

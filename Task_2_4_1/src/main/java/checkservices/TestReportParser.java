@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class TestReportParser {
     private File dir;
@@ -17,7 +18,7 @@ public class TestReportParser {
         this.dir = dir;
     }
 
-    public int[] run(String studentNick, String taskId) {
+    public int[] run(String studentNick, String taskId, int timeout) {
         int totalTests = 0;
         int failedTests = 0;
 
@@ -44,7 +45,14 @@ public class TestReportParser {
 
             ProcessBuilder pb = new ProcessBuilder(command);
             pb.directory(dir);
-            pb.start().waitFor();
+            Process process = pb.start();
+            boolean finished = process.waitFor(timeout, TimeUnit.SECONDS);
+
+            if (!finished) {
+                process.destroyForcibly();
+                Logger.info("[" + studentNick + " | Task_" + taskId + "] Таймаут выполнения тестов (" + timeout + " сек)");
+                return new int[]{0, 0};
+            }
 
             File gradleReports = new File(dir, "build/test-results/test");
             File mavenReports = new File(dir, "target/surefire-reports");

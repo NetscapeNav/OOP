@@ -1,10 +1,8 @@
 package uni;
 
+import check.Logger;
 import groovy.lang.Closure;
-import groovy.lang.GroovyShell;
-import groovy.lang.Script;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +12,11 @@ public class Config {
     private List<Group> groups = new ArrayList<>();
     private List<Task> tasks = new ArrayList<>();
     private List<Convertion> conversions = new ArrayList<>();
+    private List<Checkpoint> checkpoints = new ArrayList<>();
     private Map<Integer, List<String>> groupAssignments = new HashMap<>();
+
+    private int timeout = 60;
+    private String styleGuide = "GOOGLE";
 
     public Config() {
     }
@@ -30,7 +32,7 @@ public class Config {
             script.setDelegate(this);
             script.run();
         } catch (Exception e) {
-            System.out.println("Ошибка при импорте файла: " + fileName);
+            Logger.info("Ошибка при импорте файла: " + fileName);
             e.printStackTrace();
         }
     }
@@ -86,7 +88,7 @@ public class Config {
         }
 
         public void to(int targetGroup) {
-            System.out.println("-> Назначение: задача " + taskId + " для группы " + targetGroup);
+            Logger.info("-> Назначение: задача " + taskId + " для группы " + targetGroup);
             groupAssignments.putIfAbsent(targetGroup, new ArrayList<>());
             groupAssignments.get(targetGroup).add(taskId);
         }
@@ -103,7 +105,8 @@ public class Config {
     }
 
     public void point(String name, String date) {
-        System.out.println("-> Добавлена контрольная точка: " + name + " (дата: " + date + ")");
+        checkpoints.add(new Checkpoint(name, date));
+        Logger.info("-> Добавлена контрольная точка: " + name + " (дата: " + date + ")");
     }
 
     public void settings(Closure cl) {
@@ -113,11 +116,13 @@ public class Config {
     }
 
     public void setTimeout(int timeout) {
-        System.out.println("-> Установлен таймаут: " + timeout);
+        this.timeout = timeout;
+        Logger.info("-> Установлен таймаут: " + timeout);
     }
 
     public void setStyleGuide(String styleGuide) {
-        System.out.println("-> Установлен стиль: " + styleGuide);
+        this.styleGuide = styleGuide;
+        Logger.info("-> Установлен стиль: " + styleGuide);
     }
     
     public void convertion(int score, int mark) {
@@ -134,5 +139,17 @@ public class Config {
     
     public List<Convertion> getConversions() {
         return conversions;
+    }
+    
+    public List<Checkpoint> getCheckpoints() {
+        return checkpoints;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public String getStyleGuide() {
+        return styleGuide;
     }
 }
