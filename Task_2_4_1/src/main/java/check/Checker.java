@@ -10,12 +10,15 @@ import checkservices.GitService;
 import checkservices.StyleChecker;
 import checkservices.TestReportParser;
 import uni.Config;
+import uni.Group;
+import uni.Student;
+import uni.Task;
 
 public class Checker {
     private final Config config;
     private final HTMLReporter reporter;
 
-    public Checker (Config config) {
+    public Checker(Config config) {
         this.config = config;
         this.reporter = new HTMLReporter();
     }
@@ -30,129 +33,155 @@ public class Checker {
 
         int globalTimeout = config.getTimeout();
 
-        config.getGroups().parallelStream().forEach(group -> {
-            group.getStudents().parallelStream().forEach(student -> {
-                String repository = student.getRepoURL();
-                String nick = student.getGithubNick();
+        config.getGroups().parallelStream().forEach(group ->
+                processGroup(group, baseDir, globalTimeout)
+        );
 
-                if (repository == null || repository.isEmpty()) {
-                    Logger.info("[" + nick + "] У студента нет ссылки на репозиторий!");
-                    return; 
-                }
+        reporter.generateHTMLReport(config.getConversions(), config.getCheckpoints());
+    }
 
-                File studentDIR = new File(baseDir, nick);
-                GitService gitService = new GitService(studentDIR);
+    private void processGroup(Group group, File baseDir, int globalTimeout) {
+        List<String> assignedTaskIds = config.getAssignedTasksForGroup(group.getNumber());
 
-                if (studentDIR.exists()) {
-                    Logger.info("[" + nick + "] Репозиторий уже скачан. Обновляем изменения (git pull)...");
-                    gitService.gitPull(nick); 
-                } else {
-                    Logger.info("[" + nick + "] Клонируем репозиторий для студента " + nick);
-                    gitService.gitClone(repository, nick); 
-                }
+        if (assignedTaskIds == null || assignedTaskIds.isEmpty()) {
+            Logger.info("[" + group.getNumber() + "] Для группы нет назначенных задач.");
+            return;
+        }
 
-                Logger.info("[" + nick + "] Ищем Java-файлы для компиляции...");
-                
-                List<String> assignedTaskIds = config.getAssignedTasksForGroup(group.getNumber());
-                
-                if (assignedTaskIds == null || assignedTaskIds.isEmpty()) {
-                    Logger.info("[" + nick + "] Для группы " + group.getNumber() + " нет назначенных задач.");
-                    return;
-                }
+        group.getStudents().parallelStream().forEach(student ->
+                processStudent(student, group, baseDir, globalTimeout, assignedTaskIds)
+        );
+    }
 
-                config.getTasks().parallelStream().forEach(task -> {
-                    String taskID = task.getId();
-                    
-                    if (!assignedTaskIds.contains(taskID)) {
-                        return;
-                    }
+    private void processStudent(Student student, Group group, File baseDir,
+                                int globalTimeout, List<String> assignedTaskIds) {
+        String repository = student.getRepoURL();
+        String nick = student.getGithubNick();
 
-                    Logger.info("\n[" + nick + " | Task_" + taskID + "] Ищем и проверяем задачу Task_" + taskID + "...");
-                    File taskDir = new File(studentDIR, "Task_" + taskID);
+        if (repository == null || repository.isEmpty()) {
+            Logger.info("[" + nick + "] У студента нет ссылки на репозиторий!");
+            return;
+        }
 
-                    BuildService buildService = new BuildService(taskDir); 
-                    StyleChecker styleChecker = new StyleChecker(taskDir); 
-                    DocGenerator docGenerator = new DocGenerator(taskDir);
-                    TestReportParser testReportParser = new TestReportParser(taskDir);
+        File studentDIR = new File(baseDir, nick);
+        updateOrCloneRepository(studentDIR, repository, nick);
 
-                    boolean compiled = buildService.build(nick, taskID, globalTimeout);
-                    boolean stylePassed = false;
-                    boolean docGenerated = false;
+        Logger.info("[" + nick + "] Ищем Java-файлы для компиляции...");
 
-                    int passed = 0;
-                    int total = 0;
-                    int finalScore = 0;
-                    LocalDate submissionDate = LocalDate.now();
+        config.getTasks().parallelStream()
+                .filter(task -> assignedTaskIds.contains(task.getId()))
+                .forEach(task -> processTask(task, student, group, studentDIR, globalTimeout));
+    }
 
-                    if (compiled) {
-                        stylePassed = (styleChecker.revise(nick, taskID, globalTimeout) == 1);
-                        if (stylePassed) {
-                            Logger.info("[" + nick + " | Task_" + taskID + "] -> Стиль Task_" + taskID + " проверен (1 балл).");
-                        } else {
-                            Logger.info("[" + nick + " | Task_" + taskID + "] -> Стиль Task_" + taskID + " провалился (0 баллов).");
-                        }
+    private void updateOrCloneRepository(File studentDIR, String repository, String nick) {
+        GitService gitService = new GitService(studentDIR);
+        if (studentDIR.exists()) {
+            Logger.info("[" + nick + "] Репозиторий уже скачан. Обновляем изменения (git pull)...");
+            gitService.gitPull(nick);
+        } else {
+            Logger.info("[" + nick + "] Клонируем репозиторий для студента " + nick);
+            gitService.gitClone(repository, nick);
+        }
+    }
 
-                        docGenerated = docGenerator.generate(nick, taskID, globalTimeout);
+    private void processTask(Task task, Student student, Group group, File studentDIR, int globalTimeout) {
+        String taskID = task.getId();
+        String nick = student.getGithubNick();
+        File taskDir = new File(studentDIR, "Task_" + taskID);
 
-                        if (docGenerated) {
-                            int[] testResults = testReportParser.run(nick, taskID, globalTimeout);
-                            passed = testResults[0];
-                            total = testResults[1];
+        Logger.info("\n[" + nick + " | Task_" + taskID + "] Ищем и проверяем задачу Task_" + taskID + "...");
 
-                            if (total > 0) {
-                                double baseScore = task.getMaxScore() * ((double) passed / total);
+        BuildService buildService = new BuildService(taskDir);
+        boolean compiled = buildService.build(nick, taskID, globalTimeout);
+        LocalDate date = LocalDate.now();
 
-                                submissionDate = gitService.getLastCommitDate(taskDir, nick, taskID);
+        if (!compiled) {
+            recordResult(group, nick, taskID, false, false, false, 0, 0, 0, date);
+            return;
+        }
 
-                                String soft = task.getSoftDeadline();
-                                String hard = task.getHardDeadline();
+        checkStyleAndDocs(task, student, group, taskDir, globalTimeout);
+    }
 
-                                if (hard != null && !hard.isEmpty() && submissionDate.isAfter(LocalDate.parse(hard))) {
-                                    finalScore = 0;
-                                    Logger.info("[" + nick + " | Task_" + taskID + "] -> Жесткий дедлайн (" + hard + ") пропущен! Итог: 0 баллов.");
-                                } else if (soft != null && !soft.isEmpty() && submissionDate.isAfter(LocalDate.parse(soft))) {
-                                    finalScore = (int) Math.round(baseScore * 0.5);
-                                    Logger.info("[" + nick + " | Task_" + taskID + "] -> Мягкий дедлайн (" + soft + ") пропущен! Штраф 50%. Итог: " + finalScore);
-                                } else {
-                                    finalScore = (int) Math.round(baseScore);
-                                    Logger.info("[" + nick + " | Task_" + taskID + "] -> Сдано вовремя! (" + submissionDate + "). Штрафов нет.");
-                                }
-                            }
-                        } else {
-                            Logger.info("[" + nick + " | Task_" + taskID + "] -> Документация не генерируется. Итог: 0 баллов.");
-                        }
+    private void checkStyleAndDocs(Task task, Student student, Group group, File taskDir, int globalTimeout) {
+        String taskID = task.getId();
+        String nick = student.getGithubNick();
 
-                        reporter.addRecord(
-                                String.valueOf(group.getNumber()),
-                                student.getGithubNick(),
-                                taskID,
-                                compiled,
-                                stylePassed,
-                                docGenerated,
-                                passed,
-                                total,
-                                finalScore,
-                                submissionDate
-                        );
-                    } else {
-                        reporter.addRecord(
-                                String.valueOf(group.getNumber()),
-                                student.getGithubNick(),
-                                taskID,
-                                false,
-                                false,
-                                false,
-                                0,
-                                0,
-                                0,
-                                submissionDate
-                        );
-                    }
-                });
-            });
-        });
-        
-        reporter.generateHTMLReport(config.getConversions(), config.getCheckpoints()); 
+        StyleChecker styleChecker = new StyleChecker(taskDir);
+        boolean stylePassed = (styleChecker.revise(nick, taskID, globalTimeout) == 1);
+        logStyleResult(nick, taskID, stylePassed);
+
+        DocGenerator docGenerator = new DocGenerator(taskDir);
+        boolean docGenerated = docGenerator.generate(nick, taskID, globalTimeout);
+        LocalDate date = LocalDate.now();
+
+        if (!docGenerated) {
+            Logger.info("[" + nick + " | Task_" + taskID + "] -> Документация не генерируется. Итог: 0 баллов.");
+            recordResult(group, nick, taskID, true, stylePassed, false, 0, 0, 0, date);
+            return;
+        }
+
+        processTestsAndScore(task, student, group, taskDir, globalTimeout, stylePassed);
+    }
+
+    private void processTestsAndScore(Task task, Student student, Group group, File taskDir,
+                                      int timeout, boolean stylePassed) {
+        String taskID = task.getId();
+        String nick = student.getGithubNick();
+
+        TestReportParser testReportParser = new TestReportParser(taskDir);
+        int[] testResults = testReportParser.run(nick, taskID, timeout);
+        int passed = testResults[0];
+        int total = testResults[1];
+        int finalScore = 0;
+        LocalDate submissionDate = LocalDate.now();
+
+        if (total > 0) {
+            GitService gitService = new GitService(taskDir);
+            submissionDate = gitService.getLastCommitDate(taskDir, nick, taskID);
+            finalScore = calculateScore(task, nick, taskID, passed, total, submissionDate);
+        }
+
+        recordResult(group, nick, taskID, true, stylePassed, true, passed, total, finalScore, submissionDate);
+    }
+
+    private int calculateScore(Task task, String nick, String taskID, int passed, int total, LocalDate date) {
+        double baseScore = task.getMaxScore() * ((double) passed / total);
+        String soft = task.getSoftDeadline();
+        String hard = task.getHardDeadline();
+
+        if (hard != null && !hard.isEmpty() && date.isAfter(LocalDate.parse(hard))) {
+            Logger.info("[" + nick + " | Task_" + taskID + "] -> Жесткий дедлайн (" + hard
+                    + ") пропущен! Итог: 0 баллов.");
+            return 0;
+        }
+
+        if (soft != null && !soft.isEmpty() && date.isAfter(LocalDate.parse(soft))) {
+            int score = (int) Math.round(baseScore * 0.5);
+            Logger.info("[" + nick + " | Task_" + taskID + "] -> Мягкий дедлайн (" + soft
+                    + ") пропущен! Штраф 50%. Итог: " + score);
+            return score;
+        }
+
+        int score = (int) Math.round(baseScore);
+        Logger.info("[" + nick + " | Task_" + taskID + "] -> Сдано вовремя! (" + date + "). Штрафов нет.");
+        return score;
+    }
+
+    private void logStyleResult(String nick, String taskID, boolean stylePassed) {
+        if (stylePassed) {
+            Logger.info("[" + nick + " | Task_" + taskID + "] -> Стиль Task_" + taskID + " проверен (1 балл).");
+        } else {
+            Logger.info("[" + nick + " | Task_" + taskID + "] -> Стиль Task_" + taskID + " провалился (0 баллов).");
+        }
+    }
+
+    private void recordResult(Group group, String nick, String taskID, boolean compiled, boolean stylePassed,
+                              boolean docGenerated, int passed, int total, int finalScore, LocalDate date) {
+        reporter.addRecord(
+                String.valueOf(group.getNumber()), nick, taskID, compiled,
+                stylePassed, docGenerated, passed, total, finalScore, date
+        );
     }
 
     public HTMLReporter getReporter() {
