@@ -576,6 +576,76 @@ class Tests {
         testDir.delete();
     }
 
+    @Test
+    void testDocGeneratorWithGradleMockSuccess() throws Exception {
+        File testDir = new File("test_doc_gradle_dir");
+        testDir.mkdirs();
+
+        File gradlew = new File(testDir, "gradlew");
+        Files.writeString(gradlew.toPath(), "#!/bin/sh\nexit 0\n");
+        gradlew.setExecutable(true);
+
+        File gradlewBat = new File(testDir, "gradlew.bat");
+        Files.writeString(gradlewBat.toPath(), "@echo off\nexit /b 0\n");
+        gradlewBat.setExecutable(true);
+
+        DocGenerator docGen = new DocGenerator(testDir);
+        assertTrue(docGen.generate("test", "1_1", 10), "Документация должна сгенерироваться через Gradle mock");
+
+        deleteDirectory(testDir);
+    }
+
+    @Test
+    void testDocGeneratorWithGradleMockFailure() throws Exception {
+        File testDir = new File("test_doc_gradle_fail_dir");
+        testDir.mkdirs();
+
+        File gradlew = new File(testDir, "gradlew");
+        Files.writeString(gradlew.toPath(), "#!/bin/sh\nexit 1\n");
+        gradlew.setExecutable(true);
+
+        File gradlewBat = new File(testDir, "gradlew.bat");
+        Files.writeString(gradlewBat.toPath(), "@echo off\nexit /b 1\n");
+        gradlewBat.setExecutable(true);
+
+        DocGenerator docGen = new DocGenerator(testDir);
+        assertFalse(docGen.generate("test", "1_1", 10), "Должен вернуть false при ошибке работы Gradle");
+
+        deleteDirectory(testDir);
+    }
+
+    @Test
+    void testDocGeneratorNoJavaFiles() throws Exception {
+        File testDir = new File("test_doc_no_java_dir");
+        testDir.mkdirs();
+
+        DocGenerator docGen = new DocGenerator(testDir);
+        assertFalse(docGen.generate("test", "1_1", 10), "Должен вернуть false, так как нет Java-файлов");
+
+        deleteDirectory(testDir);
+    }
+
+    @Test
+    void testDocGeneratorWithJavadocSuccess() throws Exception {
+        File testDir = new File("test_javadoc_dir");
+        testDir.mkdirs();
+
+        File srcDir = new File(testDir, "src/main/java/test");
+        srcDir.mkdirs();
+        File javaFile = new File(srcDir, "HelloWorld.java");
+        Files.writeString(javaFile.toPath(),
+                "package test;\n" +
+                        "/**\n * Test class\n */\n" +
+                        "public class HelloWorld {\n" +
+                        "    public static void main(String[] args) {}\n" +
+                        "}");
+
+        DocGenerator docGen = new DocGenerator(testDir);
+        assertTrue(docGen.generate("test", "1_1", 10), "Документация должна успешно сгенерироваться через стандартный javadoc");
+
+        deleteDirectory(testDir);
+    }
+
     private void deleteDirectory(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
         if (allContents != null) {
