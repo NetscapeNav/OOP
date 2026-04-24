@@ -646,6 +646,102 @@ class Tests {
         deleteDirectory(testDir);
     }
 
+    @Test
+    void testTestReportParserNoBuildSystem() {
+        File dir = new File("test_no_build_system");
+        dir.mkdirs();
+
+        TestReportParser parser = new TestReportParser(dir);
+        int[] res = parser.run("test", "1_1", 10);
+
+        assertEquals(0, res[0], "Должен вернуть 0 пройденных тестов, если нет системы сборки");
+        assertEquals(0, res[1], "Должен вернуть 0 всего тестов, если нет системы сборки");
+
+        deleteDirectory(dir);
+    }
+
+    @Test
+    void testBuildServiceGradleFail() throws Exception {
+        File dir = new File("test_build_gradle_fail");
+        dir.mkdirs();
+
+        File gradlew = new File(dir, "gradlew");
+        Files.writeString(gradlew.toPath(), "#!/bin/sh\nexit 1\n");
+        gradlew.setExecutable(true);
+
+        File gradlewBat = new File(dir, "gradlew.bat");
+        Files.writeString(gradlewBat.toPath(), "@echo off\nexit /b 1\n");
+        gradlewBat.setExecutable(true);
+
+        BuildService bs = new BuildService(dir);
+        assertFalse(bs.build("test", "1_1", 10), "Должен вернуть false при ошибке сборки Gradle");
+
+        deleteDirectory(dir);
+    }
+
+    @Test
+    void testBuildServiceJavacFail() throws Exception {
+        File dir = new File("test_build_javac_fail");
+        dir.mkdirs();
+        File src = new File(dir, "src/main/java/test");
+        src.mkdirs();
+
+        File javaFile = new File(src, "Bad.java");
+        Files.writeString(javaFile.toPath(), "public class Bad { invalid syntax }");
+
+        BuildService bs = new BuildService(dir);
+        assertFalse(bs.build("test", "1_1", 10), "Должен вернуть false при ошибке компиляции javac");
+
+        deleteDirectory(dir);
+    }
+
+    @Test
+    void testCheckerVariousBranches() throws Exception {
+        File baseDir = new File("student_repositories");
+        baseDir.mkdirs();
+
+        File existingStudentDir = new File(baseDir, "existing_student");
+        existingStudentDir.mkdirs();
+
+        File taskDir = new File(existingStudentDir, "Task_1");
+        taskDir.mkdirs();
+
+        File gradlew = new File(taskDir, "gradlew");
+        Files.writeString(gradlew.toPath(), "#!/bin/sh\nif [ \"$1\" = \"javadoc\" ]; then exit 1; fi\nexit 0\n");
+        gradlew.setExecutable(true);
+
+        File gradlewBat = new File(taskDir, "gradlew.bat");
+        Files.writeString(gradlewBat.toPath(), "@echo off\nif \"%1\"==\"javadoc\" exit /b 1\nexit /b 0\n");
+        gradlewBat.setExecutable(true);
+
+        String configContent = "tasks {\n" +
+                "    task('1') { maxScore = 10 }\n" +
+                "}\n" +
+                "groups {\n" +
+                "    group(1) {\n" +
+                "        student('existing_student') { repoURL = 'http://git' }\n" +
+                "        student('empty_repo_student') { repoURL = '' }\n" +
+                "        student('null_repo_student') { }\n" +
+                "    }\n" +
+                "}\n" +
+                "assignments {\n" +
+                "    assign '1' to 1\n" +
+                "}\n";
+
+        Path configPath = Path.of("checker_coverage_config.groovy");
+        Files.writeString(configPath, configContent);
+
+        Config config = new Config();
+        config.include("checker_coverage_config.groovy");
+
+        Checker checker = new Checker(config);
+
+        checker.check();
+
+        Files.deleteIfExists(configPath);
+        deleteDirectory(existingStudentDir);
+    }
+
     private void deleteDirectory(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
         if (allContents != null) {
