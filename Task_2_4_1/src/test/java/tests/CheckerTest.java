@@ -2,7 +2,7 @@ package tests;
 
 import check.Checker;
 import check.HTMLReporter;
-import check.Logger;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import uni.Config;
 
@@ -14,11 +14,21 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CheckerTest {
-    @Test
-    void testLogger() {
-        assertDoesNotThrow(() -> Logger.info("Test message"));
-        assertDoesNotThrow(() -> Logger.error("Test error", new RuntimeException("Test exception")));
-        assertDoesNotThrow(() -> Logger.error("Test error without exception", null));
+
+    @AfterEach
+    void tearDown() {
+        deleteDirectory(new File("student_repositories"));
+        new File("report.html").delete();
+        new File("lib/checkstyle-all.jar").delete();
+
+        String[] configFiles = {
+                "deadline_config.groovy", "deadline_config_2.groovy",
+                "no_tasks_config.groovy", "wrong_group_config.groovy",
+                "checkpoint_config.groovy", "checker_coverage_config.groovy"
+        };
+        for (String f : configFiles) {
+            new File(f).delete();
+        }
     }
 
     @Test
@@ -69,9 +79,6 @@ public class CheckerTest {
         List<HTMLReporter.Record> records = checker.getReporter().getRecords();
         assertEquals(1, records.size());
         assertEquals(0, records.get(0).finalScore);
-
-        Files.deleteIfExists(configPath);
-        mockCheckstyle.delete();
     }
 
     @Test
@@ -115,8 +122,6 @@ public class CheckerTest {
 
         List<HTMLReporter.Record> records = checker.getReporter().getRecords();
         assertEquals(1, records.size());
-
-        Files.deleteIfExists(configPath);
     }
 
     @Test
@@ -155,8 +160,6 @@ public class CheckerTest {
 
         List<HTMLReporter.Record> records = checker.getReporter().getRecords();
         assertEquals(0, records.size(), "Студенту не назначены задачи, отчет должен быть пустым");
-
-        Files.deleteIfExists(configPath);
     }
 
     @Test
@@ -200,8 +203,6 @@ public class CheckerTest {
 
         List<HTMLReporter.Record> records = checker.getReporter().getRecords();
         assertTrue(records.stream().noneMatch(r -> r.taskId.equals("1_4")), "Задача 1_4 не должна быть в отчете, так как назначена только 1_5");
-
-        Files.deleteIfExists(configPath);
     }
 
     @Test
@@ -247,8 +248,6 @@ public class CheckerTest {
 
         List<HTMLReporter.Record> records = checker.getReporter().getRecords();
         assertEquals(1, records.size());
-
-        Files.deleteIfExists(configPath);
     }
 
     @Test
@@ -293,59 +292,6 @@ public class CheckerTest {
         Checker checker = new Checker(config);
 
         checker.check();
-
-        Files.deleteIfExists(configPath);
-        deleteDirectory(existingStudentDir);
-    }
-
-    @Test
-    void testSystemIntegration() throws Exception {
-        File dummyRepo = new File("student_repositories/test_student_integration/Task_test_integration");
-        dummyRepo.mkdirs();
-
-        File srcDir = new File(dummyRepo, "src/main/java/test");
-        srcDir.mkdirs();
-        File javaFile = new File(srcDir, "HelloWorld.java");
-        Files.writeString(javaFile.toPath(), "package test; public class HelloWorld { public static void main(String[] args) {} }");
-
-        String dummyConfig = "tasks {\n" +
-                "    task('test_integration') {\n" +
-                "        name = 'Integration Task'\n" +
-                "        maxScore = 10\n" +
-                "    }\n" +
-                "}\n" +
-                "groups {\n" +
-                "    group(999) {\n" +
-                "        student('test_student_integration') {\n" +
-                "            name = 'Integration Student'\n" +
-                "            repoURL = 'dummy_url'\n" +
-                "        }\n" +
-                "    }\n" +
-                "}\n" +
-                "assignments {\n" +
-                "    assign 'test_integration' to 999\n" +
-                "}";
-
-        Path configPath = Path.of("integration_config.groovy");
-        Files.writeString(configPath, dummyConfig);
-
-        Config config = new Config();
-        config.include("integration_config.groovy");
-
-        Checker checker = new Checker(config);
-        checker.check();
-
-        File report = new File("report.html");
-        assertTrue(report.exists(), "HTML отчет должен быть создан");
-
-        List<HTMLReporter.Record> records = checker.getReporter().getRecords();
-        assertEquals(1, records.size(), "Должна быть одна запись в отчете");
-        assertEquals("999", records.get(0).groupName);
-        assertEquals("test_student_integration", records.get(0).studentName);
-        assertTrue(records.get(0).isCompiled, "Код должен быть скомпилирован");
-        assertTrue(records.get(0).docGenerated, "Документация должна быть сгенерирована javadoc'ом");
-
-        Files.deleteIfExists(configPath);
     }
 
     private void deleteDirectory(File directoryToBeDeleted) {

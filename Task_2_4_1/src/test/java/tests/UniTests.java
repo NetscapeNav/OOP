@@ -2,6 +2,7 @@ package tests;
 
 import check.Checker;
 import check.HTMLReporter;
+import check.Logger;
 import checkservices.BuildService;
 import checkservices.TestReportParser;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UniTests {
+    @Test
+    void testLogger() {
+        assertDoesNotThrow(() -> Logger.info("Test message"));
+        assertDoesNotThrow(() -> Logger.error("Test error", new RuntimeException("Test exception")));
+        assertDoesNotThrow(() -> Logger.error("Test error without exception", null));
+    }
+
     @Test
     void testTaskGettersAndSetters() {
         Task task = new Task();
