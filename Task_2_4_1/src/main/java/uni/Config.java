@@ -15,7 +15,7 @@ public class Config {
     private List<Checkpoint> checkpoints = new ArrayList<>();
     private Map<Integer, List<String>> groupAssignments = new HashMap<>();
 
-    private int timeout = 60;
+    private int timeout = 100;
     private String styleGuide = "GOOGLE";
 
     public Config() {

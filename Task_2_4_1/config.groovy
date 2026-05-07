@@ -34,7 +34,7 @@ checkpoints {
 }
 
 settings {
-    timeout = 30
+    timeout = 100
     styleGuide = "GOOGLE"
     convertion 10, 3
     convertion 50, 4
