@@ -16,8 +16,7 @@ public class TestWorkerNode {
     @BeforeEach
     public void setUp() throws InterruptedException {
         workerThread = new Thread(() -> {
-            WorkerNode node = new WorkerNode();
-            node.startServer(TEST_PORT);
+            WorkerNode.main(new String[]{String.valueOf(TEST_PORT)});
         });
         workerThread.start();
 
@@ -89,5 +88,15 @@ public class TestWorkerNode {
         } catch (Exception e) {
             fail("Сетевая ошибка: " + e.getMessage());
         }
+    }
+    
+    @Test
+    public void testWorkerMainDefaultPort() throws InterruptedException {
+        Thread defaultWorker = new Thread(() -> {
+            WorkerNode.main(new String[]{});
+        });
+        defaultWorker.start();
+        Thread.sleep(500);
+        defaultWorker.interrupt();
     }
 }

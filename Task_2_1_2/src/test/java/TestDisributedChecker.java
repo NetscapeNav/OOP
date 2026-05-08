@@ -33,4 +33,11 @@ public class TestDisributedChecker {
         DistributedChecker checker = new DistributedChecker();
         Assertions.assertTrue(checker.hasComposite(largeMixed));
     }
+    
+    @Test
+    public void testEmptyAndNullArrays() {
+        DistributedChecker checker = new DistributedChecker();
+        Assertions.assertFalse(checker.hasComposite(new int[]{}));
+        Assertions.assertFalse(checker.hasComposite(null));
+    }
 }
