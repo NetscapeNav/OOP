@@ -7,10 +7,17 @@ import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DistributedChecker implements PrimeFinder {
-    private final String[] IPsockets = {"netscape-localhost", "netscape-localhost", "netscape-localhost"};
-    private final int[] port = {8080, 8081, 8082};
+    private final String[] IPsockets;
+    private final int[] port;
 
     public DistributedChecker() {
+        this.IPsockets = new String[]{"netscape-localhost", "netscape-localhost", "netscape-localhost"};
+        this.port = new int[]{8080, 8081, 8082};
+    }
+
+    public DistributedChecker(String[] ips, int[] ports) {
+        this.IPsockets = ips;
+        this.port = ports;
     }
 
     @Override
