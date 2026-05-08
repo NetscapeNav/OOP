@@ -63,4 +63,20 @@ public class TestDisributedChecker {
         Assertions.assertFalse(checker.hasComposite(new int[]{}));
         Assertions.assertFalse(checker.hasComposite(null));
     }
+
+    @Test
+    public void testFallbackMechanism() {
+        DistributedChecker failChecker = new DistributedChecker(
+                new String[]{"127.0.0.1", "127.0.0.1", "127.0.0.1"},
+                new int[]{9997, 9998, 9999}
+        );
+
+        Assertions.assertTrue(failChecker.hasComposite(not_primes));
+    }
+
+    @Test
+    public void testDefaultConstructor() {
+        DistributedChecker defaultChecker = new DistributedChecker();
+        Assertions.assertFalse(defaultChecker.hasComposite(primes));
+    }
 }
