@@ -40,31 +40,26 @@ public class TestDisributedChecker {
 
     @Test
     public void testPrimes() {
-        DistributedChecker checker = new DistributedChecker();
         Assertions.assertFalse(checker.hasComposite(primes));
     }
 
     @Test
     public void testNotPrimes() {
-        DistributedChecker checker = new DistributedChecker();
         Assertions.assertTrue(checker.hasComposite(not_primes));
     }
 
     @Test
     public void testNotPrimeOnce() {
-        DistributedChecker checker = new DistributedChecker();
         Assertions.assertTrue(checker.hasComposite(not_prime_once));
     }
 
     @Test
     public void testLargePrimes() {
-        DistributedChecker checker = new DistributedChecker();
         Assertions.assertTrue(checker.hasComposite(largeMixed));
     }
     
     @Test
     public void testEmptyAndNullArrays() {
-        DistributedChecker checker = new DistributedChecker();
         Assertions.assertFalse(checker.hasComposite(new int[]{}));
         Assertions.assertFalse(checker.hasComposite(null));
     }
