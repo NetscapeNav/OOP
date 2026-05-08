@@ -89,7 +89,9 @@ public class Checker {
         if (compiled) {
             handleSuccessfulCompilation(task, nick, taskDir, taskId, groupNumber, timeout, git);
         } else {
-            reporter.addRecord(groupNumber, nick, taskId, false, false, false, 0, 0, 0, LocalDate.now());
+            reporter.addRecord(groupNumber,
+                    nick, taskId, false, false, false,
+                    0, 0, 0, LocalDate.now());
         }
     }
 
@@ -105,7 +107,8 @@ public class Checker {
         boolean docGenerated = docGen.generate(nick, taskId, timeout);
         if (!docGenerated) {
             Logger.info("[" + nick + " | Task_" + taskId + "] Документация не сгенерирована. Итог: 0 баллов.");
-            reporter.addRecord(groupNumber, nick, taskId, true, styleOk, false, 0, 0, 0, LocalDate.now());
+            reporter.addRecord(groupNumber, nick, taskId, true, styleOk, false,
+                    0, 0, 0, LocalDate.now());
             return;
         }
 
@@ -119,7 +122,8 @@ public class Checker {
             finalScore = calculateScore(task, passed, total, submissionDate, nick, taskId);
         }
 
-        reporter.addRecord(groupNumber, nick, taskId, true, styleOk, true, passed, total, finalScore, submissionDate);
+        reporter.addRecord(groupNumber, nick, taskId, true, styleOk, true,
+                passed, total, finalScore, submissionDate);
     }
 
     private int calculateScore(Task task, int passed, int total,
