@@ -2,10 +2,15 @@ package prime_first;
 
 public class PrimeUtils {
     public static boolean isComposite(int num) {
-        if (num < 2) {
+        if (num <= 2) {
             return false;
         }
-        for (int i = 2; i * i <= num; i++) {
+
+        if (num % 2 == 0) {
+            return true;
+        }
+
+        for (int i = 3; i <= num / i; i += 2) {
             if (num % i == 0) {
                 return true;
             }
