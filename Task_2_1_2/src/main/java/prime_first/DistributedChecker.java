@@ -91,6 +91,7 @@ public class DistributedChecker implements PrimeFinder {
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            throw new RuntimeException("Distributed checking was interrupted", e);
         } finally {
             stop.set(true);
             for (Thread thread : dispatcherThreads) {
@@ -101,6 +102,7 @@ public class DistributedChecker implements PrimeFinder {
                     thread.join();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
+                    throw new RuntimeException("Distributed checking was interrupted", e);
                 }
             }
         }

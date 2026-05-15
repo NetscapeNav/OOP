@@ -32,7 +32,9 @@ public class WorkerNode {
                     clientThread.setDaemon(true);
                     clientThread.start();
                 } catch (SocketTimeoutException e) {
-                    // проверка interrupt и graceful shutdown
+                    if (Thread.currentThread().isInterrupted()) {
+                        break;
+                    }
                 }
             }
         } catch (Exception e) {
