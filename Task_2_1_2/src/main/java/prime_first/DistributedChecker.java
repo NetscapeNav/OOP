@@ -240,10 +240,6 @@ public class DistributedChecker implements PrimeFinder {
                         return new WorkerResult(hasComposite, results);
                     }
 
-                    if (messageType == DistributedProtocol.MSG_ERROR) {
-                        throw new IOException("Worker returned error");
-                    }
-
                     throw new IOException("Unknown message type: " + messageType);
                 }
             }

@@ -11,7 +11,6 @@ final class DistributedProtocol {
     static final int MSG_ACCEPTED = 1;
     static final int MSG_HEARTBEAT = 2;
     static final int MSG_RESULT = 3;
-    static final int MSG_ERROR = 4;
 
     private DistributedProtocol() {
     }
