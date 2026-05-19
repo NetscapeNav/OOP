@@ -1,4 +1,7 @@
-package prime_first;
+package master;
+
+import prime_common.DistributedProtocol;
+import prime_common.PrimeFinder;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -62,6 +65,8 @@ public class DistributedChecker implements PrimeFinder {
             return false;
         }
 
+        Object completionLock = new Object();
+
         List<DistributedTask> tasks = createTasks(numbersToCheck);
         BlockingQueue<DistributedTask> pendingTasks = new LinkedBlockingQueue<>(tasks);
 
@@ -74,6 +79,7 @@ public class DistributedChecker implements PrimeFinder {
         for (WorkerAddress worker : workers) {
             Thread dispatcherThread = new Thread(() -> dispatchThreads(
                     worker,
+                    completionLock,
                     pendingTasks,
                     unfinishedTasks,
                     hasComposite,
@@ -86,8 +92,10 @@ public class DistributedChecker implements PrimeFinder {
         }
 
         try {
-            while (!hasComposite.get() && unfinishedTasks.get() > 0) {
-                Thread.sleep(50);
+            synchronized (completionLock) {
+                while (!hasComposite.get() && unfinishedTasks.get() > 0) {
+                    completionLock.wait();
+                }
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -110,7 +118,7 @@ public class DistributedChecker implements PrimeFinder {
         return hasComposite.get();
     }
 
-    private void dispatchThreads(WorkerAddress worker, BlockingQueue<DistributedTask> pendingTasks,
+    private void dispatchThreads(WorkerAddress worker, Object completionLock, BlockingQueue<DistributedTask> pendingTasks,
                                  AtomicInteger unfinishedTasks, AtomicBoolean hasComposite, AtomicBoolean stop) {
         while (!stop.get() && !Thread.currentThread().isInterrupted()) {
             if (unfinishedTasks.get() == 0) {
@@ -136,11 +144,17 @@ public class DistributedChecker implements PrimeFinder {
                 WorkerResult result = sendTaskAndWaitResult(worker, task, attemptID);
                 globalCache.putAll(result.results);
                 task.markDone();
-                unfinishedTasks.decrementAndGet();
+                int leftTasks = unfinishedTasks.decrementAndGet();
 
                 if (result.hasComposite) {
                     hasComposite.set(true);
                     stop.set(true);
+                }
+
+                if (result.hasComposite || leftTasks == 0) {
+                    synchronized (completionLock) {
+                        completionLock.notifyAll();
+                    }
                 }
             } catch (IOException e) {
                 if (!stop.get() && !task.isDone()) {

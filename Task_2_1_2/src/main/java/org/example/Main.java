@@ -1,6 +1,6 @@
 package org.example;
 
-import prime_first.DistributedChecker;
+import master.DistributedChecker;
 
 public class Main {
     public static void main(String[] args) {

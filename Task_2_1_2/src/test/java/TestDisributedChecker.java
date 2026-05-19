@@ -2,8 +2,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import prime_first.DistributedChecker;
-import prime_first.WorkerNode;
+import master.DistributedChecker;
+import worker.WorkerNode;
 
 import java.net.ServerSocket;
 import java.util.ArrayList;

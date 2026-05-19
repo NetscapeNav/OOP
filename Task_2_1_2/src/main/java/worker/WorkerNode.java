@@ -1,4 +1,7 @@
-package prime_first;
+package worker;
+
+import prime_common.DistributedProtocol;
+import prime_common.PrimeUtils;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -22,8 +25,8 @@ public class WorkerNode {
         node.startServer(port);
     }
 
-    public void startServer(int port) {
-        try (ServerSocket serverSocket = new ServerSocket(port);) {
+    private void startServer(int port) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
             serverSocket.setSoTimeout(500);
             while (!Thread.currentThread().isInterrupted()) {
                 try {
@@ -91,7 +94,9 @@ public class WorkerNode {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            if (!Thread.currentThread().isInterrupted()) {
+                e.printStackTrace();
+            }
         } finally {
             finished.set(true);
 
