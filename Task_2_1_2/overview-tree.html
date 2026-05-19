@@ -50,8 +50,10 @@ loadScripts(document, 'script');</script>
 <h1 class="title">Hierarchy For All Packages</h1>
 <span class="package-hierarchy-label">Package Hierarchies:</span>
 <ul class="horizontal">
+<li><a href="master/package-tree.html">master</a>, </li>
 <li><a href="org/example/package-tree.html">org.example</a>, </li>
-<li><a href="prime_first/package-tree.html">prime_first</a></li>
+<li><a href="prime_common/package-tree.html">prime_common</a>, </li>
+<li><a href="worker/package-tree.html">worker</a></li>
 </ul>
 </div>
 <section class="hierarchy">
@@ -59,10 +61,11 @@ loadScripts(document, 'script');</script>
 <ul>
 <li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" class="type-name-link external-link" title="class or interface in java.lang">Object</a>
 <ul>
-<li class="circle">prime_first.<a href="prime_first/DistributedChecker.html" class="type-name-link" title="class in prime_first">DistributedChecker</a> (implements prime_first.<a href="prime_first/PrimeFinder.html" title="interface in prime_first">PrimeFinder</a>)</li>
+<li class="circle">master.<a href="master/DistributedChecker.html" class="type-name-link" title="class in master">DistributedChecker</a> (implements prime_common.<a href="prime_common/PrimeFinder.html" title="interface in prime_common">PrimeFinder</a>)</li>
+<li class="circle">prime_common.<a href="prime_common/DistributedProtocol.html" class="type-name-link" title="class in prime_common">DistributedProtocol</a></li>
 <li class="circle">org.example.<a href="org/example/Main.html" class="type-name-link" title="class in org.example">Main</a></li>
-<li class="circle">prime_first.<a href="prime_first/PrimeUtils.html" class="type-name-link" title="class in prime_first">PrimeUtils</a></li>
-<li class="circle">prime_first.<a href="prime_first/WorkerNode.html" class="type-name-link" title="class in prime_first">WorkerNode</a></li>
+<li class="circle">prime_common.<a href="prime_common/PrimeUtils.html" class="type-name-link" title="class in prime_common">PrimeUtils</a></li>
+<li class="circle">worker.<a href="worker/WorkerNode.html" class="type-name-link" title="class in worker">WorkerNode</a></li>
 </ul>
 </li>
 </ul>
@@ -70,7 +73,7 @@ loadScripts(document, 'script');</script>
 <section class="hierarchy">
 <h2 title="Interface Hierarchy">Interface Hierarchy</h2>
 <ul>
-<li class="circle">prime_first.<a href="prime_first/PrimeFinder.html" class="type-name-link" title="interface in prime_first">PrimeFinder</a></li>
+<li class="circle">prime_common.<a href="prime_common/PrimeFinder.html" class="type-name-link" title="interface in prime_common">PrimeFinder</a></li>
 </ul>
 </section>
 </main>
