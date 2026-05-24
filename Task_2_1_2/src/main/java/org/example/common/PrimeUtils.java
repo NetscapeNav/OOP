@@ -1,4 +1,4 @@
-package prime_common;
+package org.example.common;
 
 public class PrimeUtils {
     public static boolean isComposite(int num) {

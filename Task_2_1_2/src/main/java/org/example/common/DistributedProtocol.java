@@ -1,4 +1,4 @@
-package prime_common;
+package org.example.common;
 
 public final class DistributedProtocol {
     public static final int DEFAULT_CHUNK_SIZE = 1024;

@@ -1,6 +1,6 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import prime_common.PrimeUtils;
+import org.example.common.PrimeUtils;
 
 public class TestPrimeUtils {
     @Test

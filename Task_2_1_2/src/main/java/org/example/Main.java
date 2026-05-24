@@ -1,6 +1,6 @@
 package org.example;
 
-import master.DistributedChecker;
+import org.example.master.DistributedChecker;
 
 public class Main {
     public static void main(String[] args) {

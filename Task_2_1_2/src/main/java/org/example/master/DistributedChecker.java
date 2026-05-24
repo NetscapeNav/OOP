@@ -1,7 +1,7 @@
-package master;
+package org.example.master;
 
-import prime_common.DistributedProtocol;
-import prime_common.PrimeFinder;
+import org.example.common.DistributedProtocol;
+import org.example.common.PrimeFinder;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -51,6 +51,8 @@ public class DistributedChecker implements PrimeFinder {
 
     @Override
     public boolean hasComposite(int[] array) {
+        Set<Socket> activeSockets = ConcurrentHashMap.newKeySet();
+
         if (array == null || array.length == 0) {
             return false;
         }
@@ -78,6 +80,7 @@ public class DistributedChecker implements PrimeFinder {
 
         for (WorkerAddress worker : workers) {
             Thread dispatcherThread = new Thread(() -> dispatchThreads(
+                    activeSockets,
                     worker,
                     completionLock,
                     pendingTasks,
@@ -118,7 +121,7 @@ public class DistributedChecker implements PrimeFinder {
         return hasComposite.get();
     }
 
-    private void dispatchThreads(WorkerAddress worker, Object completionLock, BlockingQueue<DistributedTask> pendingTasks,
+    private void dispatchThreads(Set<Socket> activeSockets, WorkerAddress worker, Object completionLock, BlockingQueue<DistributedTask> pendingTasks,
                                  AtomicInteger unfinishedTasks, AtomicBoolean hasComposite, AtomicBoolean stop) {
         while (!stop.get() && !Thread.currentThread().isInterrupted()) {
             if (unfinishedTasks.get() == 0) {
@@ -141,7 +144,7 @@ public class DistributedChecker implements PrimeFinder {
             int attemptID = task.startAttempt();
 
             try {
-                WorkerResult result = sendTaskAndWaitResult(worker, task, attemptID);
+                WorkerResult result = sendTaskAndWaitResult(activeSockets, worker, task, attemptID);
                 globalCache.putAll(result.results);
                 task.markDone();
                 int leftTasks = unfinishedTasks.decrementAndGet();
@@ -149,6 +152,7 @@ public class DistributedChecker implements PrimeFinder {
                 if (result.hasComposite) {
                     hasComposite.set(true);
                     stop.set(true);
+                    closeActiveSockets(activeSockets);
                 }
 
                 if (result.hasComposite || leftTasks == 0) {
@@ -162,6 +166,15 @@ public class DistributedChecker implements PrimeFinder {
                     pendingTasks.offer(task);
                     sleepBeforeRetry();
                 }
+            }
+        }
+    }
+
+    private void closeActiveSockets(Set<Socket> activeSockets) {
+        for (Socket socket : activeSockets) {
+            try {
+                socket.close();
+            } catch (IOException ignored) {
             }
         }
     }
@@ -200,64 +213,68 @@ public class DistributedChecker implements PrimeFinder {
         return numbers;
     }
 
-    private WorkerResult sendTaskAndWaitResult(WorkerAddress worker, DistributedTask task,
+    private WorkerResult sendTaskAndWaitResult(Set<Socket> activeSockets, WorkerAddress worker, DistributedTask task,
                                                int attemptID) throws IOException {
         try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress(worker.ip, worker.port),
-            DistributedProtocol.CONNECT_TIMEOUT_MS);
-            socket.setSoTimeout(DistributedProtocol.HEARTBEAT_TIMEOUT_MS);
-            try (DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-                 DataInputStream input = new DataInputStream(socket.getInputStream())) {
-                output.writeInt(task.taskID);
-                output.writeInt(attemptID);
-                output.writeInt(task.numbers.length);
-                for (int num : task.numbers) {
-                    output.writeInt(num);
-                }
-                output.flush();
-
-                while (true) {
-                    int messageType;
-                    int responseTaskID;
-                    int responseAttemptID;
-                    try {
-                        messageType = input.readInt();
-                        responseTaskID = input.readInt();
-                        responseAttemptID = input.readInt();
-                    } catch (SocketTimeoutException e) {
-                        throw new IOException("Worker timeout", e);
+            activeSockets.add(socket);
+            try {
+                socket.connect(new InetSocketAddress(worker.ip, worker.port),
+                DistributedProtocol.CONNECT_TIMEOUT_MS);
+                socket.setSoTimeout(DistributedProtocol.HEARTBEAT_TIMEOUT_MS);
+                try (DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+                     DataInputStream input = new DataInputStream(socket.getInputStream())) {
+                    output.writeInt(task.taskID);
+                    output.writeInt(attemptID);
+                    output.writeInt(task.numbers.length);
+                    for (int num : task.numbers) {
+                        output.writeInt(num);
                     }
+                    output.flush();
 
-                    if (responseTaskID != task.taskID || responseAttemptID != attemptID) {
-                        throw new IOException("Received response for another task");
-                    }
-
-                    if (messageType == DistributedProtocol.MSG_ACCEPTED) {
-                        continue;
-                    }
-
-                    if (messageType == DistributedProtocol.MSG_HEARTBEAT) {
-                        continue;
-                    }
-
-                    if (messageType == DistributedProtocol.MSG_RESULT) {
-                        boolean hasComposite = input.readBoolean();
-                        int resultCount = input.readInt();
-                        Map<Integer, Boolean> results = new HashMap<>();
-
-                        for (int i = 0; i < resultCount; i++) {
-                            int number = input.readInt();
-                            boolean isComposite = input.readBoolean();
-                            results.put(number, isComposite);
+                    while (true) {
+                        int messageType;
+                        int responseTaskID;
+                        int responseAttemptID;
+                        try {
+                            messageType = input.readInt();
+                            responseTaskID = input.readInt();
+                            responseAttemptID = input.readInt();
+                        } catch (SocketTimeoutException e) {
+                            throw new IOException("Worker timeout", e);
                         }
 
-                        return new WorkerResult(hasComposite, results);
+                        if (responseTaskID != task.taskID || responseAttemptID != attemptID) {
+                            throw new IOException("Received response for another task");
+                        }
+
+                        if (messageType == DistributedProtocol.MSG_ACCEPTED) {
+                            continue;
+                        }
+
+                        if (messageType == DistributedProtocol.MSG_HEARTBEAT) {
+                            continue;
+                        }
+
+                        if (messageType == DistributedProtocol.MSG_RESULT) {
+                            boolean hasComposite = input.readBoolean();
+                            int resultCount = input.readInt();
+                            Map<Integer, Boolean> results = new HashMap<>();
+
+                            for (int i = 0; i < resultCount; i++) {
+                                int number = input.readInt();
+                                boolean isComposite = input.readBoolean();
+                                results.put(number, isComposite);
+                            }
+
+                            return new WorkerResult(hasComposite, results);
+                        }
+
+                        throw new IOException("Unknown message type: " + messageType);
                     }
-
-                    throw new IOException("Unknown message type: " + messageType);
                 }
+            } finally {
+                activeSockets.remove(socket);
             }
-
         }
     }
 

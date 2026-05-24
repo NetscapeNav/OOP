@@ -1,7 +1,7 @@
-package worker;
+package org.example.worker;
 
-import prime_common.DistributedProtocol;
-import prime_common.PrimeUtils;
+import org.example.common.DistributedProtocol;
+import org.example.common.PrimeUtils;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -29,14 +29,29 @@ public class WorkerNode {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             serverSocket.setSoTimeout(500);
             while (!Thread.currentThread().isInterrupted()) {
+                Socket clientSocket = null;
                 try {
-                    Socket clientSocket = serverSocket.accept();
-                    Thread clientThread = new Thread(() -> handleClient(clientSocket));
+                    clientSocket = serverSocket.accept();
+                    Socket socketForThread = clientSocket;
+                    Thread clientThread = new Thread(() -> handleClient(socketForThread));
                     clientThread.setDaemon(true);
                     clientThread.start();
+                    clientSocket = null;
                 } catch (SocketTimeoutException e) {
                     if (Thread.currentThread().isInterrupted()) {
                         break;
+                    }
+                } catch (Exception e) {
+                    if (clientSocket != null) {
+                        try {
+                            clientSocket.close();
+                        } catch (Exception closeException) {
+                            e.addSuppressed(closeException);
+                        }
+                    }
+
+                    if (!Thread.currentThread().isInterrupted()) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -73,6 +88,10 @@ public class WorkerNode {
             boolean hasComposite = false;
 
             for (int num : numbers) {
+                if (finished.get()) {
+                    return;
+                }
+
                 Boolean res = cache.computeIfAbsent(num, PrimeUtils::isComposite);
                 results.put(num, res);
                 if (res) {
