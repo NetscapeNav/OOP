@@ -11,6 +11,7 @@ public final class DistributedProtocol {
     public static final int MSG_ACCEPTED = 1;
     public static final int MSG_HEARTBEAT = 2;
     public static final int MSG_RESULT = 3;
+    public static final int MSG_CANCEL = 4;
 
     private DistributedProtocol() {
     }

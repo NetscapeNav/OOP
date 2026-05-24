@@ -11,6 +11,7 @@ import java.net.SocketTimeoutException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WorkerNode {
@@ -64,6 +65,7 @@ public class WorkerNode {
 
     private void handleClient(Socket socket) {
         Thread heartbeatThread = null;
+        Thread cancelThread = null;
         AtomicBoolean finished = new AtomicBoolean(false);
         try (Socket clientSocket = socket;
              DataInputStream input = new DataInputStream(clientSocket.getInputStream());
@@ -84,6 +86,10 @@ public class WorkerNode {
             heartbeatThread.setDaemon(true);
             heartbeatThread.start();
 
+            cancelThread = new Thread(() -> listenForCancel(input, taskID, attemptID, finished));
+            cancelThread.setDaemon(true);
+            cancelThread.start();
+
             Map<Integer, Boolean> results = new LinkedHashMap<>();
             boolean hasComposite = false;
 
@@ -92,10 +98,18 @@ public class WorkerNode {
                     return;
                 }
 
-                Boolean res = cache.computeIfAbsent(num, PrimeUtils::isComposite);
+                Boolean res;
+                try {
+                    res = cache.computeIfAbsent(num, value -> PrimeUtils.isComposite(value, finished::get));
+                } catch (CancellationException e) {
+                    return;
+                }
+
                 results.put(num, res);
+
                 if (res) {
                     hasComposite = true;
+                    break;
                 }
             }
 
@@ -122,6 +136,10 @@ public class WorkerNode {
             if (heartbeatThread != null) {
                 heartbeatThread.interrupt();
             }
+
+            if (cancelThread != null) {
+                cancelThread.interrupt();
+            }
         }
     }
 
@@ -147,6 +165,26 @@ public class WorkerNode {
             output.writeInt(taskID);
             output.writeInt(attemptID);
             output.flush();
+        }
+    }
+
+    private void listenForCancel(DataInputStream input, int taskID, int attemptID, AtomicBoolean finished) {
+        while (!finished.get() && !Thread.currentThread().isInterrupted()) {
+            try {
+                int messageType = input.readInt();
+                int receivedTaskID = input.readInt();
+                int receivedAttemptID = input.readInt();
+
+                if (messageType == DistributedProtocol.MSG_CANCEL
+                        && receivedTaskID == taskID
+                        && receivedAttemptID == attemptID) {
+                    finished.set(true);
+                    return;
+                }
+            } catch (Exception e) {
+                finished.set(true);
+                return;
+            }
         }
     }
 }

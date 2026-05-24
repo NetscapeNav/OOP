@@ -51,7 +51,7 @@ public class DistributedChecker implements PrimeFinder {
 
     @Override
     public boolean hasComposite(int[] array) {
-        Set<Socket> activeSockets = ConcurrentHashMap.newKeySet();
+        Set<ActiveConnection> activeConnections = ConcurrentHashMap.newKeySet();
 
         if (array == null || array.length == 0) {
             return false;
@@ -80,7 +80,7 @@ public class DistributedChecker implements PrimeFinder {
 
         for (WorkerAddress worker : workers) {
             Thread dispatcherThread = new Thread(() -> dispatchThreads(
-                    activeSockets,
+                    activeConnections,
                     worker,
                     completionLock,
                     pendingTasks,
@@ -105,6 +105,7 @@ public class DistributedChecker implements PrimeFinder {
             throw new RuntimeException("Distributed checking was interrupted", e);
         } finally {
             stop.set(true);
+            сloseActiveConnections(activeConnections);
             for (Thread thread : dispatcherThreads) {
                 thread.interrupt();
             }
@@ -121,7 +122,7 @@ public class DistributedChecker implements PrimeFinder {
         return hasComposite.get();
     }
 
-    private void dispatchThreads(Set<Socket> activeSockets, WorkerAddress worker, Object completionLock, BlockingQueue<DistributedTask> pendingTasks,
+    private void dispatchThreads(Set<ActiveConnection> activeConnections, WorkerAddress worker, Object completionLock, BlockingQueue<DistributedTask> pendingTasks,
                                  AtomicInteger unfinishedTasks, AtomicBoolean hasComposite, AtomicBoolean stop) {
         while (!stop.get() && !Thread.currentThread().isInterrupted()) {
             if (unfinishedTasks.get() == 0) {
@@ -141,10 +142,14 @@ public class DistributedChecker implements PrimeFinder {
                 continue;
             }
 
+            if (stop.get()) {
+                return;
+            }
+
             int attemptID = task.startAttempt();
 
             try {
-                WorkerResult result = sendTaskAndWaitResult(activeSockets, worker, task, attemptID);
+                WorkerResult result = sendTaskAndWaitResult(activeConnections, worker, task, attemptID);
                 globalCache.putAll(result.results);
                 task.markDone();
                 int leftTasks = unfinishedTasks.decrementAndGet();
@@ -152,7 +157,7 @@ public class DistributedChecker implements PrimeFinder {
                 if (result.hasComposite) {
                     hasComposite.set(true);
                     stop.set(true);
-                    closeActiveSockets(activeSockets);
+                    сloseActiveConnections(activeConnections);
                 }
 
                 if (result.hasComposite || leftTasks == 0) {
@@ -170,10 +175,20 @@ public class DistributedChecker implements PrimeFinder {
         }
     }
 
-    private void closeActiveSockets(Set<Socket> activeSockets) {
-        for (Socket socket : activeSockets) {
+    private void сloseActiveConnections(Set<ActiveConnection> activeConnections) {
+        for (ActiveConnection connection : activeConnections) {
             try {
-                socket.close();
+                synchronized (connection.output) {
+                    connection.output.writeInt(DistributedProtocol.MSG_CANCEL);
+                    connection.output.writeInt(connection.taskID);
+                    connection.output.writeInt(connection.attemptID);
+                    connection.output.flush();
+                }
+            } catch (IOException ignored) {
+            }
+
+            try {
+                connection.socket.close();
             } catch (IOException ignored) {
             }
         }
@@ -213,16 +228,18 @@ public class DistributedChecker implements PrimeFinder {
         return numbers;
     }
 
-    private WorkerResult sendTaskAndWaitResult(Set<Socket> activeSockets, WorkerAddress worker, DistributedTask task,
+    private WorkerResult sendTaskAndWaitResult(Set<ActiveConnection> activeConnections, WorkerAddress worker, DistributedTask task,
                                                int attemptID) throws IOException {
         try (Socket socket = new Socket()) {
-            activeSockets.add(socket);
-            try {
-                socket.connect(new InetSocketAddress(worker.ip, worker.port),
-                DistributedProtocol.CONNECT_TIMEOUT_MS);
-                socket.setSoTimeout(DistributedProtocol.HEARTBEAT_TIMEOUT_MS);
-                try (DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-                     DataInputStream input = new DataInputStream(socket.getInputStream())) {
+            socket.connect(new InetSocketAddress(worker.ip, worker.port),
+            DistributedProtocol.CONNECT_TIMEOUT_MS);
+            socket.setSoTimeout(DistributedProtocol.HEARTBEAT_TIMEOUT_MS);
+            try (DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+                 DataInputStream input = new DataInputStream(socket.getInputStream())) {
+                ActiveConnection connection = new ActiveConnection(socket, output, task.taskID, attemptID);
+                activeConnections.add(connection);
+
+                try {
                     output.writeInt(task.taskID);
                     output.writeInt(attemptID);
                     output.writeInt(task.numbers.length);
@@ -271,9 +288,9 @@ public class DistributedChecker implements PrimeFinder {
 
                         throw new IOException("Unknown message type: " + messageType);
                     }
+                } finally {
+                    activeConnections.remove(connection);
                 }
-            } finally {
-                activeSockets.remove(socket);
             }
         }
     }
@@ -291,6 +308,20 @@ public class DistributedChecker implements PrimeFinder {
         PENDING,
         IN_PROGRESS,
         DONE
+    }
+
+    private static class ActiveConnection {
+        final Socket socket;
+        final DataOutputStream output;
+        final int taskID;
+        final int attemptID;
+
+        ActiveConnection(Socket socket, DataOutputStream output, int taskID, int attemptID) {
+            this.socket = socket;
+            this.output = output;
+            this.taskID = taskID;
+            this.attemptID = attemptID;
+        }
     }
 
     private static class DistributedTask {
