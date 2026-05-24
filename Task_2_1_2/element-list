@@ -1,4 +1,4 @@
-master
 org.example
-prime_common
-worker
+org.example.common
+org.example.master
+org.example.worker
