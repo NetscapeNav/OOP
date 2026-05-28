@@ -105,7 +105,7 @@ public class DistributedChecker implements PrimeFinder {
             throw new RuntimeException("Distributed checking was interrupted", e);
         } finally {
             stop.set(true);
-            сloseActiveConnections(activeConnections);
+            closeActiveConnections(activeConnections);
             for (Thread thread : dispatcherThreads) {
                 thread.interrupt();
             }
@@ -157,7 +157,7 @@ public class DistributedChecker implements PrimeFinder {
                 if (result.hasComposite) {
                     hasComposite.set(true);
                     stop.set(true);
-                    сloseActiveConnections(activeConnections);
+                    closeActiveConnections(activeConnections);
                 }
 
                 if (result.hasComposite || leftTasks == 0) {
@@ -175,7 +175,7 @@ public class DistributedChecker implements PrimeFinder {
         }
     }
 
-    private void сloseActiveConnections(Set<ActiveConnection> activeConnections) {
+    private void closeActiveConnections(Set<ActiveConnection> activeConnections) {
         for (ActiveConnection connection : activeConnections) {
             try {
                 synchronized (connection.output) {

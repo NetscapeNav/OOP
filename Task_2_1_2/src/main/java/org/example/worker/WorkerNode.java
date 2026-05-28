@@ -113,6 +113,10 @@ public class WorkerNode {
                 }
             }
 
+            if (finished.get()) {
+                return;
+            }
+
             synchronized (output) {
                 output.writeInt(DistributedProtocol.MSG_RESULT);
                 output.writeInt(taskID);

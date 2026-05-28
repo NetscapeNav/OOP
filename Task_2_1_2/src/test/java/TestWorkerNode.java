@@ -46,7 +46,7 @@ public class TestWorkerNode {
         Assertions.assertTrue(response.accepted);
         Assertions.assertTrue(response.hasComposite);
         Assertions.assertEquals(Boolean.TRUE, response.results.get(4));
-        Assertions.assertEquals(Boolean.TRUE, response.results.get(9));
+        Assertions.assertFalse(response.results.containsKey(9));
     }
 
     @Test
