@@ -6,8 +6,10 @@ import org.example.worker.WorkerNode;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +19,7 @@ public class TestWorkerNode {
     private static final int MSG_ACCEPTED = 1;
     private static final int MSG_HEARTBEAT = 2;
     private static final int MSG_RESULT = 3;
+    private static final int MSG_CANCEL = 4;
 
     private Thread workerThread;
 
@@ -128,6 +131,61 @@ public class TestWorkerNode {
                     Assertions.fail("Unknown message type: " + messageType);
                 }
             }
+        }
+    }
+
+    @Test
+    public void testWorkerStopsAfterCancelMessage() throws Exception {
+        int port = startWorker();
+
+        int taskID = 20;
+        int attemptID = 1;
+        int[] numbers = new int[]{
+                2147483647, 2147483629, 2147483587, 2147483579,
+                2147483563, 2147483549, 2147483543, 2147483497,
+                2147483489, 2147483477, 2147483423, 2147483399
+        };
+
+        boolean accepted = false;
+
+        try (Socket socket = new Socket("127.0.0.1", port);
+             DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+             DataInputStream input = new DataInputStream(socket.getInputStream())) {
+
+            socket.setSoTimeout(3000);
+
+            output.writeInt(taskID);
+            output.writeInt(attemptID);
+            output.writeInt(numbers.length);
+            for (int number : numbers) {
+                output.writeInt(number);
+            }
+
+            output.writeInt(MSG_CANCEL);
+            output.writeInt(taskID);
+            output.writeInt(attemptID);
+            output.flush();
+
+            while (true) {
+                int messageType = input.readInt();
+                int responseTaskID = input.readInt();
+                int responseAttemptID = input.readInt();
+
+                Assertions.assertEquals(taskID, responseTaskID);
+                Assertions.assertEquals(attemptID, responseAttemptID);
+
+                if (messageType == MSG_ACCEPTED) {
+                    accepted = true;
+                } else if (messageType == MSG_HEARTBEAT) {
+                    continue;
+                } else if (messageType == MSG_RESULT) {
+                    Assertions.fail("Worker must not send MSG_RESULT after MSG_CANCEL");
+                } else {
+                    Assertions.fail("Unknown message type: " + messageType);
+                }
+            }
+        } catch (EOFException | SocketException e) {
+            Assertions.assertTrue(accepted);
         }
     }
 
